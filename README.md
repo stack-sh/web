@@ -38,6 +38,10 @@ npm run docs:preview
 
 Formatting and linting use Oxfmt and Oxlint. The production build compiles the React playground into `dist/`, validates the English, Japanese, Simplified Chinese, and Korean documentation sets, and builds VitePress with a `/docs/` base into `dist/docs/`.
 
+## Brand mark
+
+[`public/favicon.svg`](./public/favicon.svg) is the canonical Stack logo mark for Web surfaces. The Playground uses it as its favicon and header mark; VitePress uses the identical [`docs/public/favicon.svg`](./docs/public/favicon.svg) copy for its favicon, navigation, and localized home pages. The documentation validator rejects the build if the two public-root copies differ.
+
 ## Scope
 
 The initial playground includes:
