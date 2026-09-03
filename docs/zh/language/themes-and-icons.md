@@ -89,6 +89,8 @@ diagram "Explicit icon" {
 | `identity`      | Identity and access               | 身份验证或授权        |
 | `observability` | Observability system              | 指标、日志或链路追踪  |
 
+<IconCatalog locale="zh" />
+
 语义 `kind` 与显式图标应独立选择。例如，`icon "web"` 可以装饰 `client` 或 `service` 节点，但不会改变该节点的含义。
 
 ## 缺失图标与厂商图标

@@ -190,6 +190,11 @@ for (const term of requiredTerms) {
 for (const locale of ["", ...locales]) {
   const page = path.join(docsRoot, locale, "language/themes-and-icons.md")
   const source = await readFile(page, "utf8")
+  const componentLocale = locale || "en"
+
+  if (!source.includes(`<IconCatalog locale="${componentLocale}" />`)) {
+    throw new Error(`${componentLocale}/language/themes-and-icons.md is missing its icon gallery`)
+  }
 
   for (const iconId of coreIconIds) {
     if (!source.includes(`| \`${iconId}\``)) {

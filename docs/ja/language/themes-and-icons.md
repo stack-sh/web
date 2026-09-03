@@ -89,6 +89,8 @@ Free core catalogは、次のprovider-neutralな明示iconを`default`、`light`
 | `identity`      | Identity and access               | Authentication / authorization   |
 | `observability` | Observability system              | Metrics / logs / traces          |
 
+<IconCatalog locale="ja" />
+
 Semanticな`kind`と明示iconは独立して選びます。たとえば`icon "web"`は`client`にも`service`にも使えますが、そのnodeの意味は変更しません。
 
 ## 未収録iconとvendor icon

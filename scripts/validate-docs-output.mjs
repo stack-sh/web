@@ -78,6 +78,14 @@ for (const [page, language] of localePages) {
   }
 }
 
+for (const locale of ["", "ja/", "zh/", "ko/"]) {
+  const page = `${locale}language/themes-and-icons.html`
+  const html = await readFile(path.join(outputRoot, page), "utf8")
+  const cards = html.match(/class="stack-icon-card"/g)?.length ?? 0
+
+  if (cards !== 12) throw new Error(`${page} contains ${cards} icon cards instead of 12`)
+}
+
 const sitemap = await readFile(path.join(outputRoot, "sitemap.xml"), "utf8")
 const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1])
 

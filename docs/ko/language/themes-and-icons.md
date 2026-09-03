@@ -89,6 +89,8 @@ diagram "Explicit icon" {
 | `identity`      | Identity and access               | 인증 또는 권한 부여            |
 | `observability` | Observability system              | 메트릭, 로그 또는 트레이스     |
 
+<IconCatalog locale="ko" />
+
 의미를 나타내는 `kind`와 명시적 아이콘은 독립적으로 선택합니다. 예를 들어 `icon "web"`은 `client` 또는 `service` 노드를 꾸밀 수 있지만 노드의 의미를 바꾸지 않습니다.
 
 ## 누락 아이콘과 벤더 아이콘
