@@ -4,10 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build": "npm run build:playground && npm run docs:build",
+    "build:playground": "tsc -b && vite build",
     "cloudflare:check": "wrangler deploy --dry-run",
     "deploy": "npm run build && wrangler deploy",
     "dev": "vite",
+    "docs:build": "node scripts/validate-docs.mjs && vitepress build docs && node scripts/validate-docs-output.mjs",
+    "docs:dev": "vitepress dev docs",
+    "docs:preview": "vitepress preview docs",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "lint": "oxlint --deny-warnings .",
@@ -48,6 +52,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.2",
+    "vitepress": "2.0.0-alpha.19",
     "vitest": "^4.1.11",
     "wrangler": "^4.128.0"
   }

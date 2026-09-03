@@ -1,0 +1,158 @@
+:root {
+  --vp-font-family-base:
+    "IBM Plex Sans Variable", "Hiragino Sans", "Yu Gothic UI", "Microsoft YaHei", "Malgun Gothic",
+    sans-serif;
+  --vp-font-family-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #f5f5f5;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #f5f5f5;
+  --vp-c-text-1: #111111;
+  --vp-c-text-2: #525252;
+  --vp-c-text-3: #737373;
+  --vp-c-divider: #dedede;
+  --vp-c-gutter: #ededed;
+  --vp-c-brand-1: #1d63d8;
+  --vp-c-brand-2: #1456bd;
+  --vp-c-brand-3: #0e489f;
+  --vp-c-brand-soft: rgb(29 99 216 / 10%);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-bg: #1d63d8;
+  --vp-button-brand-hover-bg: #1456bd;
+  --vp-button-brand-active-bg: #0e489f;
+  --vp-code-block-bg: #f6f8fa;
+  --vp-code-line-highlight-color: rgb(29 99 216 / 8%);
+  --vp-custom-block-tip-border: #1d63d8;
+  --vp-custom-block-tip-bg: rgb(29 99 216 / 7%);
+}
+
+.dark {
+  --vp-c-bg: #0d1117;
+  --vp-c-bg-alt: #161b22;
+  --vp-c-bg-elv: #161b22;
+  --vp-c-bg-soft: #161b22;
+  --vp-c-text-1: #e6edf3;
+  --vp-c-text-2: #b1bac4;
+  --vp-c-text-3: #8b949e;
+  --vp-c-divider: #30363d;
+  --vp-c-gutter: #21262d;
+  --vp-c-brand-1: #79c0ff;
+  --vp-c-brand-2: #a5d6ff;
+  --vp-c-brand-3: #c9e6ff;
+  --vp-c-brand-soft: rgb(121 192 255 / 12%);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-bg: #1d63d8;
+  --vp-button-brand-hover-bg: #2f74e5;
+  --vp-button-brand-active-bg: #1456bd;
+  --vp-code-block-bg: #0d1117;
+  --vp-code-line-highlight-color: rgb(121 192 255 / 10%);
+  --vp-custom-block-tip-border: #79c0ff;
+  --vp-custom-block-tip-bg: rgb(121 192 255 / 8%);
+}
+
+body {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  color: var(--vp-c-bg);
+  background: var(--vp-c-text-1);
+}
+
+.VPNavBar,
+.VPSidebar {
+  border-color: var(--vp-c-divider);
+}
+
+.VPNavBarTitle .title {
+  letter-spacing: -0.025em;
+}
+
+.VPHomeHero .name,
+.VPHomeHero .text {
+  max-width: 14ch;
+  letter-spacing: -0.055em;
+}
+
+.VPHomeHero .name {
+  color: var(--vp-c-text-1);
+  -webkit-text-fill-color: currentcolor;
+}
+
+.VPHomeHero .tagline {
+  max-width: 42rem;
+  line-height: 1.65;
+}
+
+.VPHomeHero .image-bg {
+  display: none;
+}
+
+.VPHomeHero .VPImage {
+  width: min(20rem, 72vw);
+  height: min(20rem, 72vw);
+}
+
+.VPFeatures .VPFeature {
+  padding: 1.5rem 0 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--vp-c-divider);
+  border-radius: 0;
+}
+
+.VPFeatures .VPFeature:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.VPFeatures .VPFeature .box {
+  padding: 0;
+}
+
+.VPDoc .content-container,
+.VPDoc.has-aside .content-container {
+  max-width: 46rem;
+}
+
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.75;
+}
+
+.vp-doc h2 {
+  padding-top: 2.25rem;
+  margin-top: 2.75rem;
+  border-color: var(--vp-c-divider);
+}
+
+.vp-doc table {
+  display: table;
+  width: 100%;
+}
+
+.vp-doc div[class*="language-"] {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.375rem;
+}
+
+.vp-doc .custom-block {
+  border-radius: 0.25rem;
+}
+
+@media (max-width: 639px) {
+  .vp-doc table {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

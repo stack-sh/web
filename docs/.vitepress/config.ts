@@ -1,0 +1,343 @@
+import { createRequire } from "node:module"
+
+import { defineConfig } from "vitepress"
+import type { LanguageRegistration } from "@shikijs/core"
+import type { DefaultTheme } from "vitepress"
+
+const require = createRequire(import.meta.url)
+const stackGrammar = require("@stack-sh/language/grammar") as LanguageRegistration
+
+type Labels = {
+  guide: string
+  introduction: string
+  gettingStarted: string
+  playground: string
+  language: string
+  syntax: string
+  nodesAndGroups: string
+  edgesAndLayout: string
+  themesAndIcons: string
+  formatting: string
+  reference: string
+  diagnosticsAndLimits: string
+  versioningAndSafety: string
+  edit: string
+  outline: string
+  previous: string
+  next: string
+  appearance: string
+  lightMode: string
+  darkMode: string
+  menu: string
+  returnToTop: string
+  changeLanguage: string
+  skipToContent: string
+}
+
+function sidebar(prefix: string, labels: Labels): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: labels.guide,
+      items: [
+        { text: labels.introduction, link: `${prefix}/guide/what-is-stack` },
+        { text: labels.gettingStarted, link: `${prefix}/guide/getting-started` },
+        { text: labels.playground, link: `${prefix}/guide/playground` },
+      ],
+    },
+    {
+      text: labels.language,
+      items: [
+        { text: labels.syntax, link: `${prefix}/language/syntax` },
+        { text: labels.nodesAndGroups, link: `${prefix}/language/nodes-and-groups` },
+        { text: labels.edgesAndLayout, link: `${prefix}/language/edges-and-layout` },
+        { text: labels.themesAndIcons, link: `${prefix}/language/themes-and-icons` },
+        { text: labels.formatting, link: `${prefix}/language/formatting` },
+      ],
+    },
+    {
+      text: labels.reference,
+      items: [
+        {
+          text: labels.diagnosticsAndLimits,
+          link: `${prefix}/reference/diagnostics-and-limits`,
+        },
+        {
+          text: labels.versioningAndSafety,
+          link: `${prefix}/reference/versioning-and-safety`,
+        },
+      ],
+    },
+  ]
+}
+
+function localeTheme(prefix: string, labels: Labels): DefaultTheme.Config {
+  return {
+    nav: [
+      { text: labels.guide, link: `${prefix}/guide/getting-started` },
+      { text: labels.reference, link: `${prefix}/reference/diagnostics-and-limits` },
+      { text: "Playground", link: "https://stack-diagram.com/", target: "_self" },
+    ],
+    sidebar: sidebar(prefix, labels),
+    editLink: {
+      pattern: "https://github.com/stack-sh/web/edit/main/docs/:path",
+      text: labels.edit,
+    },
+    outline: { level: [2, 3], label: labels.outline },
+    docFooter: { prev: labels.previous, next: labels.next },
+    darkModeSwitchLabel: labels.appearance,
+    lightModeSwitchTitle: labels.lightMode,
+    darkModeSwitchTitle: labels.darkMode,
+    sidebarMenuLabel: labels.menu,
+    returnToTopLabel: labels.returnToTop,
+    langMenuLabel: labels.changeLanguage,
+    skipToContentLabel: labels.skipToContent,
+  }
+}
+
+const en: Labels = {
+  guide: "Guide",
+  introduction: "What is Stack?",
+  gettingStarted: "Getting started",
+  playground: "Using the Playground",
+  language: "Language",
+  syntax: "Document and syntax",
+  nodesAndGroups: "Nodes and groups",
+  edgesAndLayout: "Edges and layout",
+  themesAndIcons: "Themes and icons",
+  formatting: "Canonical formatting",
+  reference: "Reference",
+  diagnosticsAndLimits: "Diagnostics and limits",
+  versioningAndSafety: "Versioning and safety",
+  edit: "Edit this page on GitHub",
+  outline: "On this page",
+  previous: "Previous page",
+  next: "Next page",
+  appearance: "Appearance",
+  lightMode: "Switch to light theme",
+  darkMode: "Switch to dark theme",
+  menu: "Menu",
+  returnToTop: "Return to top",
+  changeLanguage: "Change language",
+  skipToContent: "Skip to content",
+}
+
+const ja: Labels = {
+  guide: "ガイド",
+  introduction: "Stackとは",
+  gettingStarted: "はじめる",
+  playground: "Playgroundの使い方",
+  language: "言語",
+  syntax: "Documentとsyntax",
+  nodesAndGroups: "Nodeとgroup",
+  edgesAndLayout: "Edgeとlayout",
+  themesAndIcons: "Themeとicon",
+  formatting: "Canonical formatting",
+  reference: "リファレンス",
+  diagnosticsAndLimits: "Diagnosticとlimit",
+  versioningAndSafety: "Versioningと安全性",
+  edit: "GitHubでこのページを編集",
+  outline: "このページ",
+  previous: "前のページ",
+  next: "次のページ",
+  appearance: "表示",
+  lightMode: "ライトテーマに切り替える",
+  darkMode: "ダークテーマに切り替える",
+  menu: "メニュー",
+  returnToTop: "ページ上部へ戻る",
+  changeLanguage: "言語を変更",
+  skipToContent: "本文へ移動",
+}
+
+const zh: Labels = {
+  guide: "指南",
+  introduction: "什么是 Stack？",
+  gettingStarted: "快速开始",
+  playground: "使用 Playground",
+  language: "语言",
+  syntax: "文档与语法",
+  nodesAndGroups: "节点与分组",
+  edgesAndLayout: "连线与布局",
+  themesAndIcons: "主题与图标",
+  formatting: "规范格式化",
+  reference: "参考",
+  diagnosticsAndLimits: "诊断与限制",
+  versioningAndSafety: "版本与安全",
+  edit: "在 GitHub 上编辑此页",
+  outline: "本页内容",
+  previous: "上一页",
+  next: "下一页",
+  appearance: "外观",
+  lightMode: "切换到浅色主题",
+  darkMode: "切换到深色主题",
+  menu: "菜单",
+  returnToTop: "返回顶部",
+  changeLanguage: "切换语言",
+  skipToContent: "跳到正文",
+}
+
+const ko: Labels = {
+  guide: "가이드",
+  introduction: "Stack이란?",
+  gettingStarted: "시작하기",
+  playground: "Playground 사용법",
+  language: "언어",
+  syntax: "문서와 문법",
+  nodesAndGroups: "노드와 그룹",
+  edgesAndLayout: "엣지와 레이아웃",
+  themesAndIcons: "테마와 아이콘",
+  formatting: "표준 포매팅",
+  reference: "레퍼런스",
+  diagnosticsAndLimits: "진단과 제한",
+  versioningAndSafety: "버전과 안전성",
+  edit: "GitHub에서 이 페이지 편집",
+  outline: "이 페이지에서",
+  previous: "이전 페이지",
+  next: "다음 페이지",
+  appearance: "화면 모드",
+  lightMode: "라이트 테마로 전환",
+  darkMode: "다크 테마로 전환",
+  menu: "메뉴",
+  returnToTop: "맨 위로",
+  changeLanguage: "언어 변경",
+  skipToContent: "본문으로 이동",
+}
+
+export default defineConfig({
+  base: "/docs/",
+  outDir: "../dist/docs",
+  cleanUrls: true,
+  lastUpdated: true,
+  sitemap: { hostname: "https://stack-diagram.com/docs/" },
+  transformHtml(code, id) {
+    if (!id.endsWith("index.html")) return code
+
+    return code.replace('<div class="VPContent', '<div role="main" class="VPContent')
+  },
+  head: [
+    ["link", { rel: "icon", href: "/docs/favicon.svg", type: "image/svg+xml" }],
+    ["meta", { name: "theme-color", content: "#ffffff" }],
+  ],
+  locales: {
+    root: {
+      label: "English",
+      lang: "en-US",
+      title: "Stack",
+      description: "Write architecture diagrams as concise, reviewable source.",
+      themeConfig: localeTheme("", en),
+    },
+    ja: {
+      label: "日本語",
+      lang: "ja-JP",
+      title: "Stack",
+      description: "Architecture diagramを簡潔でreview可能なsourceとして記述します。",
+      themeConfig: localeTheme("/ja", ja),
+      markdown: {
+        container: { infoLabel: "情報", tipLabel: "ヒント", warningLabel: "警告" },
+        codeCopyButton: { tooltipText: "コードをコピー", copiedText: "コピーしました" },
+      },
+    },
+    zh: {
+      label: "简体中文",
+      lang: "zh-CN",
+      title: "Stack",
+      description: "用简洁、可审查的源代码编写架构图。",
+      themeConfig: localeTheme("/zh", zh),
+      markdown: {
+        container: { infoLabel: "信息", tipLabel: "提示", warningLabel: "警告" },
+        codeCopyButton: { tooltipText: "复制代码", copiedText: "已复制" },
+      },
+    },
+    ko: {
+      label: "한국어",
+      lang: "ko-KR",
+      title: "Stack",
+      description: "아키텍처 다이어그램을 간결하고 검토 가능한 소스로 작성합니다.",
+      themeConfig: localeTheme("/ko", ko),
+      markdown: {
+        container: { infoLabel: "정보", tipLabel: "팁", warningLabel: "경고" },
+        codeCopyButton: { tooltipText: "코드 복사", copiedText: "복사됨" },
+      },
+    },
+  },
+  markdown: {
+    languages: [stackGrammar],
+    theme: { light: "github-light", dark: "github-dark" },
+  },
+  themeConfig: {
+    logo: {
+      light: "/stack-mark-light.svg",
+      dark: "/stack-mark-dark.svg",
+      alt: "",
+    },
+    i18nRouting: true,
+    externalLinkIcon: true,
+    socialLinks: [{ icon: "github", link: "https://github.com/stack-sh" }],
+    search: {
+      provider: "local",
+      options: {
+        locales: {
+          ja: {
+            translations: {
+              button: { buttonText: "検索", buttonAriaLabel: "ドキュメントを検索" },
+              modal: {
+                displayDetails: "詳細を表示",
+                resetButtonTitle: "検索をリセット",
+                backButtonTitle: "検索を閉じる",
+                noResultsText: "結果が見つかりません",
+                footer: {
+                  selectText: "選択",
+                  selectKeyAriaLabel: "Enter",
+                  navigateText: "移動",
+                  navigateUpKeyAriaLabel: "上矢印",
+                  navigateDownKeyAriaLabel: "下矢印",
+                  closeText: "閉じる",
+                  closeKeyAriaLabel: "Escape",
+                },
+              },
+            },
+          },
+          zh: {
+            translations: {
+              button: { buttonText: "搜索", buttonAriaLabel: "搜索文档" },
+              modal: {
+                displayDetails: "显示详情",
+                resetButtonTitle: "重置搜索",
+                backButtonTitle: "关闭搜索",
+                noResultsText: "未找到结果",
+                footer: {
+                  selectText: "选择",
+                  selectKeyAriaLabel: "回车",
+                  navigateText: "导航",
+                  navigateUpKeyAriaLabel: "向上箭头",
+                  navigateDownKeyAriaLabel: "向下箭头",
+                  closeText: "关闭",
+                  closeKeyAriaLabel: "Escape",
+                },
+              },
+            },
+          },
+          ko: {
+            translations: {
+              button: { buttonText: "검색", buttonAriaLabel: "문서 검색" },
+              modal: {
+                displayDetails: "상세 보기",
+                resetButtonTitle: "검색 초기화",
+                backButtonTitle: "검색 닫기",
+                noResultsText: "결과를 찾을 수 없습니다",
+                footer: {
+                  selectText: "선택",
+                  selectKeyAriaLabel: "Enter",
+                  navigateText: "이동",
+                  navigateUpKeyAriaLabel: "위쪽 화살표",
+                  navigateDownKeyAriaLabel: "아래쪽 화살표",
+                  closeText: "닫기",
+                  closeKeyAriaLabel: "Escape",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+})
