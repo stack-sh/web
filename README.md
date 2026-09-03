@@ -42,6 +42,12 @@ Formatting and linting use Oxfmt and Oxlint. The production build compiles the R
 
 [`public/favicon.svg`](./public/favicon.svg) is the canonical Stack logo mark for Web surfaces. The Playground uses it as its favicon and header mark; VitePress uses the identical [`docs/public/favicon.svg`](./docs/public/favicon.svg) copy for its favicon, navigation, and localized home pages. The documentation validator rejects the build if the two public-root copies differ.
 
+## Discovery metadata
+
+The Playground publishes canonical, Open Graph, Twitter Card, and `WebApplication` JSON-LD metadata from `index.html`. [`public/ogp.png`](./public/ogp.png) is the shared 1200×630 social image for the Playground and documentation.
+
+[`public/robots.txt`](./public/robots.txt) permits public search crawling and advertises both sitemaps. [`public/llms.txt`](./public/llms.txt) and [`docs/public/llms.txt`](./docs/public/llms.txt) provide curated agent entry points. The VitePress build also emits clean Markdown alternatives for every documentation page and generates `/llms-full.txt` from the complete English documentation, so the agent-facing content stays synchronized with its public source.
+
 ## Scope
 
 The initial playground includes:

@@ -18,13 +18,82 @@ const pages = [
 const locales = ["ja", "zh", "ko"]
 const docsRoot = path.resolve("docs")
 
-const [playgroundLogo, documentationLogo] = await Promise.all([
+const [
+  playgroundLogo,
+  documentationLogo,
+  playgroundHtml,
+  socialImage,
+  rootAgentIndex,
+  documentationAgentIndex,
+  robots,
+  rootSitemap,
+] = await Promise.all([
   readFile(path.resolve("public/favicon.svg"), "utf8"),
   readFile(path.join(docsRoot, "public/favicon.svg"), "utf8"),
+  readFile(path.resolve("index.html"), "utf8"),
+  readFile(path.resolve("public/ogp.png")),
+  readFile(path.resolve("public/llms.txt"), "utf8"),
+  readFile(path.join(docsRoot, "public/llms.txt"), "utf8"),
+  readFile(path.resolve("public/robots.txt"), "utf8"),
+  readFile(path.resolve("public/sitemap.xml"), "utf8"),
 ])
 
 if (playgroundLogo !== documentationLogo) {
   throw new Error("Playground and documentation logo assets do not match")
+}
+
+const siteDescription = "Write your Technical Stack, Get beautiful diagram"
+const requiredMetadata = [
+  "<title>Stack</title>",
+  `name="description" content="${siteDescription}"`,
+  'rel="canonical" href="https://stack-diagram.com/"',
+  'rel="describedby" href="/llms.txt"',
+  'property="og:title" content="Stack"',
+  'property="og:image" content="https://stack-diagram.com/ogp.png"',
+  'name="twitter:card" content="summary_large_image"',
+  'type="application/ld+json"',
+]
+
+for (const metadata of requiredMetadata) {
+  if (!playgroundHtml.includes(metadata)) {
+    throw new Error(`Playground metadata is missing: ${metadata}`)
+  }
+}
+
+if (
+  socialImage.subarray(1, 4).toString("ascii") !== "PNG" ||
+  socialImage.readUInt32BE(16) !== 1200 ||
+  socialImage.readUInt32BE(20) !== 630
+) {
+  throw new Error("Social image must be a 1200x630 PNG")
+}
+
+for (const [name, source] of [
+  ["root", rootAgentIndex],
+  ["documentation", documentationAgentIndex],
+]) {
+  if (!source.startsWith("# Stack") || !source.includes("\n\n> ")) {
+    throw new Error(`${name} llms.txt does not follow the expected Markdown structure`)
+  }
+}
+
+for (const crawlerDirective of ["User-agent: OAI-SearchBot", "User-agent: *", "Allow: /"]) {
+  if (!robots.includes(crawlerDirective)) {
+    throw new Error(`robots.txt is missing: ${crawlerDirective}`)
+  }
+}
+
+for (const sitemapUrl of [
+  "https://stack-diagram.com/sitemap.xml",
+  "https://stack-diagram.com/docs/sitemap.xml",
+]) {
+  if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
+    throw new Error(`robots.txt does not advertise ${sitemapUrl}`)
+  }
+}
+
+if (!rootSitemap.includes("<loc>https://stack-diagram.com/</loc>")) {
+  throw new Error("Root sitemap does not include the Playground")
 }
 
 function codeBlocks(source) {
