@@ -4,7 +4,7 @@ The minimal browser playground for the Stack architecture diagram language.
 
 The top-level experience is a responsive source-to-SVG workspace: edit Stack source on the left, inspect the generated SVG on the right, and run formatting or validation from the toolbar. On smaller screens, the editor and preview stack vertically.
 
-Documentation will be added under a nested route in a later initiative. Cloudflare Workers is the intended hosting target, but deployment and Git integration are intentionally not configured yet.
+Documentation will be added under a nested route in a later initiative. The playground is deployed to the `stack-web` Cloudflare Worker and served from [stack-diagram.com](https://stack-diagram.com/).
 
 ## Development
 
@@ -19,7 +19,7 @@ npm ci
 npm run dev
 ```
 
-The WebAssembly adapter is installed from the exact public `@stack-sh/engine` version in `package.json`. Web builds do not require a Rust toolchain.
+The WebAssembly adapter and editor language assets are installed from the exact public `@stack-sh/engine` and `@stack-sh/language` versions in `package.json`. Web builds do not require a Rust toolchain.
 
 ## Commands
 
@@ -42,12 +42,13 @@ The initial playground includes:
 
 - Responsive editor and SVG preview panes
 - `Format`, `Check`, and `Run` actions
-- Portable diagnostics with source locations
+- Syntax highlighting from the shared Stack TextMate grammar
+- Compiler-style diagnostics with source selection, code frames, expected values, help, and related locations
 - Safe SVG image preview and download
 
 Authentication, persistence, collaboration, paid themes, and documentation pages are outside this first delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the Vite output as static assets.
 
-Syntax highlighting is also deferred. A later iteration should consume a reusable public Stack grammar and register it as a custom Shiki language so browser and editor integrations share one definition.
+The editor keeps a native textarea as the input surface and layers Shiki presentation behind it. Highlighting consumes the raw `@stack-sh/language/grammar` export and does not determine whether source is valid. Validation and diagnostic guidance continue to come only from `@stack-sh/engine`.
 
 ## License
 
