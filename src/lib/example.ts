@@ -27,7 +27,7 @@ diagram "Commerce platform" {
 
     node storefront "Storefront" {
       kind client
-      icon "kind-client"
+      icon "web"
       detail "Web application"
     }
 
