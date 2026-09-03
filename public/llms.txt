@@ -1,0 +1,25 @@
+# Stack
+
+> Stack is a declarative language and browser playground for writing technical-stack and software-architecture diagrams as concise, reviewable source.
+
+Stack source describes components, boundaries, relationships, themes, and layout intent. The deterministic engine formats, validates, lays out, and renders a standalone accessible SVG. Stack is not an infrastructure-as-code system or an executable programming language.
+
+## Documentation
+
+- [Stack documentation](https://stack-diagram.com/docs/llms.txt): Curated guides, complete language reference, diagnostics, limits, versioning, and safety information.
+- [Complete English documentation](https://stack-diagram.com/llms-full.txt): All English documentation in one Markdown document for agents that prefer a single context.
+- [Getting started](https://stack-diagram.com/docs/guide/getting-started.md): Install the browser package, write a first `.stack` document, and use the Playground.
+- [Language syntax](https://stack-diagram.com/docs/language/syntax.md): Document structure, identifiers, strings, comments, and validation rules.
+- [Themes and icons](https://stack-diagram.com/docs/language/themes-and-icons.md): Theme selection, icon references, fallbacks, and catalog ownership.
+- [Diagnostics and limits](https://stack-diagram.com/docs/reference/diagnostics-and-limits.md): Diagnostic codes, source ranges, warnings, and safety limits.
+
+## Product
+
+- [Stack Playground](https://stack-diagram.com/): Write, format, validate, render, preview, and download Stack diagrams in the browser.
+- [Stack on GitHub](https://github.com/stack-sh): Public language specification, compiler, theme catalog, engine, and Web repositories.
+
+## Translations
+
+- [日本語ドキュメント](https://stack-diagram.com/docs/ja/index.md): Japanese documentation.
+- [简体中文文档](https://stack-diagram.com/docs/zh/index.md): Simplified Chinese documentation.
+- [한국어 문서](https://stack-diagram.com/docs/ko/index.md): Korean documentation.

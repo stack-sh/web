@@ -1,4 +1,6 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises"
 import { createRequire } from "node:module"
+import path from "node:path"
 
 import { defineConfig } from "vitepress"
 import type { LanguageRegistration } from "@shikijs/core"
@@ -6,6 +8,60 @@ import type { DefaultTheme } from "vitepress"
 
 const require = createRequire(import.meta.url)
 const stackGrammar = require("@stack-sh/language/grammar") as LanguageRegistration
+const siteOrigin = "https://stack-diagram.com"
+const siteDescription = "Write your Technical Stack, Get beautiful diagram"
+const socialImageUrl = `${siteOrigin}/ogp.png`
+const documentationHomeMarkdown: Record<string, string> = {
+  "index.md": `# Stack Documentation
+
+Stack is a declarative language for writing static software-architecture and technical-stack diagrams as concise, reviewable source.
+
+- [Getting started](./guide/getting-started.md)
+- [Language reference](./language/syntax.md)
+- [Diagnostics and limits](./reference/diagnostics-and-limits.md)
+`,
+  "ja/index.md": `# Stackドキュメント
+
+Stackは、静的なsoftware architecture diagramとtechnical stack diagramを簡潔でreview可能なsourceとして記述するための宣言的言語です。
+
+- [はじめる](./guide/getting-started.md)
+- [言語リファレンス](./language/syntax.md)
+- [Diagnosticとlimit](./reference/diagnostics-and-limits.md)
+`,
+  "zh/index.md": `# Stack 文档
+
+Stack 是一种声明式语言，用简洁、可审查的源代码编写静态软件架构图和技术栈图。
+
+- [快速开始](./guide/getting-started.md)
+- [语言参考](./language/syntax.md)
+- [诊断与限制](./reference/diagnostics-and-limits.md)
+`,
+  "ko/index.md": `# Stack 문서
+
+Stack은 정적 소프트웨어 아키텍처 및 기술 스택 다이어그램을 간결하고 검토 가능한 소스로 작성하는 선언적 언어입니다.
+
+- [시작하기](./guide/getting-started.md)
+- [언어 레퍼런스](./language/syntax.md)
+- [진단과 제한](./reference/diagnostics-and-limits.md)
+`,
+}
+
+function agentMarkdown(relativePath: string, source: string): string {
+  const content = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim()
+  return `${content || documentationHomeMarkdown[relativePath] || ""}\n`
+}
+
+function documentationUrl(relativePath: string): string {
+  const route = relativePath.replace(/index\.md$/, "").replace(/\.md$/, "")
+  return `${siteOrigin}/docs/${route}`
+}
+
+function openGraphLocale(relativePath: string): string {
+  if (relativePath.startsWith("ja/")) return "ja_JP"
+  if (relativePath.startsWith("zh/")) return "zh_CN"
+  if (relativePath.startsWith("ko/")) return "ko_KR"
+  return "en_US"
+}
 
 type Labels = {
   guide: string
@@ -212,6 +268,73 @@ export default defineConfig({
     if (!id.endsWith("index.html")) return code
 
     return code.replace('<div class="VPContent', '<div role="main" class="VPContent')
+  },
+  transformHead({ pageData, title, description }) {
+    if (pageData.isNotFound || !pageData.relativePath) return
+
+    const canonicalUrl = documentationUrl(pageData.relativePath)
+    const markdownUrl = `/docs/${pageData.relativePath}`
+
+    return [
+      ["link", { rel: "canonical", href: canonicalUrl }],
+      ["link", { rel: "alternate", type: "text/markdown", href: markdownUrl }],
+      ["link", { rel: "describedby", href: "/docs/llms.txt" }],
+      ["meta", { name: "robots", content: "index, follow, max-image-preview:large" }],
+      ["meta", { property: "og:type", content: "article" }],
+      ["meta", { property: "og:site_name", content: "Stack" }],
+      ["meta", { property: "og:title", content: title }],
+      ["meta", { property: "og:description", content: description }],
+      ["meta", { property: "og:url", content: canonicalUrl }],
+      ["meta", { property: "og:image", content: socialImageUrl }],
+      ["meta", { property: "og:image:type", content: "image/png" }],
+      ["meta", { property: "og:image:width", content: "1200" }],
+      ["meta", { property: "og:image:height", content: "630" }],
+      ["meta", { property: "og:image:alt", content: "Stack" }],
+      ["meta", { property: "og:locale", content: openGraphLocale(pageData.relativePath) }],
+      ["meta", { name: "twitter:card", content: "summary_large_image" }],
+      ["meta", { name: "twitter:title", content: title }],
+      ["meta", { name: "twitter:description", content: description }],
+      ["meta", { name: "twitter:image", content: socialImageUrl }],
+      ["meta", { name: "twitter:image:alt", content: "Stack" }],
+    ]
+  },
+  async buildEnd(siteConfig) {
+    const englishPages: Array<{ relativePath: string; source: string }> = []
+
+    for (const relativePath of siteConfig.pages) {
+      const source = agentMarkdown(
+        relativePath,
+        await readFile(path.join(siteConfig.srcDir, relativePath), "utf8"),
+      )
+      const destination = path.join(siteConfig.outDir, relativePath)
+      await mkdir(path.dirname(destination), { recursive: true })
+      await writeFile(destination, source)
+
+      if (!/^(ja|zh|ko)\//.test(relativePath)) {
+        englishPages.push({ relativePath, source })
+      }
+    }
+
+    const completeDocumentation = [
+      "# Stack",
+      "",
+      `> ${siteDescription}`,
+      "",
+      "This file contains the complete English Stack documentation for agents that prefer one document. The curated entry point is https://stack-diagram.com/llms.txt.",
+      ...englishPages
+        .sort((left, right) => left.relativePath.localeCompare(right.relativePath))
+        .flatMap(({ relativePath, source }) => [
+          "",
+          "---",
+          "",
+          `Source: ${siteOrigin}/docs/${relativePath}`,
+          "",
+          source.trim(),
+        ]),
+      "",
+    ].join("\n")
+
+    await writeFile(path.join(siteConfig.outDir, "..", "llms-full.txt"), completeDocumentation)
   },
   head: [
     ["link", { rel: "icon", href: "/docs/favicon.svg", type: "image/svg+xml" }],

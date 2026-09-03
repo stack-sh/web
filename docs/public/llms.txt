@@ -1,0 +1,36 @@
+# Stack Documentation
+
+> Stack is a declarative language for static software-architecture and technical-stack diagrams, with deterministic formatting, validation, layout, and SVG rendering.
+
+These Markdown pages are the public user-facing reference. Examples marked as `stack` code blocks are canonical Stack source. English is the default language; Japanese, Simplified Chinese, and Korean translations preserve the same examples and heading coverage.
+
+## Guide
+
+- [What is Stack?](https://stack-diagram.com/docs/guide/what-is-stack.md): Goals, conceptual model, processing pipeline, and deliberate non-goals.
+- [Getting started](https://stack-diagram.com/docs/guide/getting-started.md): Package installation, first diagram, engine operations, and browser Playground workflow.
+- [Using the Playground](https://stack-diagram.com/docs/guide/playground.md): Editor, formatter, diagnostics, preview, color mode, and SVG download behavior.
+
+## Language
+
+- [Document and syntax](https://stack-diagram.com/docs/language/syntax.md): Version declaration, diagram grammar, identifiers, strings, comments, and validation.
+- [Nodes and groups](https://stack-diagram.com/docs/language/nodes-and-groups.md): Node kinds, labels, details, groups, and containment.
+- [Edges and layout](https://stack-diagram.com/docs/language/edges-and-layout.md): Edge kinds, direction, ranks, ordering, and layout fallbacks.
+- [Themes and icons](https://stack-diagram.com/docs/language/themes-and-icons.md): Built-in themes, icon identifiers, catalog metadata, and fallback behavior.
+- [Canonical formatting](https://stack-diagram.com/docs/language/formatting.md): Deterministic source formatting and semantic preservation.
+
+## Reference
+
+- [Diagnostics and limits](https://stack-diagram.com/docs/reference/diagnostics-and-limits.md): Stable diagnostic codes, source ranges, warnings, and bounded-input limits.
+- [Versioning and safety](https://stack-diagram.com/docs/reference/versioning-and-safety.md): Compatibility policy, trust boundaries, escaping, and package responsibilities.
+
+## Translations
+
+- [日本語](https://stack-diagram.com/docs/ja/index.md): Japanese documentation entry point.
+- [简体中文](https://stack-diagram.com/docs/zh/index.md): Simplified Chinese documentation entry point.
+- [한국어](https://stack-diagram.com/docs/ko/index.md): Korean documentation entry point.
+
+## Optional
+
+- [Complete English documentation](https://stack-diagram.com/llms-full.txt): All English pages combined into one Markdown document.
+- [Stack Playground](https://stack-diagram.com/): Browser editor and SVG renderer.
+- [Stack on GitHub](https://github.com/stack-sh): Public source repositories and contributor information.
