@@ -17,6 +17,11 @@ const pages = [
 
 const locales = ["ja", "zh", "ko"]
 const docsRoot = path.resolve("docs")
+const packageMetadata = JSON.parse(await readFile(path.resolve("package.json"), "utf8"))
+
+if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.3.0") {
+  throw new Error("Documentation must use the exact @stack-sh/engine 0.3.0 release")
+}
 
 const [
   playgroundLogo,

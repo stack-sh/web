@@ -89,6 +89,8 @@ Free core catalogは、次のprovider-neutralな明示iconを`default`、`light`
 | `identity`      | Identity and access               | Authentication / authorization   |
 | `observability` | Observability system              | Metrics / logs / traces          |
 
+下のpreviewをlight / darkへ切り替えると、実際のoutputを比較できます。各imageは公開`@stack-sh/engine@0.3.0`がlocalでrenderし、DocumentationにTheme SVG assetを複製していません。Syntaxの行を選ぶとコピーできます。
+
 <IconCatalog locale="ja" />
 
 Semanticな`kind`と明示iconは独立して選びます。たとえば`icon "web"`は`client`にも`service`にも使えますが、そのnodeの意味は変更しません。

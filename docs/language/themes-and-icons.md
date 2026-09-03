@@ -89,6 +89,8 @@ The free core catalog includes these provider-neutral explicit icons in `default
 | `identity`      | Identity and access               | Authentication or authorization    |
 | `observability` | Observability system              | Metrics, logs, or traces           |
 
+Switch the preview below between light and dark to inspect the actual output. The published `@stack-sh/engine@0.3.0` renders every image locally; the Documentation does not copy Theme SVG assets. Select a syntax row to copy it.
+
 <IconCatalog locale="en" />
 
 Use the semantic `kind` independently from the explicit icon. For example, `icon "web"` may decorate either a `client` or `service` node without changing what that node means.

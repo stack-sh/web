@@ -89,6 +89,8 @@ diagram "Explicit icon" {
 | `identity`      | Identity and access               | 인증 또는 권한 부여            |
 | `observability` | Observability system              | 메트릭, 로그 또는 트레이스     |
 
+아래 미리보기를 라이트와 다크로 전환하여 실제 출력을 비교할 수 있습니다. 각 이미지는 공개된 `@stack-sh/engine@0.3.0`이 로컬에서 렌더링하며 문서에 Theme SVG 에셋을 복제하지 않습니다. 문법 행을 선택하면 복사됩니다.
+
 <IconCatalog locale="ko" />
 
 의미를 나타내는 `kind`와 명시적 아이콘은 독립적으로 선택합니다. 예를 들어 `icon "web"`은 `client` 또는 `service` 노드를 꾸밀 수 있지만 노드의 의미를 바꾸지 않습니다.

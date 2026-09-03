@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises"
+import { readFile, readdir } from "node:fs/promises"
 import path from "node:path"
 
 const outputRoot = path.resolve("dist/docs")
@@ -84,6 +84,12 @@ for (const locale of ["", "ja/", "zh/", "ko/"]) {
   const cards = html.match(/class="stack-icon-card"/g)?.length ?? 0
 
   if (cards !== 12) throw new Error(`${page} contains ${cards} icon cards instead of 12`)
+}
+
+const documentationAssets = await readdir(path.join(outputRoot, "assets"))
+
+if (!documentationAssets.some((asset) => /^stack_engine_bg\..+\.wasm$/.test(asset))) {
+  throw new Error("Built Documentation does not include the published Engine WebAssembly")
 }
 
 const sitemap = await readFile(path.join(outputRoot, "sitemap.xml"), "utf8")
