@@ -11,19 +11,15 @@ Documentation will be added under a nested route in a later initiative. Cloudfla
 Requirements:
 
 - Node.js 22.14 or newer
-- Stable Rust with the `wasm32-unknown-unknown` target
-- `wasm-bindgen-cli` 0.2.127
 
 ```sh
-git clone --recurse-submodules git@github.com:stack-sh/web.git
+git clone git@github.com:stack-sh/web.git
 cd web
-rustup target add wasm32-unknown-unknown
-cargo install wasm-bindgen-cli --version 0.2.127 --locked
 npm ci
 npm run dev
 ```
 
-The WebAssembly adapter is built from the `stack-sh/engine` submodule pinned to the final merged engine revision. This source pin is temporary until `@stack-sh/engine` has a public package release.
+The WebAssembly adapter is installed from the exact public `@stack-sh/engine` version in `package.json`. Web builds do not require a Rust toolchain.
 
 ## Commands
 
@@ -34,10 +30,11 @@ npm run format:check
 npm run lint
 npm test
 npm run build
+npm run cloudflare:check
 npm run preview
 ```
 
-Formatting and linting use Oxfmt and Oxlint. The production build generates the pinned Stack WebAssembly package before TypeScript and Vite compilation.
+Formatting and linting use Oxfmt and Oxlint. The production build compiles TypeScript and Vite assets with the published Stack WebAssembly package.
 
 ## Scope
 
@@ -48,7 +45,7 @@ The initial playground includes:
 - Portable diagnostics with source locations
 - Safe SVG image preview and download
 
-Authentication, persistence, collaboration, paid themes, documentation pages, deployment, and repository-to-Cloudflare Git integration are outside this first delivery.
+Authentication, persistence, collaboration, paid themes, and documentation pages are outside this first delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the Vite output as static assets.
 
 Syntax highlighting is also deferred. A later iteration should consume a reusable public Stack grammar and register it as a custom Shiki language so browser and editor integrations share one definition.
 

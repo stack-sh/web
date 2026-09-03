@@ -10,10 +10,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
-      "@stack-sh/engine": path.resolve(
-        import.meta.dirname,
-        "./vendor/engine/packages/engine/index.js",
-      ),
     },
   },
 })

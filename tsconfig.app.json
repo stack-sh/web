@@ -7,8 +7,7 @@
     "types": ["vite/client"],
     "allowArbitraryExtensions": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@stack-sh/engine": ["./vendor/engine/packages/engine/index.d.ts"]
+      "@/*": ["./src/*"]
     },
     "skipLibCheck": true,
 
