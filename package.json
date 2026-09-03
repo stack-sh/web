@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run engine:build && tsc -b && vite build",
-    "dev": "npm run engine:build && vite",
-    "engine:build": "npm --prefix vendor/engine ci && npm --prefix vendor/engine run build:wasm",
+    "build": "tsc -b && vite build",
+    "cloudflare:check": "wrangler deploy --dry-run",
+    "deploy": "npm run build && wrangler deploy",
+    "dev": "vite",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "lint": "oxlint --deny-warnings .",
@@ -17,6 +18,7 @@
   "dependencies": {
     "@fontsource-variable/ibm-plex-sans": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@stack-sh/engine": "0.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.39.0",
@@ -43,6 +45,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.2",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wrangler": "^4.128.0"
   }
 }

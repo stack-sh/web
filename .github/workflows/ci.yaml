@@ -27,15 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install stable Rust toolchain
-        run: rustup toolchain install stable --profile minimal --target wasm32-unknown-unknown
-
-      - name: Install WebAssembly binding generator
-        uses: taiki-e/install-action@e67fa11c4b9316fa714ddf0abed07a0c3143b95b
-        with:
-          tool: wasm-bindgen-cli@0.2.127
-          fallback: none
-
       - name: Check formatting
         run: npm run format:check
 
@@ -47,3 +38,6 @@ jobs:
 
       - name: Build playground
         run: npm run build
+
+      - name: Check Cloudflare deployment bundle
+        run: npm run cloudflare:check

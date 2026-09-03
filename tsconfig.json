@@ -2,8 +2,7 @@
   "files": [],
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"],
-      "@stack-sh/engine": ["./vendor/engine/packages/engine/index.d.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
