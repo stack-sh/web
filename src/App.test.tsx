@@ -40,6 +40,9 @@ const diagnostic = {
 
 describe("Stack Playground", () => {
   beforeEach(() => {
+    localStorage.clear()
+    document.documentElement.classList.remove("dark")
+    document.documentElement.style.colorScheme = ""
     engine.initialize.mockResolvedValue({})
     engine.check.mockReturnValue({ diagnostics: [], metadata })
     engine.format.mockReturnValue({ diagnostics: [], formattedSource: "stack 1.0\n", metadata })
@@ -137,5 +140,32 @@ describe("Stack Playground", () => {
     fireEvent.change(editor, { target: { value: source.replace("hoo", "right") } })
     expect(screen.queryByText("[STK2002]")).not.toBeInTheDocument()
     expect(screen.getByText("Source changed")).toBeInTheDocument()
+  })
+
+  it("switches color mode and remembers the choice", async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole("button", { name: "Switch to dark mode" }))
+
+    expect(document.documentElement).toHaveClass("dark")
+    expect(document.documentElement.style.colorScheme).toBe("dark")
+    expect(localStorage.getItem("stack-color-mode")).toBe("dark")
+    expect(screen.getByRole("button", { name: "Switch to light mode" })).toBeInTheDocument()
+  })
+
+  it("opens the rendered diagram in an accessible dialog", async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await screen.findByAltText("Rendered Stack architecture diagram")
+
+    await user.click(screen.getByRole("button", { name: "Expand rendered diagram" }))
+
+    expect(screen.getByRole("dialog", { name: "Rendered diagram" })).toBeInTheDocument()
+    expect(screen.getByAltText("Expanded Stack architecture diagram")).toBeInTheDocument()
+
+    await user.keyboard("{Escape}")
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Expand rendered diagram" })).toHaveFocus()
   })
 })

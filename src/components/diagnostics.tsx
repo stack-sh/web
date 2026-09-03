@@ -13,7 +13,7 @@ export function Diagnostics({ diagnostics, source, onSelectRange }: DiagnosticsP
     <section
       aria-label="Diagnostics"
       aria-live="polite"
-      className="max-h-64 overflow-auto border-t bg-white"
+      className="max-h-64 overflow-auto border-t bg-background"
     >
       <div className="flex h-9 items-center justify-between border-b px-3 text-xs">
         <h3 className="font-medium" id="diagnostics-heading">
@@ -52,7 +52,7 @@ export function Diagnostics({ diagnostics, source, onSelectRange }: DiagnosticsP
 
                 <p className="mt-1.5 leading-5 text-foreground">{diagnostic.message}</p>
 
-                <div className="mt-2 overflow-x-auto border bg-[#fbfbfb] py-2 font-mono leading-5">
+                <div className="mt-2 overflow-x-auto border bg-editor py-2 font-mono leading-5">
                   <div className="grid min-w-max grid-cols-[2rem_1rem_1fr] px-2">
                     <span className="text-right text-muted-foreground">{frame.line}</span>
                     <span aria-hidden="true" className="text-center text-muted-foreground">
@@ -62,9 +62,9 @@ export function Diagnostics({ diagnostics, source, onSelectRange }: DiagnosticsP
                       {frame.before}
                       <span
                         className={cn(
-                          "border-b-2 bg-neutral-200",
+                          "border-b-2 bg-foreground/10",
                           diagnostic.severity === "error"
-                            ? "border-destructive bg-red-50"
+                            ? "border-destructive bg-destructive/10"
                             : "border-foreground",
                         )}
                       >
