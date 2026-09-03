@@ -98,6 +98,16 @@
     background: #111111;
     color: #ffffff;
   }
+
+  .stack-editor-input-highlighted {
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stack-editor-input-highlighted::selection {
+    background: rgb(17 17 17 / 16%);
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

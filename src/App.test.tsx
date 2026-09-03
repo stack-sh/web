@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -19,7 +19,7 @@ vi.mock("@stack-sh/engine", () => ({
 import App from "./App"
 
 const metadata = {
-  engineVersion: "0.1.0",
+  engineVersion: "0.2.0",
   languageVersion: { major: 1, minor: 0 },
   themeCatalogRevision: "sha256:test",
   themeCatalogVersion: "0.1.0",
@@ -27,6 +27,7 @@ const metadata = {
 
 const diagnostic = {
   code: "STK2001",
+  expected: [],
   help: "Add the missing closing brace.",
   message: "The diagram is not closed.",
   range: {
@@ -78,8 +79,63 @@ describe("Stack Playground", () => {
 
     await user.click(screen.getByRole("button", { name: "Check" }))
 
-    await waitFor(() => expect(screen.getByText("STK2001")).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText("[STK2001]")).toBeInTheDocument())
     expect(screen.getByText("The diagram is not closed.")).toBeInTheDocument()
     expect(screen.getByText("Check found errors")).toBeInTheDocument()
+  })
+
+  it("shows actionable guidance and selects the diagnostic source range", async () => {
+    const user = userEvent.setup()
+    const source =
+      'stack 1.0\ndiagram "Example" {\n  node app "App"\n  layout { direction hoo }\n}\n'
+    engine.check.mockReturnValueOnce({
+      diagnostics: [
+        {
+          code: "STK2002",
+          expected: ["right", "down"],
+          help: "Use 'right' for horizontal flow or 'down' for vertical flow.",
+          message: "Unknown layout direction 'hoo'.",
+          range: {
+            end: { byteOffset: 71, column: 25, line: 4 },
+            start: { byteOffset: 68, column: 22, line: 4 },
+          },
+          related: [
+            {
+              message: "The diagram starts here.",
+              range: {
+                end: { byteOffset: 17, column: 8, line: 2 },
+                start: { byteOffset: 10, column: 1, line: 2 },
+              },
+            },
+          ],
+          severity: "error",
+        },
+      ],
+      metadata,
+    })
+    render(<App />)
+    await screen.findByAltText("Rendered Stack architecture diagram")
+
+    const editor = screen.getByRole<HTMLTextAreaElement>("textbox", { name: "Stack source" })
+    fireEvent.change(editor, { target: { value: source } })
+    await user.click(screen.getByRole("button", { name: "Check" }))
+
+    expect(screen.getByText("Unknown layout direction 'hoo'.")).toBeInTheDocument()
+    expect(screen.getByText("right")).toBeInTheDocument()
+    expect(screen.getByText("down")).toBeInTheDocument()
+    expect(screen.getByText(/Use 'right' for horizontal flow/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: "Go to error STK2002 at 4:22" }))
+    expect(editor).toHaveFocus()
+    expect(editor.selectionStart).toBe(68)
+    expect(editor.selectionEnd).toBe(71)
+
+    await user.click(screen.getByRole("button", { name: "The diagram starts here. at 2:1" }))
+    expect(editor.selectionStart).toBe(10)
+    expect(editor.selectionEnd).toBe(17)
+
+    fireEvent.change(editor, { target: { value: source.replace("hoo", "right") } })
+    expect(screen.queryByText("[STK2002]")).not.toBeInTheDocument()
+    expect(screen.getByText("Source changed")).toBeInTheDocument()
   })
 })

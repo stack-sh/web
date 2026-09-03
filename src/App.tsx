@@ -70,6 +70,12 @@ export default function App() {
     }
   }
 
+  function handleSourceChange(nextSource: string) {
+    setSource(nextSource)
+    setDiagnostics([])
+    setStatus("Source changed")
+  }
+
   function handleCheck() {
     try {
       const result = checkStack(source)
@@ -130,7 +136,7 @@ export default function App() {
             onCheck={handleCheck}
             onFormat={handleFormat}
             onRender={handleRender}
-            onSourceChange={setSource}
+            onSourceChange={handleSourceChange}
             source={source}
           />
           <PreviewPane
