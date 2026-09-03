@@ -57,6 +57,7 @@ describe("Stack Playground", () => {
     render(<App />)
 
     expect(screen.getByRole("textbox", { name: "Stack source" })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Docs" })).toHaveAttribute("href", "/docs/")
     expect(await screen.findByAltText("Rendered Stack architecture diagram")).toBeInTheDocument()
     expect(screen.getByText("Render completed")).toBeInTheDocument()
     expect(engine.render).toHaveBeenCalledOnce()

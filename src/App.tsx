@@ -130,7 +130,12 @@ export default function App() {
           </div>
 
           <nav aria-label="Primary" className="flex items-center gap-3 sm:gap-4">
-            <span className="text-xs text-muted-foreground">Docs later</span>
+            <a
+              className="rounded-sm text-xs text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              href="/docs/"
+            >
+              Docs
+            </a>
             <a
               className="rounded-sm text-xs text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               href="https://github.com/stack-sh"

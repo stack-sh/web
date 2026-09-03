@@ -1,10 +1,10 @@
 # Stack Web
 
-The minimal browser playground for the Stack architecture diagram language.
+The browser playground and documentation site for the Stack architecture diagram language.
 
 The top-level experience is a responsive source-to-SVG workspace: edit Stack source on the left, inspect the generated SVG on the right, and run formatting or validation from the toolbar. On smaller screens, the editor and preview stack vertically.
 
-Documentation will be added under a nested route in a later initiative. The playground is deployed to the `stack-web` Cloudflare Worker and served from [stack-diagram.com](https://stack-diagram.com/).
+The playground is deployed to the `stack-web` Cloudflare Worker at [stack-diagram.com](https://stack-diagram.com/). Its multilingual VitePress documentation is built into the same static asset bundle and served from [`/docs/`](https://stack-diagram.com/docs/).
 
 ## Development
 
@@ -25,6 +25,7 @@ The WebAssembly adapter and editor language assets are installed from the exact 
 
 ```sh
 npm run dev
+npm run docs:dev
 npm run format
 npm run format:check
 npm run lint
@@ -32,9 +33,10 @@ npm test
 npm run build
 npm run cloudflare:check
 npm run preview
+npm run docs:preview
 ```
 
-Formatting and linting use Oxfmt and Oxlint. The production build compiles TypeScript and Vite assets with the published Stack WebAssembly package.
+Formatting and linting use Oxfmt and Oxlint. The production build compiles the React playground into `dist/`, validates the English, Japanese, Simplified Chinese, and Korean documentation sets, and builds VitePress with a `/docs/` base into `dist/docs/`.
 
 ## Scope
 
@@ -47,7 +49,7 @@ The initial playground includes:
 - Compiler-style diagnostics with source selection, code frames, expected values, help, and related locations
 - Safe SVG image preview, expanded dialog, and download
 
-Authentication, persistence, collaboration, paid themes, and documentation pages are outside this first delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the Vite output as static assets.
+Authentication, persistence, collaboration, and paid themes remain outside this delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the combined Vite and VitePress output as static assets.
 
 The editor keeps a native textarea as the input surface and layers Shiki presentation behind it. Highlighting consumes the raw `@stack-sh/language/grammar` export and does not determine whether source is valid. The Web-owned Shiki themes map grammar scopes to accessible light and dark colors. Validation and diagnostic guidance continue to come only from `@stack-sh/engine`.
 
