@@ -60,15 +60,42 @@ diagram "Dark architecture" {
 ```stack
 stack 1.0
 
-diagram "Icon fallback" {
-  node primary "Primary database" {
-    kind database
-    icon "postgresql"
+diagram "Explicit icon" {
+  node gateway "Public API" {
+    kind service
+    icon "api"
   }
 }
 ```
 
-아이콘은 노드를 꾸밀 뿐 `database` kind나 접근성 라벨을 바꾸지 않습니다. 유효 테마에 `postgresql`이 없으면 `kind-database`로 계속 렌더링하고 `STK5001`을 냅니다. 테마마다 그림은 다를 수 있지만 같은 식별자는 같은 논리 대상을 의미해야 합니다.
+아이콘은 노드를 꾸밀 뿐 `service` kind, identity, label, 접근성 설명을 바꾸지 않습니다. 테마마다 색상과 그림은 달라질 수 있지만 같은 식별자는 같은 논리 대상을 나타냅니다.
+
+## First-party 아이콘 catalog
+
+무료 코어 catalog는 `default`, `light`, `dark`에 다음 provider-neutral 명시적 아이콘을 제공합니다.
+
+| ID              | Stable subject                    | 주요 용도                      |
+| --------------- | --------------------------------- | ------------------------------ |
+| `api`           | Application programming interface | 공개 또는 내부 API             |
+| `web`           | Web application                   | 브라우저용 Web 경험            |
+| `mobile`        | Mobile application                | iOS 또는 Android 클라이언트    |
+| `desktop`       | Desktop application               | 네이티브 데스크톱 클라이언트   |
+| `server`        | Server host                       | 가상 머신 또는 물리 호스트     |
+| `container`     | Application container             | 컨테이너화된 워크로드          |
+| `cluster`       | Compute cluster                   | 오케스트레이션된 컴퓨팅 그룹   |
+| `cloud`         | Cloud environment                 | provider-neutral 클라우드 경계 |
+| `scheduler`     | Scheduled execution               | Cron 작업 또는 예약 실행       |
+| `webhook`       | Webhook endpoint                  | 인바운드 또는 아웃바운드 콜백  |
+| `identity`      | Identity and access               | 인증 또는 권한 부여            |
+| `observability` | Observability system              | 메트릭, 로그 또는 트레이스     |
+
+의미를 나타내는 `kind`와 명시적 아이콘은 독립적으로 선택합니다. 예를 들어 `icon "web"`은 `client` 또는 `service` 노드를 꾸밀 수 있지만 노드의 의미를 바꾸지 않습니다.
+
+## 누락 아이콘과 벤더 아이콘
+
+코어 catalog에는 현재 `postgresql`, `aws`, `github`, `docker` 같은 벤더 또는 프로젝트 마크가 없습니다. 유효 테마가 작성한 아이콘 식별자를 제공하지 않으면 노드 kind fallback으로 계속 렌더링하고 `STK5001` 경고를 냅니다.
+
+위 표의 provider-neutral 아이콘을 사용하거나 kind fallback만으로 역할이 명확하면 `icon`을 생략하세요. 벤더 마크는 에셋별 license, 재배포 및 trademark review를 완료해야 별도 catalog에 포함할 수 있습니다.
 
 ## Catalog와 에셋 안전성
 

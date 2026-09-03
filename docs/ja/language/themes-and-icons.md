@@ -60,15 +60,42 @@ Theme identifierは通常のStack identifier syntaxを使います。一度登�
 ```stack
 stack 1.0
 
-diagram "Icon fallback" {
-  node primary "Primary database" {
-    kind database
-    icon "postgresql"
+diagram "Explicit icon" {
+  node gateway "Public API" {
+    kind service
+    icon "api"
   }
 }
 ```
 
-Iconはnodeを装飾するだけで、`database` kindやaccessible labelを変えません。Effective themeに`postgresql`がなければ、`kind-database`でrenderを続け、warning `STK5001`を出します。Themeごとにartworkを変えられますが、同じidentifierは同じlogical subjectを表します。
+Iconはnodeを装飾するだけで、`service` kind、identity、label、accessible descriptionを変えません。Themeごとに色やartworkを調整できますが、同じidentifierは同じlogical subjectを表します。
+
+## First-party icon catalog
+
+Free core catalogは、次のprovider-neutralな明示iconを`default`、`light`、`dark`に収録しています。
+
+| ID              | Stable subject                    | 主な用途                         |
+| --------------- | --------------------------------- | -------------------------------- |
+| `api`           | Application programming interface | Public / internal API            |
+| `web`           | Web application                   | Browser向けWeb experience        |
+| `mobile`        | Mobile application                | iOS / Android client             |
+| `desktop`       | Desktop application               | Native desktop client            |
+| `server`        | Server host                       | Virtual machine / physical host  |
+| `container`     | Application container             | Containerized workload           |
+| `cluster`       | Compute cluster                   | Orchestrated compute group       |
+| `cloud`         | Cloud environment                 | Provider-neutralなcloud boundary |
+| `scheduler`     | Scheduled execution               | Cron job / scheduled work        |
+| `webhook`       | Webhook endpoint                  | Inbound / outbound callback      |
+| `identity`      | Identity and access               | Authentication / authorization   |
+| `observability` | Observability system              | Metrics / logs / traces          |
+
+Semanticな`kind`と明示iconは独立して選びます。たとえば`icon "web"`は`client`にも`service`にも使えますが、そのnodeの意味は変更しません。
+
+## 未収録iconとvendor icon
+
+Core catalogは現在、`postgresql`、`aws`、`github`、`docker`などのvendor / project markを収録していません。Effective themeにauthored icon identifierがなければ、node kindのfallbackでrenderを続け、warning `STK5001`を出します。
+
+上表のprovider-neutral iconを選ぶか、kind fallbackだけで役割が伝わる場合は`icon`を省略してください。Vendor markを別catalogへ収録するには、asset単位のlicense、redistribution、trademark reviewが必要です。
 
 ## Catalogとasset safety
 

@@ -142,6 +142,20 @@ for (const locale of locales) {
 }
 
 const corpus = [...englishPages.values()].join("\n")
+const coreIconIds = [
+  "api",
+  "web",
+  "mobile",
+  "desktop",
+  "server",
+  "container",
+  "cluster",
+  "cloud",
+  "scheduler",
+  "webhook",
+  "identity",
+  "observability",
+]
 const requiredTerms = [
   "stack 1.0",
   "actor",
@@ -171,6 +185,17 @@ const requiredTerms = [
 for (const term of requiredTerms) {
   if (!corpus.includes(term))
     throw new Error(`English documentation is missing required coverage for ${term}`)
+}
+
+for (const locale of ["", ...locales]) {
+  const page = path.join(docsRoot, locale, "language/themes-and-icons.md")
+  const source = await readFile(page, "utf8")
+
+  for (const iconId of coreIconIds) {
+    if (!source.includes(`| \`${iconId}\``)) {
+      throw new Error(`${locale || "en"}/language/themes-and-icons.md is missing ${iconId}`)
+    }
+  }
 }
 
 console.log(`Validated ${pages.length * (locales.length + 1)} documentation pages.`)
