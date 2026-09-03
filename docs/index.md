@@ -6,9 +6,9 @@ hero:
   text: Architecture, as source.
   tagline: Write a small, semantic document. Get a consistent, accessible architecture diagram without drawing coordinates or styling every box.
   image:
-    light: /stack-mark-light.svg
-    dark: /stack-mark-dark.svg
-    alt: A small Stack architecture diagram
+    light: /favicon.svg
+    dark: /favicon.svg
+    alt: Stack logo
   actions:
     - theme: brand
       text: Get started

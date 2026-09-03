@@ -6,9 +6,9 @@ hero:
   text: 아키텍처를 소스로.
   tagline: 작은 의미 기반 문서를 작성하면 좌표나 박스별 스타일을 지정하지 않아도 일관되고 접근 가능한 아키텍처 다이어그램을 만들 수 있습니다.
   image:
-    light: /stack-mark-light.svg
-    dark: /stack-mark-dark.svg
-    alt: 작은 Stack 아키텍처 다이어그램
+    light: /favicon.svg
+    dark: /favicon.svg
+    alt: Stack 로고
   actions:
     - theme: brand
       text: 시작하기

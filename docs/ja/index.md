@@ -6,9 +6,9 @@ hero:
   text: Architectureをsourceとして。
   tagline: 小さなsemantic documentを書くだけで、座標やboxごとのstyleを指定せず、一貫したaccessibleなarchitecture diagramを生成できます。
   image:
-    light: /stack-mark-light.svg
-    dark: /stack-mark-dark.svg
-    alt: 小さなStack architecture diagram
+    light: /favicon.svg
+    dark: /favicon.svg
+    alt: Stackロゴ
   actions:
     - theme: brand
       text: はじめる

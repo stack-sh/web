@@ -265,9 +265,9 @@ export default defineConfig({
   },
   themeConfig: {
     logo: {
-      light: "/stack-mark-light.svg",
-      dark: "/stack-mark-dark.svg",
-      alt: "",
+      light: "/favicon.svg",
+      dark: "/favicon.svg",
+      alt: "Stack",
     },
     i18nRouting: true,
     externalLinkIcon: true,
