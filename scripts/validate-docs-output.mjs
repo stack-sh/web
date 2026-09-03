@@ -20,6 +20,11 @@ for (const [page, language] of localePages) {
 
   if (!html.includes('href="/docs/') && !html.includes('src="/docs/'))
     throw new Error(`${page} does not reference assets or routes below /docs/`)
+
+  const logoReferences = html.match(/src="\/docs\/favicon\.svg"/g)?.length ?? 0
+  if (logoReferences < 4) {
+    throw new Error(`${page} does not use the Stack logo in navigation and home hero`)
+  }
 }
 
 const sitemap = await readFile(path.join(outputRoot, "sitemap.xml"), "utf8")

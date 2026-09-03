@@ -6,9 +6,9 @@ hero:
   text: 将架构写成源代码。
   tagline: 编写一份简洁的语义文档，无需指定坐标或逐个设置方框样式，即可生成一致且无障碍的架构图。
   image:
-    light: /stack-mark-light.svg
-    dark: /stack-mark-dark.svg
-    alt: 一个小型 Stack 架构图
+    light: /favicon.svg
+    dark: /favicon.svg
+    alt: Stack 标志
   actions:
     - theme: brand
       text: 快速开始

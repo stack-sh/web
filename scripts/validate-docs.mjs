@@ -18,6 +18,15 @@ const pages = [
 const locales = ["ja", "zh", "ko"]
 const docsRoot = path.resolve("docs")
 
+const [playgroundLogo, documentationLogo] = await Promise.all([
+  readFile(path.resolve("public/favicon.svg"), "utf8"),
+  readFile(path.join(docsRoot, "public/favicon.svg"), "utf8"),
+])
+
+if (playgroundLogo !== documentationLogo) {
+  throw new Error("Playground and documentation logo assets do not match")
+}
+
 function codeBlocks(source) {
   return [...source.matchAll(/```stack\n([\s\S]*?)```/g)].map((match) => match[1])
 }
@@ -47,6 +56,19 @@ for (const locale of locales) {
     if (JSON.stringify(codeBlocks(translated)) !== JSON.stringify(codeBlocks(english))) {
       throw new Error(`${locale}/${page} does not preserve the canonical Stack examples`)
     }
+  }
+}
+
+for (const [page, source] of englishPages) {
+  if (page === "index.md" && !source.includes("light: /favicon.svg")) {
+    throw new Error("English documentation home does not use the Stack logo")
+  }
+}
+
+for (const locale of locales) {
+  const source = await readFile(path.join(docsRoot, locale, "index.md"), "utf8")
+  if (!source.includes("light: /favicon.svg")) {
+    throw new Error(`${locale}/index.md does not use the Stack logo`)
   }
 }
 
