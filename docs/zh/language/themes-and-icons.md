@@ -60,15 +60,46 @@ diagram "Dark architecture" {
 ```stack
 stack 1.0
 
-diagram "Icon fallback" {
-  node primary "Primary database" {
-    kind database
-    icon "postgresql"
+diagram "Explicit icon" {
+  node gateway "Public API" {
+    kind service
+    icon "api"
   }
 }
 ```
 
-图标只装饰节点，不改变 `database` kind 或无障碍标签。如果有效主题没有 `postgresql`，会继续用 `kind-database` 渲染并发出 `STK5001`。同一标识符在不同主题中必须表示同一逻辑对象，但具体图形可以不同。
+图标只装饰节点，不改变 `service` kind、identity、label 或无障碍说明。同一标识符在不同主题中表示同一个逻辑对象，但颜色与图形可以适配主题。
+
+## 第一方图标目录
+
+免费核心 catalog 在 `default`、`light` 和 `dark` 中提供以下与厂商无关的显式图标：
+
+| ID              | Stable subject                    | 主要用途              |
+| --------------- | --------------------------------- | --------------------- |
+| `api`           | Application programming interface | 公共或内部 API        |
+| `web`           | Web application                   | 面向浏览器的 Web 体验 |
+| `mobile`        | Mobile application                | iOS 或 Android 客户端 |
+| `desktop`       | Desktop application               | 原生桌面客户端        |
+| `server`        | Server host                       | 虚拟机或物理主机      |
+| `container`     | Application container             | 容器化工作负载        |
+| `cluster`       | Compute cluster                   | 编排后的计算集群      |
+| `cloud`         | Cloud environment                 | 与厂商无关的云边界    |
+| `scheduler`     | Scheduled execution               | Cron 任务或定时工作   |
+| `webhook`       | Webhook endpoint                  | 入站或出站回调        |
+| `identity`      | Identity and access               | 身份验证或授权        |
+| `observability` | Observability system              | 指标、日志或链路追踪  |
+
+切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.3.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
+
+<IconCatalog locale="zh" />
+
+语义 `kind` 与显式图标应独立选择。例如，`icon "web"` 可以装饰 `client` 或 `service` 节点，但不会改变该节点的含义。
+
+## 缺失图标与厂商图标
+
+核心 catalog 目前不包含 `postgresql`、`aws`、`github` 或 `docker` 等厂商或项目标志。如果有效主题没有编写的图标标识符，引擎会继续使用节点 kind 的回退图标渲染，并发出 `STK5001`。
+
+请优先选择上表中与厂商无关的图标；如果 kind 回退已能表达角色，也可以省略 `icon`。厂商标志只有在逐项完成资源 license、再分发和商标审查后，才能进入独立 catalog。
 
 ## Catalog 与资源安全
 

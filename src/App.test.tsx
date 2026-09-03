@@ -19,10 +19,10 @@ vi.mock("@stack-sh/engine", () => ({
 import App from "./App"
 
 const metadata = {
-  engineVersion: "0.2.0",
+  engineVersion: "0.3.0",
   languageVersion: { major: 1, minor: 0 },
   themeCatalogRevision: "sha256:test",
-  themeCatalogVersion: "0.1.0",
+  themeCatalogVersion: "0.2.0",
 }
 
 const diagnostic = {
@@ -65,6 +65,7 @@ describe("Stack Playground", () => {
     expect(await screen.findByAltText("Rendered Stack architecture diagram")).toBeInTheDocument()
     expect(screen.getByText("Render completed")).toBeInTheDocument()
     expect(engine.render).toHaveBeenCalledOnce()
+    expect(engine.render).toHaveBeenCalledWith(expect.stringContaining('icon "web"'))
   })
 
   it("formats the source and refreshes the preview", async () => {

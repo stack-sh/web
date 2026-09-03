@@ -60,15 +60,46 @@ An explicit icon is a quoted logical identifier:
 ```stack
 stack 1.0
 
-diagram "Icon fallback" {
-  node primary "Primary database" {
-    kind database
-    icon "postgresql"
+diagram "Explicit icon" {
+  node gateway "Public API" {
+    kind service
+    icon "api"
   }
 }
 ```
 
-The icon decorates the node; it does not change the `database` kind or accessible label. If the effective theme does not provide `postgresql`, rendering continues with `kind-database` and warning `STK5001`. The same identifier in different themes must represent the same logical subject, although the artwork may differ.
+The icon decorates the node; it does not change the `service` kind, identity, label, or accessible description. The same identifier in different themes represents the same logical subject, although its color and artwork may adapt to the theme.
+
+## First-party icon catalog
+
+The free core catalog includes these provider-neutral explicit icons in `default`, `light`, and `dark`:
+
+| ID              | Stable subject                    | Use it for                         |
+| --------------- | --------------------------------- | ---------------------------------- |
+| `api`           | Application programming interface | Public or internal APIs            |
+| `web`           | Web application                   | Browser-facing web experiences     |
+| `mobile`        | Mobile application                | iOS or Android clients             |
+| `desktop`       | Desktop application               | Native desktop clients             |
+| `server`        | Server host                       | Virtual machines or physical hosts |
+| `container`     | Application container             | Containerized workloads            |
+| `cluster`       | Compute cluster                   | Orchestrated compute groups        |
+| `cloud`         | Cloud environment                 | Provider-neutral cloud boundaries  |
+| `scheduler`     | Scheduled execution               | Cron jobs or scheduled work        |
+| `webhook`       | Webhook endpoint                  | Inbound or outbound callbacks      |
+| `identity`      | Identity and access               | Authentication or authorization    |
+| `observability` | Observability system              | Metrics, logs, or traces           |
+
+Switch the preview below between light and dark to inspect the actual output. The published `@stack-sh/engine@0.3.0` renders every image locally; the Documentation does not copy Theme SVG assets. Select a syntax row to copy it.
+
+<IconCatalog locale="en" />
+
+Use the semantic `kind` independently from the explicit icon. For example, `icon "web"` may decorate either a `client` or `service` node without changing what that node means.
+
+## Missing and vendor icons
+
+The core catalog does not currently include vendor or project marks such as `postgresql`, `aws`, `github`, or `docker`. If the effective theme does not provide an authored icon identifier, rendering continues with the node's kind fallback and warning `STK5001`.
+
+Prefer a provider-neutral icon above or omit `icon` when its kind fallback already communicates the role. Vendor marks require asset-specific license, redistribution, and trademark review before they can ship in a separate catalog.
 
 ## Catalog and asset safety
 
