@@ -122,8 +122,18 @@ export default function App() {
         <header className="flex h-12 shrink-0 items-center justify-between border-b px-3 sm:px-4">
           <h1 className="sr-only">Stack Playground</h1>
           <div className="flex h-full items-center">
-            <a className="text-sm font-semibold tracking-[-0.02em]" href="/">
-              Stack
+            <a
+              className="flex items-center gap-2 text-sm font-semibold tracking-[-0.02em]"
+              href="/"
+            >
+              <img
+                alt=""
+                className="size-5 rounded-[3px]"
+                height="20"
+                src="/favicon.svg"
+                width="20"
+              />
+              <span>Stack</span>
             </a>
             <span aria-hidden="true" className="mx-3 h-4 w-px bg-border" />
             <span className="text-sm text-muted-foreground">Playground</span>
