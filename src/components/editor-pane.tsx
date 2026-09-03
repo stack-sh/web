@@ -3,6 +3,7 @@ import { Braces, CircleCheck, Play } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import type { ColorMode } from "@/lib/color-mode"
 import { highlightStack } from "@/lib/highlight-stack"
 import { sourceSelection } from "@/lib/source-position"
 import { cn } from "@/lib/utils"
@@ -12,6 +13,7 @@ import { HighlightLayer } from "./highlight-layer"
 import type { Diagnostic, SourceRange } from "@stack-sh/engine"
 
 interface EditorPaneProps {
+  colorMode: ColorMode
   source: string
   diagnostics: readonly Diagnostic[]
   disabled: boolean
@@ -22,6 +24,7 @@ interface EditorPaneProps {
 }
 
 export function EditorPane({
+  colorMode,
   source,
   diagnostics,
   disabled,
@@ -35,6 +38,7 @@ export function EditorPane({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [highlighted, setHighlighted] = useState<{
     source: string
+    colorMode: ColorMode
     lines: Awaited<ReturnType<typeof highlightStack>>
   } | null>(null)
   const [isComposing, setIsComposing] = useState(false)
@@ -55,9 +59,9 @@ export function EditorPane({
 
   useEffect(() => {
     let active = true
-    highlightStack(source)
+    highlightStack(source, colorMode)
       .then((lines) => {
-        if (active) setHighlighted({ source, lines })
+        if (active) setHighlighted({ source, colorMode, lines })
       })
       .catch(() => {
         if (active) setHighlighted(null)
@@ -65,7 +69,7 @@ export function EditorPane({
     return () => {
       active = false
     }
-  }, [source])
+  }, [colorMode, source])
 
   const syncScroll = useCallback((textarea: HTMLTextAreaElement) => {
     if (gutterRef.current) gutterRef.current.scrollTop = textarea.scrollTop
@@ -94,11 +98,12 @@ export function EditorPane({
     syncScroll(textarea)
   }
 
-  const highlightedLines = highlighted?.source === source ? highlighted.lines : null
+  const highlightedLines =
+    highlighted?.source === source && highlighted.colorMode === colorMode ? highlighted.lines : null
   const showHighlighting = highlightedLines !== null && !isComposing
 
   return (
-    <section className="grid h-[38rem] grid-rows-[auto_1fr_auto] bg-white lg:h-auto lg:min-h-0">
+    <section className="grid h-[38rem] grid-rows-[auto_1fr_auto] bg-background lg:h-auto lg:min-h-0">
       <div className="flex min-h-12 flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
         <div className="flex items-baseline gap-2">
           <h2 className="text-sm font-medium">Source</h2>
@@ -127,10 +132,10 @@ export function EditorPane({
         </fieldset>
       </div>
 
-      <div className="flex min-h-0 overflow-hidden bg-[#fbfbfb] focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring">
+      <div className="flex min-h-0 overflow-hidden bg-editor focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring">
         <div
           aria-hidden="true"
-          className="w-11 shrink-0 overflow-hidden border-r py-4 text-right font-mono text-xs leading-[1.65rem] text-[#737373] select-none"
+          className="w-11 shrink-0 overflow-hidden border-r py-4 text-right font-mono text-xs leading-[1.65rem] text-editor-muted select-none"
           ref={gutterRef}
         >
           {lineNumbers.map((line) => (
@@ -138,9 +143,9 @@ export function EditorPane({
               className={cn(
                 "block h-[1.65rem] border-r-2 pr-2.5",
                 diagnosticLines.get(line) === "error" &&
-                  "border-destructive bg-red-50 font-medium text-destructive",
+                  "border-destructive bg-destructive/10 font-medium text-destructive",
                 diagnosticLines.get(line) === "warning" &&
-                  "border-foreground bg-neutral-100 font-medium text-foreground",
+                  "border-foreground bg-foreground/10 font-medium text-foreground",
                 !diagnosticLines.has(line) && "border-transparent",
               )}
               key={line}

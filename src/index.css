@@ -46,7 +46,34 @@
   --border: #dedede;
   --input: #dedede;
   --ring: #111111;
+  --editor: #f6f8fa;
+  --editor-muted: #57606a;
   --radius: 0.375rem;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: #0d1117;
+  --foreground: #e6edf3;
+  --card: #0d1117;
+  --card-foreground: #e6edf3;
+  --popover: #161b22;
+  --popover-foreground: #e6edf3;
+  --primary: #f0f6fc;
+  --primary-foreground: #0d1117;
+  --secondary: #21262d;
+  --secondary-foreground: #e6edf3;
+  --muted: #161b22;
+  --muted-foreground: #8b949e;
+  --accent: #21262d;
+  --accent-foreground: #f0f6fc;
+  --destructive: #ff7b72;
+  --border: #30363d;
+  --input: #30363d;
+  --ring: #c9d1d9;
+  --editor: #0d1117;
+  --editor-muted: #8b949e;
 }
 
 @theme inline {
@@ -70,6 +97,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-editor: var(--editor);
+  --color-editor-muted: var(--editor-muted);
   --radius-sm: calc(var(--radius) * 0.75);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) * 1.25);
@@ -95,8 +124,8 @@
   }
 
   ::selection {
-    background: #111111;
-    color: #ffffff;
+    background: var(--foreground);
+    color: var(--background);
   }
 
   .stack-editor-input-highlighted {
@@ -104,7 +133,7 @@
   }
 
   .stack-editor-input-highlighted::selection {
-    background: rgb(17 17 17 / 16%);
+    background: color-mix(in srgb, var(--foreground) 20%, transparent);
     color: transparent;
     -webkit-text-fill-color: transparent;
   }

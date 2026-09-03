@@ -43,12 +43,13 @@ The initial playground includes:
 - Responsive editor and SVG preview panes
 - `Format`, `Check`, and `Run` actions
 - Syntax highlighting from the shared Stack TextMate grammar
+- Distinct, accessible syntax palettes for light and dark color modes
 - Compiler-style diagnostics with source selection, code frames, expected values, help, and related locations
-- Safe SVG image preview and download
+- Safe SVG image preview, expanded dialog, and download
 
 Authentication, persistence, collaboration, paid themes, and documentation pages are outside this first delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the Vite output as static assets.
 
-The editor keeps a native textarea as the input surface and layers Shiki presentation behind it. Highlighting consumes the raw `@stack-sh/language/grammar` export and does not determine whether source is valid. Validation and diagnostic guidance continue to come only from `@stack-sh/engine`.
+The editor keeps a native textarea as the input surface and layers Shiki presentation behind it. Highlighting consumes the raw `@stack-sh/language/grammar` export and does not determine whether source is valid. The Web-owned Shiki themes map grammar scopes to accessible light and dark colors. Validation and diagnostic guidance continue to come only from `@stack-sh/engine`.
 
 ## License
 

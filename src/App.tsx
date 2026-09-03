@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react"
 import type { Diagnostic, EngineMetadata } from "@stack-sh/engine"
 
+import { ColorModeToggle } from "@/components/color-mode-toggle"
 import { EditorPane } from "@/components/editor-pane"
 import { PreviewPane } from "@/components/preview-pane"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { applyColorMode, initialColorMode, saveColorMode, type ColorMode } from "@/lib/color-mode"
 import { EXAMPLE_SOURCE } from "@/lib/example"
 import { checkStack, formatStack, initializeStackEngine, renderStack } from "@/lib/stack-engine"
 
@@ -24,12 +26,17 @@ function errorMessage(error: unknown) {
 }
 
 export default function App() {
+  const [colorMode, setColorMode] = useState<ColorMode>(initialColorMode)
   const [source, setSource] = useState(EXAMPLE_SOURCE)
   const [diagnostics, setDiagnostics] = useState<readonly Diagnostic[]>([])
   const [svg, setSvg] = useState<string | null>(null)
   const [metadata, setMetadata] = useState<EngineMetadata | null>(null)
   const [status, setStatus] = useState("Loading engine…")
   const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    applyColorMode(colorMode)
+  }, [colorMode])
 
   const reportFailure = useCallback((error: unknown) => {
     setSvg(null)
@@ -104,10 +111,16 @@ export default function App() {
     }
   }
 
+  function handleColorModeChange(nextColorMode: ColorMode) {
+    setColorMode(nextColorMode)
+    saveColorMode(nextColorMode)
+  }
+
   return (
     <TooltipProvider>
-      <div className="flex min-h-svh flex-col bg-white lg:h-svh lg:overflow-hidden">
+      <div className="flex min-h-svh flex-col bg-background lg:h-svh lg:overflow-hidden">
         <header className="flex h-12 shrink-0 items-center justify-between border-b px-3 sm:px-4">
+          <h1 className="sr-only">Stack Playground</h1>
           <div className="flex h-full items-center">
             <a className="text-sm font-semibold tracking-[-0.02em]" href="/">
               Stack
@@ -116,7 +129,7 @@ export default function App() {
             <span className="text-sm text-muted-foreground">Playground</span>
           </div>
 
-          <nav aria-label="Primary" className="flex items-center gap-4">
+          <nav aria-label="Primary" className="flex items-center gap-3 sm:gap-4">
             <span className="text-xs text-muted-foreground">Docs later</span>
             <a
               className="rounded-sm text-xs text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -126,11 +139,13 @@ export default function App() {
             >
               GitHub
             </a>
+            <ColorModeToggle colorMode={colorMode} onColorModeChange={handleColorModeChange} />
           </nav>
         </header>
 
         <main className="grid flex-1 grid-cols-1 lg:h-0 lg:min-h-0 lg:grid-cols-2">
           <EditorPane
+            colorMode={colorMode}
             diagnostics={diagnostics}
             disabled={!isReady}
             onCheck={handleCheck}
