@@ -6,6 +6,8 @@ import { defineConfig } from "vitepress"
 import type { LanguageRegistration } from "@shikijs/core"
 import type { DefaultTheme } from "vitepress"
 
+import { documentationContract } from "../../scripts/docs-validation.config.mjs"
+
 const require = createRequire(import.meta.url)
 const stackGrammar = require("@stack-sh/language/grammar") as LanguageRegistration
 const siteOrigin = "https://stack-diagram.com"
@@ -92,40 +94,13 @@ type Labels = {
 }
 
 function sidebar(prefix: string, labels: Labels): DefaultTheme.SidebarItem[] {
-  return [
-    {
-      text: labels.guide,
-      items: [
-        { text: labels.introduction, link: `${prefix}/guide/what-is-stack` },
-        { text: labels.gettingStarted, link: `${prefix}/guide/getting-started` },
-        { text: labels.playground, link: `${prefix}/guide/playground` },
-        { text: labels.providerIcons, link: `${prefix}/guide/provider-icons` },
-      ],
-    },
-    {
-      text: labels.language,
-      items: [
-        { text: labels.syntax, link: `${prefix}/language/syntax` },
-        { text: labels.nodesAndGroups, link: `${prefix}/language/nodes-and-groups` },
-        { text: labels.edgesAndLayout, link: `${prefix}/language/edges-and-layout` },
-        { text: labels.themesAndIcons, link: `${prefix}/language/themes-and-icons` },
-        { text: labels.formatting, link: `${prefix}/language/formatting` },
-      ],
-    },
-    {
-      text: labels.reference,
-      items: [
-        {
-          text: labels.diagnosticsAndLimits,
-          link: `${prefix}/reference/diagnostics-and-limits`,
-        },
-        {
-          text: labels.versioningAndSafety,
-          link: `${prefix}/reference/versioning-and-safety`,
-        },
-      ],
-    },
-  ]
+  return documentationContract.navigation.map((section) => ({
+    text: labels[section.label as keyof Labels],
+    items: section.items.map((item) => ({
+      text: labels[item.label as keyof Labels],
+      link: `${prefix}/${item.page.replace(/\.md$/, "")}`,
+    })),
+  }))
 }
 
 function localeTheme(prefix: string, labels: Labels): DefaultTheme.Config {

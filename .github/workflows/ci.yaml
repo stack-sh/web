@@ -24,6 +24,25 @@ jobs:
           node-version: 22.14.0
           cache: npm
 
+      - name: Read pinned CLI documentation contract
+        id: cli
+        run: |
+          node --input-type=module -e 'import { documentationContract } from "./scripts/docs-validation.config.mjs"; console.log(`revision=${documentationContract.cli.revision}`)' >> "$GITHUB_OUTPUT"
+
+      - name: Check out pinned Stack CLI
+        uses: actions/checkout@v7
+        with:
+          repository: stack-sh/cli
+          ref: ${{ steps.cli.outputs.revision }}
+          path: .stack-cli
+          persist-credentials: false
+
+      - name: Install minimum supported Rust
+        run: rustup toolchain install 1.85.0 --profile minimal
+
+      - name: Build pinned Stack CLI
+        run: cargo +1.85.0 build --manifest-path .stack-cli/Cargo.toml --locked
+
       - name: Install dependencies
         run: npm ci
 
@@ -35,6 +54,11 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Smoke test documentation CLI examples
+        env:
+          STACK_CLI_BIN: ${{ github.workspace }}/.stack-cli/target/debug/stack
+        run: npm run docs:smoke
 
       - name: Build playground
         run: npm run build
