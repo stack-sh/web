@@ -31,7 +31,8 @@ const expectedProviderCounts = { aws: 305, gcp: 45, azure: 639, "simple-icons": 
 if (
   providerCatalog.catalogVersion !== "1.0" ||
   providerCatalog.sourceRepository !== "stack-sh/cli" ||
-  !/^sha256:[0-9a-f]{64}$/.test(providerCatalog.sourceRevision) ||
+  providerCatalog.sourceRevision !==
+    "sha256:fef0a6ba6d40a5205617b70fa8b874859acbe6e5eeeb1ef8bab7a2fd5b7f19bf" ||
   providerCatalog.iconCount !== 1051
 ) {
   throw new Error("Provider catalog metadata is invalid")
@@ -40,6 +41,25 @@ const providerIds = new Set()
 for (const provider of providerCatalog.providers) {
   if (provider.icons.length !== expectedProviderCounts[provider.id]) {
     throw new Error(`Provider catalog has an unexpected ${provider.id} count`)
+  }
+  const providerSources = [provider.source, ...provider.additionalSources]
+  const expectedAdditionalSourceIds = provider.id === "gcp" ? ["categories"] : []
+  if (
+    JSON.stringify(provider.additionalSources.map((source) => source.id)) !==
+    JSON.stringify(expectedAdditionalSourceIds)
+  ) {
+    throw new Error(`${provider.id} has unexpected additional sources`)
+  }
+  for (const source of providerSources) {
+    if (
+      !source.pageUrl.startsWith("https://") ||
+      !source.archiveUrl.startsWith("https://") ||
+      !source.termsUrl.startsWith("https://") ||
+      !/^sha256:[0-9a-f]{64}$/.test(source.archiveSha256) ||
+      source.release.length === 0
+    ) {
+      throw new Error(`${provider.id} has invalid public source metadata`)
+    }
   }
   for (const icon of provider.icons) {
     if (providerIds.has(icon.id) || !icon.id.startsWith(`${provider.id}:`)) {
@@ -269,6 +289,16 @@ for (const locale of ["", ...locales]) {
   const componentLocale = locale || "en"
   if (!source.includes(`<ProviderCatalog locale="${componentLocale}" />`)) {
     throw new Error(`${componentLocale}/guide/provider-icons.md is missing its provider catalog`)
+  }
+  for (const providerPack of ["gcp", "simple-icons"]) {
+    if (!source.includes(`--provider-pack .stack-icons/${providerPack}`)) {
+      throw new Error(`${componentLocale}/guide/provider-icons.md is missing ${providerPack}`)
+    }
+  }
+  for (const iconId of ["gcp:cloud-run", "simple-icons:github"]) {
+    if (!source.includes(`icon "${iconId}"`)) {
+      throw new Error(`${componentLocale}/guide/provider-icons.md is missing ${iconId}`)
+    }
   }
 }
 

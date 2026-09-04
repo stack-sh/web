@@ -20,20 +20,14 @@ Pack을 불러온 뒤에는 Playground가 사용자가 선택한 로컬 파일�
 
 ## 로컬 pack 만들기
 
-공식 archive를 직접 다운로드한 뒤 공개 Stack CLI로 로컬 파일을 처리합니다.
+위의 AWS, Google Cloud, Azure 또는 Simple Icons 카드를 선택하면 감사 완료 archive의 정확한 다운로드 URL, 예상 SHA-256 및 전체 `curl` → `stack icons import` → `stack render` 명령을 확인할 수 있습니다. Archive byte가 검토된 hash와 더 이상 일치하지 않으면 CLI가 import를 거부합니다.
 
 ```sh
-stack icons list aws s3
-stack icons import aws /path/to/aws-icons.zip \
-  --accept-terms \
-  -o .stack-icons/aws
-stack icons import gcp /path/to/core-products-icons.zip \
-  --source categories=/path/to/category-icons.zip \
-  --accept-terms \
-  -o .stack-icons/gcp
+$ stack icons list aws s3
+$ stack icons list simple-icons github
 ```
 
-`aws`, `gcp`, `azure`, `simple-icons`를 사용할 수 있습니다. Google Cloud에는 위의 공식 local archive 두 개가 필요합니다. Importer는 네트워크 요청이나 업로드를 하지 않습니다. 모든 archive 전체를 검증하고 검토된 경로만 읽으며 active content를 제거하고 색상과 기하를 보존한 뒤 `manifest.json`, `NOTICE.md`, `assets/*.svg`를 생성합니다.
+`aws`, `gcp`, `azure`, `simple-icons`를 사용할 수 있습니다. Google Cloud에는 카드를 선택하면 표시되는 공식 archive 두 개가 필요합니다. Importer는 `curl`로 다운로드한 파일을 읽으며 자체적으로 다운로드하거나 업로드하지 않습니다. 모든 archive 전체를 검증하고 검토된 경로만 읽으며 active content를 제거하고 색상과 기하를 보존한 뒤 `manifest.json`, `NOTICE.md`, `assets/*.svg`를 생성합니다.
 
 ## Playground에서 pack 사용하기
 
@@ -54,16 +48,41 @@ diagram "Storage" {
 
 Playground는 이미 처리된 pack을 받으며 provider의 raw ZIP을 직접 받지 않습니다. Raw archive 검증과 안전한 SVG 처리는 CLI에 유지하여 브라우저 코드가 보안 경계를 중복 구현하지 않습니다.
 
-## CLI에서 pack을 오프라인으로 사용하기
+## CLI에서 pack 사용하기
+
+하나의 Stack 파일에서 여러 provider를 사용할 수 있습니다. 예를 들어 다음 다이어그램은 Google Cloud pack의 Cloud Run과 Simple Icons pack의 GitHub를 함께 사용합니다.
+
+```stack
+stack 1.0
+
+diagram "Deploy from GitHub to Cloud Run" {
+  node repository "GitHub" {
+    kind external
+    icon "simple-icons:github"
+  }
+
+  node service "Cloud Run" {
+    kind service
+    icon "gcp:cloud-run"
+  }
+
+  edge repository -> service "Deploy" {
+    kind dependency
+  }
+}
+```
+
+Catalog 카드의 명령으로 두 pack을 모두 import한 뒤 render할 때 `--provider-pack`을 반복해서 지정합니다.
 
 ```sh
-stack render architecture.stack \
-  --provider-pack .stack-icons/aws \
+$ stack render architecture.stack \
+  --provider-pack .stack-icons/gcp \
+  --provider-pack .stack-icons/simple-icons \
   -o architecture.svg \
   --notice architecture.NOTICE.md
 ```
 
-`--provider-pack`은 반복할 수 있습니다. `stack fmt`, `stack check`, `stack render`, `stack icons import`는 네트워크 요청을 하지 않으며 가져오기에는 공식 archive가 이미 로컬에 있으면 됩니다. CLI는 크기가 제한된 pack input을 렌더링 전에 검증하고 실제 사용 아이콘을 notice sidecar에 기록합니다.
+CLI는 크기가 제한된 각 pack을 render 전에 검증하고 실제 사용 icon과 source archive를 notice sidecar에 기록합니다.
 
 ## 오프라인 동작
 

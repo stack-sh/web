@@ -5,6 +5,7 @@ import catalogData from "../data/provider-catalogs.json"
 
 type Locale = "en" | "ja" | "zh" | "ko"
 type CatalogIcon = (typeof catalogData.providers)[number]["icons"][number]
+type CatalogSource = (typeof catalogData.providers)[number]["source"] & { id: string }
 
 const props = defineProps<{ locale: Locale }>()
 const pageSize = 100
@@ -19,66 +20,130 @@ const labels = {
   en: {
     allCategories: "All categories",
     allProviders: "All providers",
+    commandIntro: "Download, import, and render",
     category: "Category",
     copy: "Copy",
     copied: "Copied",
+    download: "Download ZIP",
     guidelines: "Guidelines",
+    hash: "Expected SHA-256",
     kind: "Kind",
     noResults: "No icon IDs match these filters.",
+    officialPage: "Official download page",
+    primaryArchive: "Primary archive",
     product: "Product",
     results: "results",
     search: "Search ID, product, or category",
     showMore: "Show more",
     source: "Brand source",
+    terms: "Terms and guidance",
   },
   ja: {
     allCategories: "すべてのcategory",
     allProviders: "すべてのprovider",
+    commandIntro: "Download・import・render",
     category: "Category",
     copy: "コピー",
     copied: "コピー済み",
+    download: "ZIPをdownload",
     guidelines: "Guideline",
+    hash: "期待するSHA-256",
     kind: "Kind",
     noResults: "条件に一致するicon IDはありません。",
+    officialPage: "公式download page",
+    primaryArchive: "Primary archive",
     product: "Product",
     results: "件",
     search: "ID、product、categoryを検索",
     showMore: "さらに表示",
     source: "Brand source",
+    terms: "Termsとguidance",
   },
   zh: {
     allCategories: "所有分类",
     allProviders: "所有提供商",
+    commandIntro: "下载、导入并渲染",
     category: "分类",
     copy: "复制",
     copied: "已复制",
+    download: "下载 ZIP",
     guidelines: "使用指南",
+    hash: "预期 SHA-256",
     kind: "类型",
     noResults: "没有符合筛选条件的图标 ID。",
+    officialPage: "官方下载页面",
+    primaryArchive: "主压缩包",
     product: "产品",
     results: "项结果",
     search: "搜索 ID、产品或分类",
     showMore: "显示更多",
     source: "品牌来源",
+    terms: "条款与指南",
   },
   ko: {
     allCategories: "모든 카테고리",
     allProviders: "모든 제공자",
+    commandIntro: "다운로드, import, render",
     category: "카테고리",
     copy: "복사",
     copied: "복사됨",
+    download: "ZIP 다운로드",
     guidelines: "사용 지침",
+    hash: "예상 SHA-256",
     kind: "종류",
     noResults: "필터와 일치하는 아이콘 ID가 없습니다.",
+    officialPage: "공식 다운로드 페이지",
+    primaryArchive: "Primary archive",
     product: "제품",
     results: "개 결과",
     search: "ID, 제품 또는 카테고리 검색",
     showMore: "더 보기",
     source: "브랜드 출처",
+    terms: "약관 및 지침",
   },
 } as const
 
+const archiveFilenames: Record<string, Record<string, string>> = {
+  aws: { primary: "aws-icons.zip" },
+  gcp: {
+    primary: "gcp-core-products-icons.zip",
+    categories: "gcp-category-icons.zip",
+  },
+  azure: { primary: "azure-icons.zip" },
+  "simple-icons": { primary: "simple-icons-16.29.0.zip" },
+}
+
 const text = computed(() => labels[props.locale])
+const selectedProvider = computed(() =>
+  catalogData.providers.find((item) => item.id === provider.value),
+)
+const selectedProviderSources = computed<CatalogSource[]>(() => {
+  const item = selectedProvider.value
+  if (!item) return []
+  return [
+    { ...item.source, id: "primary" },
+    ...item.additionalSources.map((source) => ({ ...source, id: source.id })),
+  ]
+})
+const selectedProviderCommands = computed(() => {
+  const item = selectedProvider.value
+  if (!item) return ""
+
+  const filenames = archiveFilenames[item.id]
+  const lines = selectedProviderSources.value.map(
+    (source) => `$ curl -fL "${source.archiveUrl}" -o ${filenames[source.id]}`,
+  )
+  const importLines = [`$ stack icons import ${item.id} ./${filenames.primary} \\`]
+  for (const source of item.additionalSources) {
+    importLines.push(`  --source ${source.id}=./${filenames[source.id]} \\`)
+  }
+  importLines.push(`  --accept-terms -o .stack-icons/${item.id}`)
+  lines.push(
+    importLines.join("\n"),
+    `$ stack render architecture.stack --provider-pack .stack-icons/${item.id} -o architecture.svg`,
+  )
+  return lines.join("\n")
+})
 const allIcons = computed(() =>
   catalogData.providers.flatMap((item) =>
     item.icons.map((icon) => ({ ...icon, providerId: item.id })),
@@ -142,6 +207,42 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer))
         <span>{{ item.icons.length }}</span>
       </button>
     </div>
+
+    <section
+      v-if="selectedProvider"
+      class="stack-provider-setup"
+      aria-labelledby="stack-provider-setup-title"
+    >
+      <div class="stack-provider-setup__heading">
+        <h3 id="stack-provider-setup-title">{{ selectedProvider.name }}</h3>
+        <span>{{ selectedProvider.source.release }}</span>
+      </div>
+      <div class="stack-provider-setup__links">
+        <a :href="selectedProvider.source.pageUrl" rel="noreferrer" target="_blank">
+          {{ text.officialPage }}
+        </a>
+        <a :href="selectedProvider.source.termsUrl" rel="noreferrer" target="_blank">
+          {{ text.terms }}
+        </a>
+      </div>
+      <div class="stack-provider-setup__sources">
+        <article v-for="sourceItem in selectedProviderSources" :key="sourceItem.id">
+          <strong>
+            {{ sourceItem.id === "primary" ? text.primaryArchive : sourceItem.id }}
+          </strong>
+          <span>{{ sourceItem.release }}</span>
+          <a :href="sourceItem.archiveUrl" rel="noreferrer" target="_blank">
+            {{ text.download }}
+          </a>
+          <small>
+            {{ text.hash }}
+            <code>{{ sourceItem.archiveSha256.replace("sha256:", "") }}</code>
+          </small>
+        </article>
+      </div>
+      <p>{{ text.commandIntro }}</p>
+      <pre tabindex="0"><code>{{ selectedProviderCommands }}</code></pre>
+    </section>
 
     <div class="stack-provider-filters">
       <label>

@@ -20,20 +20,14 @@ Packをloadした後のPlaygroundでは、選択したlocal fileから実際のi
 
 ## Local packを作る
 
-公式archiveを自分でdownloadし、publicなStack CLIでlocal fileを処理します。
+上のAWS、Google Cloud、Azure、Simple Iconsのcardを選ぶと、監査済みarchiveの正確なdownload URL、期待するSHA-256、`curl` → `stack icons import` → `stack render`の一連のcommandを確認できます。Archiveのbyteがreview済みhashと一致しなくなった場合、CLIはimportを拒否します。
 
 ```sh
-stack icons list aws s3
-stack icons import aws /path/to/aws-icons.zip \
-  --accept-terms \
-  -o .stack-icons/aws
-stack icons import gcp /path/to/core-products-icons.zip \
-  --source categories=/path/to/category-icons.zip \
-  --accept-terms \
-  -o .stack-icons/gcp
+$ stack icons list aws s3
+$ stack icons list simple-icons github
 ```
 
-`aws`、`gcp`、`azure`、`simple-icons`を利用できます。Google Cloudは上記2つの公式local archiveが必要です。Importerはnetwork requestやuploadを行いません。すべてのarchive全体を検証し、review済みpathだけを読み、active contentを除去してcolorとgeometryを保持し、`manifest.json`、`NOTICE.md`、`assets/*.svg`を生成します。
+`aws`、`gcp`、`azure`、`simple-icons`を利用できます。Google Cloudはcard選択時に表示される2つの公式archiveが必要です。Importerは`curl`でdownloadしたfileを読み、downloadやupload自体は行いません。すべてのarchive全体を検証し、review済みpathだけを読み、active contentを除去してcolorとgeometryを保持し、`manifest.json`、`NOTICE.md`、`assets/*.svg`を生成します。
 
 ## Playgroundでpackを使う
 
@@ -54,16 +48,41 @@ diagram "Storage" {
 
 Playgroundが受け取るのは処理済みpackで、providerのraw ZIPではありません。Raw archiveの検証と安全なSVG処理はCLIに集約し、browser codeにsecurity boundaryを重複実装しません。
 
-## CLIでpackをoffline利用する
+## CLIでpackを使う
+
+1つのStack fileで複数providerを利用できます。例えば次のdiagramはGoogle Cloud packのCloud Runと、Simple Icons packのGitHubを使います。
+
+```stack
+stack 1.0
+
+diagram "Deploy from GitHub to Cloud Run" {
+  node repository "GitHub" {
+    kind external
+    icon "simple-icons:github"
+  }
+
+  node service "Cloud Run" {
+    kind service
+    icon "gcp:cloud-run"
+  }
+
+  edge repository -> service "Deploy" {
+    kind dependency
+  }
+}
+```
+
+Catalog cardのcommandで両方のpackをimportした後、render時に`--provider-pack`を繰り返します。
 
 ```sh
-stack render architecture.stack \
-  --provider-pack .stack-icons/aws \
+$ stack render architecture.stack \
+  --provider-pack .stack-icons/gcp \
+  --provider-pack .stack-icons/simple-icons \
   -o architecture.svg \
   --notice architecture.NOTICE.md
 ```
 
-`--provider-pack`は繰り返し指定できます。`stack fmt`、`stack check`、`stack render`、`stack icons import`はnetwork requestを行いません。Importに必要なのは、公式archiveがlocalに存在することだけです。CLIはbounded pack inputをrender前に検証し、実際に使ったiconをnotice sidecarへ記録します。
+CLIはそれぞれのbounded packをrender前に検証し、実際に使ったiconとsource archiveをnotice sidecarへ記録します。
 
 ## Offline behavior
 
