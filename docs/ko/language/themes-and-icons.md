@@ -89,7 +89,7 @@ diagram "Explicit icon" {
 | `identity`      | Identity and access               | 인증 또는 권한 부여            |
 | `observability` | Observability system              | 메트릭, 로그 또는 트레이스     |
 
-아래 미리보기를 라이트와 다크로 전환하여 실제 출력을 비교할 수 있습니다. 각 이미지는 공개된 `@stack-sh/engine@0.3.0`이 로컬에서 렌더링하며 문서에 Theme SVG 에셋을 복제하지 않습니다. 문법 행을 선택하면 복사됩니다.
+아래 미리보기를 라이트와 다크로 전환하여 실제 출력을 비교할 수 있습니다. 각 이미지는 공개된 `@stack-sh/engine@0.4.0`이 로컬에서 렌더링하며 문서에 Theme SVG 에셋을 복제하지 않습니다. 문법 행을 선택하면 복사됩니다.
 
 <IconCatalog locale="ko" />
 

@@ -4,22 +4,26 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const engine = vi.hoisted(() => ({
   check: vi.fn(),
+  checkWithProviderPacks: vi.fn(),
   format: vi.fn(),
   initialize: vi.fn(),
   render: vi.fn(),
+  renderWithProviderPacks: vi.fn(),
 }))
 
 vi.mock("@stack-sh/engine", () => ({
   check: engine.check,
+  checkWithProviderPacks: engine.checkWithProviderPacks,
   default: engine.initialize,
   format: engine.format,
   render: engine.render,
+  renderWithProviderPacks: engine.renderWithProviderPacks,
 }))
 
 import App from "./App"
 
 const metadata = {
-  engineVersion: "0.3.0",
+  engineVersion: "0.4.0",
   languageVersion: { major: 1, minor: 0 },
   themeCatalogRevision: "sha256:test",
   themeCatalogVersion: "0.2.0",
@@ -45,10 +49,32 @@ describe("Stack Playground", () => {
     document.documentElement.style.colorScheme = ""
     engine.initialize.mockResolvedValue({})
     engine.check.mockReturnValue({ diagnostics: [], metadata })
+    engine.checkWithProviderPacks.mockReturnValue({ diagnostics: [], metadata })
     engine.format.mockReturnValue({ diagnostics: [], formattedSource: "stack 1.0\n", metadata })
     engine.render.mockReturnValue({
       diagnostics: [],
       metadata,
+      providerNotices: [],
+      svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" />',
+    })
+    engine.renderWithProviderPacks.mockReturnValue({
+      diagnostics: [],
+      metadata,
+      providerNotices: [
+        {
+          archiveSha256: "sha256:test",
+          attribution: "AWS icons are owned by Amazon Web Services.",
+          icons: [{ id: "aws:s3", productName: "Amazon S3" }],
+          nonEndorsement: "AWS does not endorse Stack.",
+          packRevision: "sha256:pack",
+          packVersion: "0.1.0",
+          providerId: "aws",
+          providerName: "Amazon Web Services",
+          sourceRelease: "fixture-1",
+          termsSummary: "Use in architecture diagrams.",
+          termsUrl: "https://example.com/terms",
+        },
+      ],
       svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" />',
     })
   })
@@ -173,5 +199,71 @@ describe("Stack Playground", () => {
     await user.keyboard("{Escape}")
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Expand rendered diagram" })).toHaveFocus()
+  })
+
+  it("loads a provider pack locally and renders with it", async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await screen.findByAltText("Rendered Stack architecture diagram")
+
+    await user.click(await screen.findByRole("button", { name: "Provider icons" }))
+
+    const manifest = new File(
+      [
+        JSON.stringify({
+          packVersion: "0.1.0",
+          provider: { id: "aws", name: "Amazon Web Services" },
+          source: {
+            pageUrl: "https://example.com/icons",
+            release: "fixture-1",
+            reviewAfter: "2026-12-03",
+            termsUrl: "https://example.com/terms",
+          },
+          icons: [
+            {
+              asset: { path: "assets/s3.svg" },
+              id: "aws:s3",
+              productName: "Amazon Simple Storage Service (Amazon S3)",
+            },
+          ],
+        }),
+      ],
+      "manifest.json",
+      { type: "application/json" },
+    )
+    const asset = new File(
+      ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" />'],
+      "s3.svg",
+      { type: "image/svg+xml" },
+    )
+
+    await user.upload(screen.getByLabelText("Provider pack files"), [manifest, asset])
+
+    expect(await screen.findByText("Amazon Web Services")).toBeInTheDocument()
+    expect(screen.getByText("aws:s3")).toBeInTheDocument()
+    expect(
+      screen.getByAltText("Amazon Simple Storage Service (Amazon S3) icon"),
+    ).toBeInTheDocument()
+    expect(engine.checkWithProviderPacks).toHaveBeenCalledOnce()
+    expect(engine.renderWithProviderPacks).toHaveBeenCalledOnce()
+    await user.click(screen.getByRole("button", { name: "Close" }))
+    expect(screen.getByRole("button", { name: "Notice" })).toBeInTheDocument()
+  })
+
+  it("shows an import error without sending provider files anywhere", async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await screen.findByAltText("Rendered Stack architecture diagram")
+    await user.click(await screen.findByRole("button", { name: "Provider icons" }))
+
+    await user.upload(
+      screen.getByLabelText("Provider pack files"),
+      new File(["not json"], "manifest.json", { type: "application/json" }),
+    )
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Provider manifest is not valid JSON",
+    )
+    expect(engine.renderWithProviderPacks).not.toHaveBeenCalled()
   })
 })

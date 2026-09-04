@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react"
-import type { Diagnostic, EngineMetadata } from "@stack-sh/engine"
+import { lazy, Suspense, useCallback, useEffect, useState } from "react"
+import type { Diagnostic, EngineMetadata, ProviderNotice } from "@stack-sh/engine"
 
 import { ColorModeToggle } from "@/components/color-mode-toggle"
 import { EditorPane } from "@/components/editor-pane"
@@ -7,7 +7,16 @@ import { PreviewPane } from "@/components/preview-pane"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { applyColorMode, initialColorMode, saveColorMode, type ColorMode } from "@/lib/color-mode"
 import { EXAMPLE_SOURCE } from "@/lib/example"
-import { checkStack, formatStack, initializeStackEngine, renderStack } from "@/lib/stack-engine"
+import type { LoadedProviderPack } from "@/lib/provider-pack"
+import {
+  checkStack,
+  formatStack,
+  initializeStackEngine,
+  renderStack,
+  validateProviderPack,
+} from "@/lib/stack-engine"
+
+const ProviderIcons = lazy(() => import("@/components/provider-icons"))
 
 function hasErrors(diagnostics: readonly Diagnostic[]) {
   return diagnostics.some((diagnostic) => diagnostic.severity === "error")
@@ -31,6 +40,8 @@ export default function App() {
   const [diagnostics, setDiagnostics] = useState<readonly Diagnostic[]>([])
   const [svg, setSvg] = useState<string | null>(null)
   const [metadata, setMetadata] = useState<EngineMetadata | null>(null)
+  const [providerNotices, setProviderNotices] = useState<readonly ProviderNotice[]>([])
+  const [providerPacks, setProviderPacks] = useState<readonly LoadedProviderPack[]>([])
   const [status, setStatus] = useState("Loading engine…")
   const [isReady, setIsReady] = useState(false)
 
@@ -40,14 +51,19 @@ export default function App() {
 
   const reportFailure = useCallback((error: unknown) => {
     setSvg(null)
+    setProviderNotices([])
     setStatus(errorMessage(error))
   }, [])
 
-  const runRender = useCallback((nextSource: string) => {
-    const result = renderStack(nextSource)
+  const runRender = useCallback((nextSource: string, packs: readonly LoadedProviderPack[]) => {
+    const result = renderStack(
+      nextSource,
+      packs.map((pack) => pack.input),
+    )
     setDiagnostics(result.diagnostics)
     setMetadata(result.metadata)
     setSvg(result.svg)
+    setProviderNotices(result.providerNotices)
     setStatus(resultStatus("Render", result.diagnostics))
   }, [])
 
@@ -58,7 +74,7 @@ export default function App() {
       .then(() => {
         if (!active) return
         setIsReady(true)
-        runRender(EXAMPLE_SOURCE)
+        runRender(EXAMPLE_SOURCE, [])
       })
       .catch((error: unknown) => {
         if (active) reportFailure(error)
@@ -71,7 +87,7 @@ export default function App() {
 
   function handleRender() {
     try {
-      runRender(source)
+      runRender(source, providerPacks)
     } catch (error) {
       reportFailure(error)
     }
@@ -85,7 +101,10 @@ export default function App() {
 
   function handleCheck() {
     try {
-      const result = checkStack(source)
+      const result = checkStack(
+        source,
+        providerPacks.map((pack) => pack.input),
+      )
       setDiagnostics(result.diagnostics)
       setMetadata(result.metadata)
       setStatus(resultStatus("Check", result.diagnostics))
@@ -103,8 +122,12 @@ export default function App() {
 
       if (result.formattedSource !== null) {
         setSource(result.formattedSource)
-        const rendered = renderStack(result.formattedSource)
+        const rendered = renderStack(
+          result.formattedSource,
+          providerPacks.map((pack) => pack.input),
+        )
         setSvg(rendered.svg)
+        setProviderNotices(rendered.providerNotices)
       }
     } catch (error) {
       reportFailure(error)
@@ -114,6 +137,25 @@ export default function App() {
   function handleColorModeChange(nextColorMode: ColorMode) {
     setColorMode(nextColorMode)
     saveColorMode(nextColorMode)
+  }
+
+  function handleProviderPackImport(pack: LoadedProviderPack) {
+    validateProviderPack(pack.input)
+    if (
+      !providerPacks.some((item) => item.providerId === pack.providerId) &&
+      providerPacks.length >= 32
+    ) {
+      throw new Error("At most 32 provider packs may be loaded in one tab.")
+    }
+    const nextPacks = [...providerPacks.filter((item) => item.providerId !== pack.providerId), pack]
+    setProviderPacks(nextPacks)
+    runRender(source, nextPacks)
+  }
+
+  function handleProviderPackRemove(providerId: string) {
+    const nextPacks = providerPacks.filter((pack) => pack.providerId !== providerId)
+    setProviderPacks(nextPacks)
+    runRender(source, nextPacks)
   }
 
   return (
@@ -139,7 +181,7 @@ export default function App() {
             <span className="text-sm text-muted-foreground">Playground</span>
           </div>
 
-          <nav aria-label="Primary" className="flex items-center gap-3 sm:gap-4">
+          <nav aria-label="Primary" className="flex items-center gap-2 sm:gap-4">
             <a
               className="rounded-sm text-xs text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               href="/docs/"
@@ -147,13 +189,21 @@ export default function App() {
               Docs
             </a>
             <a
-              className="rounded-sm text-xs text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="hidden rounded-sm text-xs text-muted-foreground underline-offset-4 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:inline"
               href="https://github.com/stack-sh"
               rel="noreferrer"
               target="_blank"
             >
               GitHub
             </a>
+            <Suspense fallback={null}>
+              <ProviderIcons
+                disabled={!isReady}
+                onImport={handleProviderPackImport}
+                onRemove={handleProviderPackRemove}
+                packs={providerPacks}
+              />
+            </Suspense>
             <ColorModeToggle colorMode={colorMode} onColorModeChange={handleColorModeChange} />
           </nav>
         </header>
@@ -172,6 +222,7 @@ export default function App() {
           <PreviewPane
             engineVersion={metadata?.engineVersion ?? null}
             isLoading={!isReady}
+            providerNotices={providerNotices}
             status={status}
             svg={svg}
           />

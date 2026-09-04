@@ -6,6 +6,7 @@ const pages = [
   "guide/what-is-stack.md",
   "guide/getting-started.md",
   "guide/playground.md",
+  "guide/provider-icons.md",
   "language/syntax.md",
   "language/nodes-and-groups.md",
   "language/edges-and-layout.md",
@@ -19,8 +20,8 @@ const locales = ["ja", "zh", "ko"]
 const docsRoot = path.resolve("docs")
 const packageMetadata = JSON.parse(await readFile(path.resolve("package.json"), "utf8"))
 
-if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.3.0") {
-  throw new Error("Documentation must use the exact @stack-sh/engine 0.3.0 release")
+if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.4.0") {
+  throw new Error("Documentation must use the exact @stack-sh/engine 0.4.0 release")
 }
 
 const [

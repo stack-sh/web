@@ -95,8 +95,8 @@ if (!documentationAssets.some((asset) => /^stack_engine_bg\..+\.wasm$/.test(asse
 const sitemap = await readFile(path.join(outputRoot, "sitemap.xml"), "utf8")
 const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1])
 
-if (locations.length !== 44)
-  throw new Error(`Expected 44 sitemap locations, found ${locations.length}`)
+if (locations.length !== 48)
+  throw new Error(`Expected 48 sitemap locations, found ${locations.length}`)
 
 for (const location of locations) {
   if (!location.startsWith("https://stack-diagram.com/docs/"))
@@ -135,5 +135,5 @@ for (const requiredContent of [
 }
 
 console.log(
-  "Validated site metadata, agent discovery files, four locale entry points, and all 44 sitemap locations.",
+  "Validated site metadata, agent discovery files, four locale entry points, and all 48 sitemap locations.",
 )
