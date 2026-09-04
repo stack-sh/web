@@ -139,17 +139,10 @@ export default function App() {
     saveColorMode(nextColorMode)
   }
 
-  function handleProviderPackImport(pack: LoadedProviderPack) {
-    validateProviderPack(pack.input)
-    if (
-      !providerPacks.some((item) => item.providerId === pack.providerId) &&
-      providerPacks.length >= 32
-    ) {
-      throw new Error("At most 32 provider packs may be loaded in one tab.")
-    }
-    const nextPacks = [...providerPacks.filter((item) => item.providerId !== pack.providerId), pack]
-    setProviderPacks(nextPacks)
-    runRender(source, nextPacks)
+  function handleProviderIconStoreLoad(packs: readonly LoadedProviderPack[]) {
+    for (const pack of packs) validateProviderPack(pack.input)
+    setProviderPacks(packs)
+    runRender(source, packs)
   }
 
   function handleProviderPackRemove(providerId: string) {
@@ -199,7 +192,7 @@ export default function App() {
             <Suspense fallback={null}>
               <ProviderIcons
                 disabled={!isReady}
-                onImport={handleProviderPackImport}
+                onLoad={handleProviderIconStoreLoad}
                 onRemove={handleProviderPackRemove}
                 packs={providerPacks}
               />

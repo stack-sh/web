@@ -22,6 +22,12 @@ vi.mock("@stack-sh/engine", () => ({
 
 import App from "./App"
 
+function fileAt(path: string, contents: string, type?: string): File {
+  const file = new File([contents], path.split("/").at(-1) ?? path, { type })
+  Object.defineProperty(file, "webkitRelativePath", { value: path })
+  return file
+}
+
 const metadata = {
   engineVersion: "0.6.0",
   languageVersion: { major: 1, minor: 0 },
@@ -211,64 +217,96 @@ describe("Stack Playground", () => {
     expect(screen.getByRole("button", { name: "Expand rendered diagram" })).toHaveFocus()
   })
 
-  it("loads a provider pack locally and renders with it", async () => {
+  it("loads a provider icon store and renders with every known pack", async () => {
     const user = userEvent.setup()
     render(<App />)
     await screen.findByAltText("Rendered Stack architecture diagram")
 
     await user.click(await screen.findByRole("button", { name: "Provider icons" }))
 
-    const manifest = new File(
-      [
-        JSON.stringify({
-          packVersion: "0.1.0",
-          provider: { id: "aws", name: "Amazon Web Services" },
-          source: {
-            pageUrl: "https://example.com/icons",
-            release: "fixture-1",
-            reviewAfter: "2026-12-03",
-            termsUrl: "https://example.com/terms",
+    const awsManifest = fileAt(
+      "icons/aws/manifest.json",
+      JSON.stringify({
+        packVersion: "0.1.0",
+        provider: { id: "aws", name: "Amazon Web Services" },
+        source: {
+          pageUrl: "https://example.com/icons",
+          release: "fixture-1",
+          reviewAfter: "2026-12-03",
+          termsUrl: "https://example.com/terms",
+        },
+        icons: [
+          {
+            asset: { path: "assets/s3.svg" },
+            id: "aws:s3",
+            productName: "Amazon Simple Storage Service (Amazon S3)",
           },
-          icons: [
-            {
-              asset: { path: "assets/s3.svg" },
-              id: "aws:s3",
-              productName: "Amazon Simple Storage Service (Amazon S3)",
-            },
-          ],
-        }),
-      ],
-      "manifest.json",
-      { type: "application/json" },
+        ],
+      }),
+      "application/json",
     )
-    const asset = new File(
-      ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" />'],
-      "s3.svg",
-      { type: "image/svg+xml" },
+    const awsAsset = fileAt(
+      "icons/aws/assets/s3.svg",
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" />',
+      "image/svg+xml",
+    )
+    const simpleIconsManifest = fileAt(
+      "icons/simple-icons/manifest.json",
+      JSON.stringify({
+        packVersion: "0.1.0",
+        provider: { id: "simple-icons", name: "Simple Icons" },
+        source: {
+          pageUrl: "https://example.com/simple-icons",
+          release: "fixture-1",
+          reviewAfter: "2026-12-03",
+          termsUrl: "https://example.com/simple-icons/terms",
+        },
+        icons: [
+          {
+            asset: { path: "assets/github.svg" },
+            id: "simple-icons:github",
+            productName: "GitHub",
+          },
+        ],
+      }),
+      "application/json",
+    )
+    const simpleIconsAsset = fileAt(
+      "icons/simple-icons/assets/github.svg",
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" />',
+      "image/svg+xml",
     )
 
-    await user.upload(screen.getByLabelText("Provider pack files"), [manifest, asset])
+    await user.upload(screen.getByLabelText("Provider icon store folder"), [
+      awsManifest,
+      awsAsset,
+      simpleIconsManifest,
+      simpleIconsAsset,
+    ])
 
     expect(await screen.findByText("Amazon Web Services")).toBeInTheDocument()
+    expect(screen.getByText("Simple Icons")).toBeInTheDocument()
     expect(screen.getByText("aws:s3")).toBeInTheDocument()
+    expect(screen.getByText("simple-icons:github")).toBeInTheDocument()
     expect(
       screen.getByAltText("Amazon Simple Storage Service (Amazon S3) icon"),
     ).toBeInTheDocument()
-    expect(engine.checkWithProviderPacks).toHaveBeenCalledOnce()
+    expect(engine.checkWithProviderPacks).toHaveBeenCalledTimes(2)
     expect(engine.renderWithProviderPacks).toHaveBeenCalledOnce()
+    expect(engine.renderWithProviderPacks.mock.calls[0][1]).toHaveLength(2)
     await user.click(screen.getByRole("button", { name: "Close" }))
     expect(screen.getByRole("button", { name: "Notice" })).toBeInTheDocument()
   })
 
-  it("shows an import error without sending provider files anywhere", async () => {
+  it("shows an icon store error before sending provider files to the engine", async () => {
     const user = userEvent.setup()
     render(<App />)
     await screen.findByAltText("Rendered Stack architecture diagram")
     await user.click(await screen.findByRole("button", { name: "Provider icons" }))
 
     await user.upload(
-      screen.getByLabelText("Provider pack files"),
-      new File(["not json"], "manifest.json", { type: "application/json" }),
+      screen.getByLabelText("Provider icon store folder"),
+      fileAt("icons/aws/manifest.json", "not json", "application/json"),
     )
 
     expect(await screen.findByRole("alert")).toHaveTextContent(

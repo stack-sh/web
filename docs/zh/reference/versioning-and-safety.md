@@ -35,7 +35,6 @@ Stack 字符串是纯文本。源文件不能包含可执行代码、任意 HTML
 - 浏览器 Playground 是受支持的公共体验。
 - 公共 `@stack-sh/engine` 提供 Playground 使用的 typed WebAssembly `format`、`check` 和 `render`。
 - 公共 `@stack-sh/language` 提供编辑器高亮使用的共享 TextMate grammar 和语言 metadata。
-- Native `stack` 命令存在于 private pre-release repository，但尚未作为受支持外部 binary 分发；本网站不会提供安装说明。
-- Authentication、persistence、collaboration、billing、entitlement、paid theme、remote theme registry、hosted rendering API、PNG/PDF export、multi-file project 和 LSP 不属于当前公共产品。
+- 公共 [`stack-sh/cli`](https://github.com/stack-sh/cli) 提供原生 `format`、`check`、`render` 和 provider-icon store 操作。
 
 规范语言合同位于 [`stack-sh/specification`](https://github.com/stack-sh/specification)，公共主题 catalog 位于 [`stack-sh/theme`](https://github.com/stack-sh/theme)，引擎行为位于 [`stack-sh/engine`](https://github.com/stack-sh/engine)。

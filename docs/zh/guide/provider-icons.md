@@ -1,56 +1,32 @@
 # 云服务商图标
 
-Stack 无需配置即可使用与服务商无关的核心图标目录。AWS、Google Cloud、Azure 以及常用开发和协作工具图标通过用户导入的 provider pack 使用。下方可搜索目录属于公开元数据，但 Stack 不托管或重新分发服务商 SVG 文件。
+Stack 内置与服务商无关的核心图标目录。AWS、Google Cloud、Azure 以及常用开发和协作工具图形通过 provider pack 使用，并保存在用户管理的 icon store 中。
 
 ## 可用的服务商目录
 
-已审核目录共有 1,051 个 ID：305 个 AWS Architecture Icons、Google Cloud 的全部 19 个核心产品与 26 个分类图标、对完全相同字节去重后的 639 个 Azure 服务图标，以及 62 个常用工具图标。无需加载 SVG 字节即可搜索和筛选完整列表，并以每次 100 项的方式在小屏设备上稳定显示。
+已审核目录共有 1,051 个 ID：305 个 AWS Architecture Icons、45 个 Google Cloud 产品与分类图标、639 个 Azure 服务图标，以及 62 个常用工具图标。工具目录包括 GitHub、GitHub Actions、Notion、Linear、Atlassian、Jira、Confluence、Docker、Kubernetes、Terraform、Datadog、Grafana 和 Sentry 等。
+
+选择服务商卡片即可查看导入命令。完整目录支持搜索与筛选，并以每次 100 项的方式在小屏设备上稳定显示。
 
 <ProviderCatalog locale="zh" />
 
-每个导入的 manifest 都记录官方产品名称、使用的每个来源版本与压缩包 hash、条款 URL、审核日期、允许的输出类别和非背书声明。工具图标还保留权利方的品牌来源和使用指南链接。Provider pack 只增加图形；源代码中的节点 `kind` 仍决定语义样式和布局。
+Provider pack 提供图形；Stack 源码中的节点 `kind` 继续决定语义样式和布局。
 
-## 为什么不托管图形
+## 快速开始
 
-已审核的服务商指南允许特定的架构图与文档用途，但没有明确授权 Stack 将所有 SVG 字节重新打包到网站、npm 包、WebAssembly 模块或原生二进制中。因此静态文档只展示可搜索的目录元数据、来源和准确 ID，不复制服务商图形。
-
-工具归档来自 [Simple Icons](https://simpleicons.org/)。其 CC0 分发不代表每个底层品牌标志都是 CC0；被列入目录也不构成使用许可或背书。使用前请查看上方每个图标的来源和指南链接。
-
-加载 pack 后，Playground 会从用户选择的本地文件显示真实图标。Engine 验证完成后才创建浏览器本地图片 URL，也不会把 SVG 注入页面 HTML。使用或分发生成图之前，请检查对应的服务商条款。
-
-## 创建本地 pack
-
-选择上方的 AWS、Google Cloud、Azure 或 Simple Icons 卡片，即可查看已审核压缩包的准确下载 URL、预期 SHA-256，以及完整的 `curl` → `stack icons import` → `stack render` 命令。如果压缩包字节不再匹配已审核 hash，CLI 会拒绝导入。
+为图中使用的每个服务商执行一次导入。`--accept-terms` 表示你已查看并接受链接中的服务商和品牌条款。
 
 ```sh
-$ stack icons list aws s3
-$ stack icons list simple-icons github
+$ stack icons import gcp --accept-terms
+$ stack icons import simple-icons --accept-terms
+$ stack render architecture.stack -o architecture.svg
 ```
 
-可使用 `aws`、`gcp`、`azure` 或 `simple-icons`。Google Cloud 需要选择卡片时显示的两个官方压缩包。Importer 读取由 `curl` 下载的文件，本身不发起下载或上传；它验证每个完整压缩包，只读取审核过的路径，移除活动内容，保留颜色与几何，并生成 `manifest.json`、`NOTICE.md` 和 `assets/*.svg`。
+CLI 会下载已审核的官方压缩包，验证完整 SHA-256，清理选定 SVG，并将处理后的 provider pack 写入共享 icon store。一个 `gcp` 命令会同时导入 Google Cloud 产品和分类图形。
 
-## 在 Playground 使用 pack
+## 在 CLI 中使用服务商图标
 
-打开 **Icons**，选择一个 pack 的 `manifest.json` 和 `assets/` 中所有已声明文件，再搜索已加载的本地目录并复制 ID 到源代码：
-
-```stack
-stack 1.0
-
-diagram "Storage" {
-  node files "Amazon S3" {
-    kind storage
-    icon "aws:s3"
-  }
-}
-```
-
-所选文件只保留在当前浏览器标签页。Playground 不上传、获取或持久化 pack，因此刷新后需要重新选择。生成的 SVG 使用服务商图形时，也请下载 SVG 旁边的 **Notice**。
-
-Playground 接受已经处理的 pack，而不是服务商原始 ZIP。原始压缩包验证和安全 SVG 处理仍由 CLI 负责，避免浏览器代码重复安全边界。
-
-## 在 CLI 中使用 pack
-
-一个 Stack 文件可以使用多个服务商。例如，下面的图同时使用 Google Cloud pack 中的 Cloud Run 与 Simple Icons pack 中的 GitHub：
+一个 Stack 文件可以使用多个服务商。下面的例子组合了 Google Cloud 的 Cloud Run 与 Simple Icons 的 GitHub：
 
 ```stack
 stack 1.0
@@ -72,20 +48,71 @@ diagram "Deploy from GitHub to Cloud Run" {
 }
 ```
 
-使用目录卡片中的命令导入两个 pack 后，在渲染时重复指定 `--provider-pack`：
+完成两次导入后，标准渲染命令会发现两个 pack：
+
+```sh
+$ stack render architecture.stack -o architecture.svg --notice architecture.NOTICE.md
+```
+
+## 共享 icon store
+
+默认 icon store 为 `$XDG_CONFIG_HOME/stack/icons`。未设置 `XDG_CONFIG_HOME` 时使用 `$HOME/.config/stack/icons`。
+
+```text
+icons/
+  aws/
+  gcp/
+  azure/
+  simple-icons/
+```
+
+可在 `$XDG_CONFIG_HOME/stack/config.yaml` 中设置绝对路径来更改共享位置：
+
+```yaml
+default_icons_path: /absolute/path/to/stack-icons
+```
+
+`stack icons import` 与 `stack render` 都会使用该位置。
+
+## 在 Playground 中使用服务商图标
+
+打开 **Icons**，选择 `stack/icons` 文件夹，Playground 会加载其中所有可识别的服务商目录。搜索已加载图形并选择一项，即可把 ID 复制到 Stack 源码中。
+
+所选 pack 在当前浏览器标签页中处理。当生成图使用服务商图形时，SVG 下载旁的 **Notice** 会提供来源、条款和已使用图标记录。
+
+## 将图标与项目一起管理
+
+使用 `-o` 将导入的 pack 放进可随仓库提交的项目目录：
+
+```sh
+$ stack icons import gcp --accept-terms -o .stack-icons
+$ stack icons import simple-icons --accept-terms -o .stack-icons
+```
+
+渲染时通过 `--provider-pack` 传入同一个 icon-store 根目录：
 
 ```sh
 $ stack render architecture.stack \
-  --provider-pack .stack-icons/gcp \
-  --provider-pack .stack-icons/simple-icons \
+  --provider-pack .stack-icons \
   -o architecture.svg \
   --notice architecture.NOTICE.md
 ```
 
-CLI 会在渲染前验证每个有大小限制的 pack，并把实际使用的图标和来源压缩包写入 notice sidecar。
+## 查找图标 ID
 
-## 离线行为
+可通过 CLI 或本页搜索目录：
 
-设备上已有 CLI 和所需服务商压缩包后，从编写源码到生成 SVG 都可完全离线。安装 CLI 或获取新的官方压缩包可能需要网络。
+```sh
+$ stack icons list
+$ stack icons list aws s3
+$ stack icons list azure database
+$ stack icons list simple-icons github
+```
 
-Web Playground 的 JavaScript 与 WebAssembly 加载完成后，format、check 和 render 也都在浏览器本地运行，不依赖服务端渲染，服务商文件不会离开浏览器。但当前网站并不是已安装的离线应用，因此无法保证断网冷启动。
+CLI 输出包含 `ID`、`PRODUCT`、`CATEGORY` 和推荐的 `KIND`。`gcp:cloud-run`、`simple-icons:github` 等带命名空间的 ID 会选择对应 pack 中的图形。
+
+## 验证、条款与 notice
+
+CLI 目录固定了每个官方 HTTPS 压缩包 URL、版本、完整 SHA-256、允许的条目路径、条款 URL 与审核日期。导入时会限制压缩包与 SVG 大小，清理活动及外部 SVG 内容，并以原子方式写入 pack。
+
+每个 pack 都包含 `NOTICE.md`。`stack render --notice <PATH>` 会写入实际 pack 版本、来源版本、条款 URL、署名、非背书文本和已使用的图标 ID。目录还链接每个服务商的官方来源与条款，以及 Simple Icons 标志对应的品牌来源和指南。

@@ -2,6 +2,7 @@ import type { ProviderPackInput } from "@stack-sh/engine"
 
 const MAX_PROVIDER_FILE_BYTES = 1024 * 1024
 const MAX_PROVIDER_PACK_BYTES = 32 * 1024 * 1024
+const KNOWN_PROVIDER_IDS = ["aws", "gcp", "azure", "simple-icons"] as const
 
 interface ProviderManifestIcon {
   id: string
@@ -135,27 +136,28 @@ function manifestFrom(value: unknown): ProviderManifest {
 
 function relativeFilePath(file: File): string {
   const browserFile = file as File & { webkitRelativePath?: string }
-  return browserFile.webkitRelativePath || file.name
+  return browserFile.webkitRelativePath ?? ""
 }
 
-function matchAssetFile(files: readonly File[], assetPath: string): File {
-  const suffix = `/${assetPath}`
-  const candidates = files.filter((file) => {
-    const relativePath = relativeFilePath(file)
-    return (
-      relativePath === assetPath ||
-      relativePath.endsWith(suffix) ||
-      (relativePath === file.name && file.name === assetPath.split("/").at(-1))
-    )
-  })
+function normalizedRelativePath(path: string): string {
+  const normalized = path.replaceAll("\\", "/")
+  const segments = normalized.split("/")
+  if (
+    normalized.startsWith("/") ||
+    segments.some((segment) => segment.length === 0 || segment === "." || segment === "..")
+  ) {
+    throw new Error(`Provider file path '${path}' is not a safe relative path.`)
+  }
+  return normalized
+}
 
-  if (candidates.length === 0) {
+function matchAssetFile(filesByPath: ReadonlyMap<string, File>, assetPath: string): File {
+  const candidates = filesByPath.get(assetPath)
+
+  if (!candidates) {
     throw new Error(`Select the provider asset '${assetPath}' together with manifest.json.`)
   }
-  if (candidates.length > 1) {
-    throw new Error(`More than one selected file matches provider asset '${assetPath}'.`)
-  }
-  return candidates[0]
+  return candidates
 }
 
 async function readBoundedText(file: File): Promise<string> {
@@ -165,34 +167,38 @@ async function readBoundedText(file: File): Promise<string> {
   return file.text()
 }
 
-export async function loadProviderPackFiles(
-  selectedFiles: FileList | readonly File[],
+async function loadProviderPackFiles(
+  filesByPath: ReadonlyMap<string, File>,
+  manifestFile: File,
+  expectedProviderId: string,
 ): Promise<LoadedProviderPack> {
-  const files = Array.from(selectedFiles)
-  if (files.length === 0) throw new Error("Select a provider manifest and its SVG assets.")
+  const files = Array.from(filesByPath.values())
   if (files.reduce((total, file) => total + file.size, 0) > MAX_PROVIDER_PACK_BYTES) {
-    throw new Error("Selected provider files exceed the 32 MiB pack limit.")
-  }
-
-  const manifests = files.filter((file) => file.name === "manifest.json")
-  if (manifests.length !== 1) {
-    throw new Error("Select exactly one manifest.json for each provider pack import.")
+    throw new Error(`Provider pack '${expectedProviderId}' exceeds the 32 MiB pack limit.`)
   }
 
   let manifestValue: unknown
   try {
-    manifestValue = JSON.parse(await readBoundedText(manifests[0]))
+    manifestValue = JSON.parse(await readBoundedText(manifestFile))
   } catch (error) {
     if (error instanceof SyntaxError) throw new Error("Provider manifest is not valid JSON.")
     throw error
   }
   const manifest = manifestFrom(manifestValue)
+  if (manifest.provider.id !== expectedProviderId) {
+    throw new Error(
+      `Provider directory '${expectedProviderId}' contains a manifest for '${manifest.provider.id}'.`,
+    )
+  }
 
   const assets = await Promise.all(
-    manifest.icons.map(async (icon) => ({
-      path: icon.asset.path,
-      svg: await readBoundedText(matchAssetFile(files, icon.asset.path)),
-    })),
+    manifest.icons.map(async (icon) => {
+      const assetPath = normalizedRelativePath(icon.asset.path)
+      return {
+        path: assetPath,
+        svg: await readBoundedText(matchAssetFile(filesByPath, assetPath)),
+      }
+    }),
   )
   const svgByPath = new Map(assets.map((asset) => [asset.path, asset.svg]))
 
@@ -211,4 +217,57 @@ export async function loadProviderPackFiles(
       svg: svgByPath.get(icon.asset.path) ?? "",
     })),
   }
+}
+
+export async function loadProviderIconStoreFiles(
+  selectedFiles: FileList | readonly File[],
+): Promise<LoadedProviderPack[]> {
+  const files = Array.from(selectedFiles)
+  if (files.length === 0) throw new Error("Choose a Stack icon store folder.")
+
+  const storeFiles = files.map((file) => {
+    const relativePath = relativeFilePath(file)
+    if (!relativePath) {
+      throw new Error("Choose the icon store as a folder.")
+    }
+    const path = normalizedRelativePath(relativePath)
+    return { file, path, segments: path.split("/") }
+  })
+  const roots = new Set(storeFiles.map(({ segments }) => segments[0]))
+  if (roots.size !== 1) throw new Error("Choose one Stack icon store folder.")
+
+  const packs = KNOWN_PROVIDER_IDS.flatMap((providerId) => {
+    const providerFiles = storeFiles.filter(
+      ({ segments }) => segments[1] === providerId && segments.length >= 3,
+    )
+    if (providerFiles.length === 0) return []
+
+    const manifestFiles = providerFiles.filter(
+      ({ segments }) => segments.length === 3 && segments[2] === "manifest.json",
+    )
+    if (manifestFiles.length !== 1) {
+      throw new Error(`Provider directory '${providerId}' must contain one manifest.json.`)
+    }
+
+    const filesByPath = new Map<string, File>()
+    for (const { file, segments } of providerFiles) {
+      const providerPath = segments.slice(2).join("/")
+      if (filesByPath.has(providerPath)) {
+        throw new Error(`Provider directory '${providerId}' contains '${providerPath}' twice.`)
+      }
+      filesByPath.set(providerPath, file)
+    }
+
+    return [{ filesByPath, manifestFile: manifestFiles[0].file, providerId }]
+  })
+
+  if (packs.length === 0) {
+    throw new Error("The selected folder does not contain a known provider pack.")
+  }
+
+  return Promise.all(
+    packs.map(({ filesByPath, manifestFile, providerId }) =>
+      loadProviderPackFiles(filesByPath, manifestFile, providerId),
+    ),
+  )
 }

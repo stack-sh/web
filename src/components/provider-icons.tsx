@@ -11,18 +11,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { SvgAssetImage } from "@/components/svg-asset-image"
-import { loadProviderPackFiles, type LoadedProviderPack } from "@/lib/provider-pack"
+import { loadProviderIconStoreFiles, type LoadedProviderPack } from "@/lib/provider-pack"
 
 interface ProviderIconsProps {
   disabled: boolean
   packs: readonly LoadedProviderPack[]
-  onImport: (pack: LoadedProviderPack) => void
+  onLoad: (packs: readonly LoadedProviderPack[]) => void
   onRemove: (providerId: string) => void
 }
 
 const ICON_BATCH_SIZE = 48
 
-export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderIconsProps) {
+export function ProviderIcons({ disabled, packs, onLoad, onRemove }: ProviderIconsProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [isImporting, setIsImporting] = useState(false)
@@ -50,9 +50,9 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
     setError(null)
     setIsImporting(true)
     try {
-      onImport(await loadProviderPackFiles(files))
+      onLoad(await loadProviderIconStoreFiles(files))
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "The provider pack could not load.")
+      setError(loadError instanceof Error ? loadError.message : "The icon store could not load.")
     } finally {
       setIsImporting(false)
       if (inputRef.current) inputRef.current.value = ""
@@ -75,7 +75,7 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
       <DialogTrigger asChild>
         <Button
           aria-label="Provider icons"
-          className="size-7 px-0 sm:w-auto sm:pr-2.5 sm:pl-1.5"
+          className="size-7 p-0 sm:w-auto sm:pr-2.5 sm:pl-1.5"
           disabled={disabled}
           size="sm"
           variant="outline"
@@ -83,7 +83,9 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
           <PackageOpen aria-hidden="true" />
           <span className="hidden sm:inline">Icons</span>
           {packs.length > 0 ? (
-            <span className="border-l pl-1.5 font-mono text-[0.6875rem]">{packs.length}</span>
+            <span className="hidden border-l pl-1.5 font-mono text-[0.6875rem] sm:inline">
+              {packs.length}
+            </span>
           ) : null}
         </Button>
       </DialogTrigger>
@@ -91,27 +93,27 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
         <DialogHeader className="border-b px-4 py-3 pr-12 sm:px-5">
           <DialogTitle>Provider icons</DialogTitle>
           <DialogDescription>
-            Load a CLI-created pack into this tab. Files stay in your browser and are never
-            uploaded.
+            Load the <code>stack/icons</code> folder created by Stack CLI. Processing stays in this
+            browser.
           </DialogDescription>
         </DialogHeader>
 
         <div className="border-b px-4 py-3 sm:px-5">
           <input
-            accept=".json,.svg,application/json,image/svg+xml"
-            aria-label="Provider pack files"
+            aria-label="Provider icon store folder"
             className="sr-only"
             multiple
             onChange={(event) => void handleFiles(event.currentTarget.files)}
             ref={inputRef}
             type="file"
+            {...{ webkitdirectory: "" }}
           />
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xs font-medium">Import one local pack</p>
+              <p className="text-xs font-medium">Load one icon store</p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                Select its <code>manifest.json</code> and every declared SVG in <code>assets/</code>
-                .
+                Select the folder that contains <code>aws</code>, <code>gcp</code>,{" "}
+                <code>azure</code>, or <code>simple-icons</code>.
               </p>
             </div>
             <Button
@@ -120,7 +122,7 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
               size="sm"
             >
               <Upload aria-hidden="true" data-icon="inline-start" />
-              {isImporting ? "Importing…" : "Choose files"}
+              {isImporting ? "Loading…" : "Choose icon store"}
             </Button>
           </div>
           {error ? (
@@ -134,10 +136,9 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
           {packs.length === 0 ? (
             <div className="flex min-h-48 flex-col items-center justify-center border border-dashed p-5 text-center">
               <PackageOpen aria-hidden="true" className="mb-3 size-6 text-muted-foreground" />
-              <p className="text-sm font-medium">No local provider packs</p>
+              <p className="text-sm font-medium">No provider icons loaded</p>
               <p className="mt-1 max-w-md text-xs leading-5 text-muted-foreground">
-                Core icons remain available without a pack. AWS, Google Cloud, Azure, and tool
-                artwork is user-imported so Stack does not redistribute vendor assets.
+                Choose your Stack icon store to use AWS, Google Cloud, Azure, and tool artwork.
               </p>
               <a
                 className="mt-3 inline-flex items-center gap-1 rounded-sm text-xs underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
