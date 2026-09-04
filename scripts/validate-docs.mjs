@@ -19,10 +19,46 @@ const pages = [
 const locales = ["ja", "zh", "ko"]
 const docsRoot = path.resolve("docs")
 const packageMetadata = JSON.parse(await readFile(path.resolve("package.json"), "utf8"))
+const providerCatalog = JSON.parse(
+  await readFile(path.join(docsRoot, ".vitepress/theme/data/provider-catalogs.json"), "utf8"),
+)
 
 if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.5.0") {
   throw new Error("Documentation must use the exact @stack-sh/engine 0.5.0 release")
 }
+
+const expectedProviderCounts = { aws: 305, gcp: 45, azure: 639, "simple-icons": 62 }
+if (
+  providerCatalog.catalogVersion !== "1.0" ||
+  providerCatalog.sourceRepository !== "stack-sh/cli" ||
+  !/^sha256:[0-9a-f]{64}$/.test(providerCatalog.sourceRevision) ||
+  providerCatalog.iconCount !== 1051
+) {
+  throw new Error("Provider catalog metadata is invalid")
+}
+const providerIds = new Set()
+for (const provider of providerCatalog.providers) {
+  if (provider.icons.length !== expectedProviderCounts[provider.id]) {
+    throw new Error(`Provider catalog has an unexpected ${provider.id} count`)
+  }
+  for (const icon of provider.icons) {
+    if (providerIds.has(icon.id) || !icon.id.startsWith(`${provider.id}:`)) {
+      throw new Error(`Provider catalog has an invalid or duplicate ID: ${icon.id}`)
+    }
+    providerIds.add(icon.id)
+    if (JSON.stringify(icon).includes("<svg") || "archivePath" in icon) {
+      throw new Error(`Provider documentation must not contain asset bytes or archive paths`)
+    }
+    if (
+      provider.id === "simple-icons" &&
+      (!icon.brandSourceUrl?.startsWith("https://") ||
+        !icon.brandGuidelinesUrl?.startsWith("https://"))
+    ) {
+      throw new Error(`${icon.id} is missing per-brand guidance`)
+    }
+  }
+}
+if (providerIds.size !== 1051) throw new Error("Provider catalog IDs are incomplete")
 
 const [
   playgroundLogo,
@@ -224,6 +260,15 @@ for (const locale of ["", ...locales]) {
     if (!source.includes(`| \`${iconId}\``)) {
       throw new Error(`${locale || "en"}/language/themes-and-icons.md is missing ${iconId}`)
     }
+  }
+}
+
+for (const locale of ["", ...locales]) {
+  const page = path.join(docsRoot, locale, "guide/provider-icons.md")
+  const source = await readFile(page, "utf8")
+  const componentLocale = locale || "en"
+  if (!source.includes(`<ProviderCatalog locale="${componentLocale}" />`)) {
+    throw new Error(`${componentLocale}/guide/provider-icons.md is missing its provider catalog`)
   }
 }
 
