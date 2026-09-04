@@ -88,8 +88,26 @@ Free core catalogは、次のprovider-neutralな明示iconを`default`、`light`
 | `webhook`       | Webhook endpoint                  | Inbound / outbound callback      |
 | `identity`      | Identity and access               | Authentication / authorization   |
 | `observability` | Observability system              | Metrics / logs / traces          |
+| `gateway`       | Network gateway                   | Public / private networkの入口   |
+| `load-balancer` | Load balancer                     | Trafficの分散                    |
+| `dns`           | Domain name service               | Hostname / service discovery     |
+| `cdn`           | Content delivery network          | Edgeでのcontent delivery         |
+| `firewall`      | Network firewall                  | Network access boundary          |
+| `network`       | Network topology                  | 一般的なnetwork / subnet         |
+| `event`         | Discrete event                    | 個別のdomain / system event      |
+| `stream`        | Event stream                      | 継続的なevent / data flow        |
+| `search`        | Search service                    | Indexing / query system          |
+| `analytics`     | Analytics system                  | Reporting / data analysis        |
+| `repository`    | Source code repository            | Source code / version control    |
+| `pipeline`      | Delivery pipeline                 | Build / test / deploy flow       |
+| `secret`        | Secret or credential              | Secret / key / credential        |
+| `document`      | Document or knowledge base        | Documentation / knowledge        |
+| `task`          | Task or issue tracker             | Task / ticket / issue tracking   |
+| `chat`          | Chat or messaging tool            | Team chat / messaging            |
+| `email`         | Email delivery                    | Email delivery / inbox           |
+| `ai`            | Artificial intelligence system    | AI model / inference service     |
 
-下のpreviewをlight / darkへ切り替えると、実際のoutputを比較できます。各imageは公開`@stack-sh/engine@0.4.0`がlocalでrenderし、DocumentationにTheme SVG assetを複製していません。Syntaxの行を選ぶとコピーできます。
+下のpreviewをlight / darkへ切り替えると、実際のoutputを比較できます。各imageは公開`@stack-sh/engine@0.5.0`がlocalでrenderし、DocumentationにTheme SVG assetを複製していません。Syntaxの行を選ぶとコピーできます。
 
 <IconCatalog locale="ja" />
 

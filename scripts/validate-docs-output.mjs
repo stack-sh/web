@@ -83,7 +83,7 @@ for (const locale of ["", "ja/", "zh/", "ko/"]) {
   const html = await readFile(path.join(outputRoot, page), "utf8")
   const cards = html.match(/class="stack-icon-card"/g)?.length ?? 0
 
-  if (cards !== 12) throw new Error(`${page} contains ${cards} icon cards instead of 12`)
+  if (cards !== 30) throw new Error(`${page} contains ${cards} icon cards instead of 30`)
 }
 
 const documentationAssets = await readdir(path.join(outputRoot, "assets"))

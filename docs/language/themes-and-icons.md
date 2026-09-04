@@ -88,8 +88,26 @@ The free core catalog includes these provider-neutral explicit icons in `default
 | `webhook`       | Webhook endpoint                  | Inbound or outbound callbacks      |
 | `identity`      | Identity and access               | Authentication or authorization    |
 | `observability` | Observability system              | Metrics, logs, or traces           |
+| `gateway`       | Network gateway                   | Public or private network entry    |
+| `load-balancer` | Load balancer                     | Traffic distribution               |
+| `dns`           | Domain name service               | Hostname and service discovery     |
+| `cdn`           | Content delivery network          | Edge content delivery              |
+| `firewall`      | Network firewall                  | Network access boundaries          |
+| `network`       | Network topology                  | Generic networks or subnets        |
+| `event`         | Discrete event                    | Individual domain or system events |
+| `stream`        | Event stream                      | Continuous event or data flows     |
+| `search`        | Search service                    | Indexing and query systems         |
+| `analytics`     | Analytics system                  | Reporting or data analysis         |
+| `repository`    | Source code repository            | Source code and version control    |
+| `pipeline`      | Delivery pipeline                 | Build, test, or deployment flows   |
+| `secret`        | Secret or credential              | Secrets, keys, or credentials      |
+| `document`      | Document or knowledge base        | Documentation and knowledge        |
+| `task`          | Task or issue tracker             | Tasks, tickets, or issue tracking  |
+| `chat`          | Chat or messaging tool            | Team chat or messaging             |
+| `email`         | Email delivery                    | Email delivery or inboxes          |
+| `ai`            | Artificial intelligence system    | AI models or inference services    |
 
-Switch the preview below between light and dark to inspect the actual output. The published `@stack-sh/engine@0.4.0` renders every image locally; the Documentation does not copy Theme SVG assets. Select a syntax row to copy it.
+Switch the preview below between light and dark to inspect the actual output. The published `@stack-sh/engine@0.5.0` renders every image locally; the Documentation does not copy Theme SVG assets. Select a syntax row to copy it.
 
 <IconCatalog locale="en" />
 
