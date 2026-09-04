@@ -41,7 +41,7 @@ describe("ProviderIcons", () => {
     render(
       <ProviderIcons
         disabled={false}
-        onImport={vi.fn()}
+        onLoad={vi.fn()}
         onRemove={vi.fn()}
         packs={[providerPack()]}
       />,

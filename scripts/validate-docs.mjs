@@ -291,14 +291,36 @@ for (const locale of ["", ...locales]) {
     throw new Error(`${componentLocale}/guide/provider-icons.md is missing its provider catalog`)
   }
   for (const providerPack of ["gcp", "simple-icons"]) {
-    if (!source.includes(`--provider-pack .stack-icons/${providerPack}`)) {
+    if (!source.includes(`stack icons import ${providerPack} --accept-terms`)) {
       throw new Error(`${componentLocale}/guide/provider-icons.md is missing ${providerPack}`)
+    }
+  }
+  for (const command of [
+    "stack render architecture.stack -o architecture.svg",
+    "--provider-pack .stack-icons",
+    "default_icons_path: /absolute/path/to/stack-icons",
+  ]) {
+    if (!source.includes(command)) {
+      throw new Error(`${componentLocale}/guide/provider-icons.md is missing ${command}`)
     }
   }
   for (const iconId of ["gcp:cloud-run", "simple-icons:github"]) {
     if (!source.includes(`icon "${iconId}"`)) {
       throw new Error(`${componentLocale}/guide/provider-icons.md is missing ${iconId}`)
     }
+  }
+}
+
+const providerCatalogComponent = await readFile(
+  path.join(docsRoot, ".vitepress/theme/components/ProviderCatalog.vue"),
+  "utf8",
+)
+if (!providerCatalogComponent.includes("stack icons import ${item.id} --accept-terms")) {
+  throw new Error("Provider catalog cards must show the provider import command")
+}
+for (const legacyCommand of ["curl -fL", "--source"]) {
+  if (providerCatalogComponent.includes(legacyCommand)) {
+    throw new Error(`Provider catalog still contains legacy command ${legacyCommand}`)
   }
 }
 

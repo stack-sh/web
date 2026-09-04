@@ -35,7 +35,6 @@ Rendered SVG contains no script, event handler, arbitrary external reference, ho
 - The browser Playground is the supported public experience.
 - Public `@stack-sh/engine` provides the typed WebAssembly `format`, `check`, and `render` operations used by the Playground.
 - Public `@stack-sh/language` provides the shared TextMate grammar and language metadata used for editor highlighting.
-- The native `stack` command exists in a private pre-release repository but is not distributed as a supported external binary. These docs do not instruct users to install it.
-- Authentication, persistence, collaboration, billing, entitlement, paid themes, remote theme registries, hosted rendering APIs, PNG/PDF export, multi-file projects, and LSP features are not part of the current public product.
+- Public [`stack-sh/cli`](https://github.com/stack-sh/cli) provides native `format`, `check`, `render`, and provider-icon store operations.
 
 The normative language contract remains in [`stack-sh/specification`](https://github.com/stack-sh/specification). The public theme catalog is in [`stack-sh/theme`](https://github.com/stack-sh/theme), and engine behavior is in [`stack-sh/engine`](https://github.com/stack-sh/engine).

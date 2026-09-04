@@ -58,6 +58,7 @@ The initial playground includes:
 - Distinct, accessible syntax palettes for light and dark color modes
 - Compiler-style diagnostics with source selection, code frames, expected values, help, and related locations
 - Safe SVG image preview, expanded dialog, and download
+- User-selected provider icon stores with searchable AWS, Google Cloud, Azure, and tool artwork
 
 Authentication, persistence, collaboration, and paid themes remain outside this delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the combined Vite and VitePress output as static assets.
 

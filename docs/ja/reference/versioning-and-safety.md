@@ -35,7 +35,6 @@ Rendered SVGにはscript、event handler、任意external reference、host font 
 - Browser Playgroundがsupport対象のpublic experienceです。
 - Public `@stack-sh/engine`がPlaygroundで使うtyped WebAssembly `format`、`check`、`render`を提供します。
 - Public `@stack-sh/language`がeditor highlight用のshared TextMate grammarと言語metadataを提供します。
-- Native `stack` commandはprivate pre-release repositoryにありますが、support対象のexternal binaryとして未配布です。このdocsではinstall手順を案内しません。
-- Authentication、persistence、collaboration、billing、entitlement、paid theme、remote theme registry、hosted rendering API、PNG/PDF export、multi-file project、LSPは現在のpublic productに含みません。
+- Public [`stack-sh/cli`](https://github.com/stack-sh/cli)がnative `format`、`check`、`render`、provider-icon store操作を提供します。
 
 Normative language contractは[`stack-sh/specification`](https://github.com/stack-sh/specification)、public theme catalogは[`stack-sh/theme`](https://github.com/stack-sh/theme)、engine behaviorは[`stack-sh/engine`](https://github.com/stack-sh/engine)が正本です。

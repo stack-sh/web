@@ -1,56 +1,32 @@
 # Provider icons
 
-Stack supports a provider-neutral core icon catalog without setup. AWS, Google Cloud, Azure, and common developer or collaboration artwork is available through user-imported provider packs. The searchable catalog below is public metadata, but Stack does not host or redistribute the vendor SVG files.
+Stack includes a provider-neutral core icon catalog. AWS, Google Cloud, Azure, and common developer and collaboration artwork are available through provider packs stored in your user-managed icon store.
 
 ## Available provider catalog
 
-The audited catalog contains 1,051 IDs: 305 AWS Architecture Icons, all 19 Google Cloud core-product and 26 category icons, 639 Azure service icons after exact-byte deduplication, and 62 curated tool icons. Search or filter the complete list without loading any SVG bytes. Results are shown 100 at a time so the page remains usable on smaller devices.
+The audited catalog contains 1,051 IDs: 305 AWS Architecture Icons, 45 Google Cloud product and category icons, 639 Azure service icons, and 62 curated tool icons. The tool catalog includes GitHub, GitHub Actions, Notion, Linear, Atlassian, Jira, Confluence, Docker, Kubernetes, Terraform, Datadog, Grafana, Sentry, and more.
+
+Select a provider card to see its import command, then search or filter the complete catalog. Results are shown 100 at a time for comfortable use on smaller devices.
 
 <ProviderCatalog locale="en" />
 
-Every imported manifest records the official product name, every contributing source release and archive hash, terms URL, review date, permitted output categories, and non-endorsement notice. Curated tool records also retain the rights owner's brand source and guideline links. A provider pack adds only artwork; the authored node `kind` still controls its semantic styling and layout.
+A provider pack supplies artwork. The node `kind` in Stack source continues to control semantic styling and layout.
 
-## Why artwork is not hosted
+## Quick start
 
-The reviewed vendor guidance permits particular diagram and documentation uses, but does not clearly grant Stack permission to repackage every SVG byte in its website, npm package, WebAssembly module, or native binary. Static Documentation therefore shows searchable catalog metadata, provenance, and exact IDs without copying vendor artwork.
-
-The curated tool archive comes from [Simple Icons](https://simpleicons.org/). Its CC0 distribution does not imply that every underlying brand mark is CC0, so inclusion is not permission or endorsement. Follow the per-icon source and guideline links shown above before use.
-
-After you load a pack, the Playground shows its actual icons from your selected local files. It creates browser-local image URLs only after Engine validation and does not inject the SVG as page HTML. Review the linked provider terms before using or distributing a generated diagram.
-
-## Create a local pack
-
-Select an AWS, Google Cloud, Azure, or Simple Icons card above to see its exact audited download URL, expected SHA-256, and complete `curl` → `stack icons import` → `stack render` commands. The CLI rejects an archive if its bytes no longer match the reviewed hash.
+Import each provider used by a diagram once. `--accept-terms` records your confirmation that you reviewed the linked provider and brand terms.
 
 ```sh
-$ stack icons list aws s3
-$ stack icons list simple-icons github
+$ stack icons import gcp --accept-terms
+$ stack icons import simple-icons --accept-terms
+$ stack render architecture.stack -o architecture.svg
 ```
 
-Use `aws`, `gcp`, `azure`, or `simple-icons`. Google Cloud requires both official archives shown when its card is selected. The importer reads the files downloaded by `curl`; it does not fetch or upload them itself. It verifies every complete archive, reads only reviewed paths, removes active content, preserves colors and geometry, and creates `manifest.json`, `NOTICE.md`, and `assets/*.svg`.
+The CLI downloads the audited official archives, verifies their complete SHA-256 hashes, sanitizes the selected SVGs, and writes each processed provider pack to the shared icon store. Google Cloud product and category artwork is imported together by the single `gcp` command.
 
-## Use a pack in Playground
+## Use provider icons in CLI
 
-Open **Icons**, choose one pack's `manifest.json` and every declared file in `assets/`, then search the loaded local catalog and copy an ID into source:
-
-```stack
-stack 1.0
-
-diagram "Storage" {
-  node files "Amazon S3" {
-    kind storage
-    icon "aws:s3"
-  }
-}
-```
-
-The selected files stay in the current browser tab. The Playground does not upload, fetch, or persist the pack, so reloads require another selection. Use **Notice** beside the SVG download when a rendered diagram embeds provider artwork.
-
-The Playground accepts an already processed pack, not a raw provider ZIP. Raw-archive verification and safe SVG processing remain in the CLI so browser code does not duplicate that security boundary.
-
-## Use a pack in CLI
-
-A single Stack file can use multiple providers. For example, this diagram uses Cloud Run from the Google Cloud pack and GitHub from the Simple Icons pack:
+A Stack file can use multiple providers. This example combines Cloud Run from Google Cloud with GitHub from Simple Icons:
 
 ```stack
 stack 1.0
@@ -72,20 +48,71 @@ diagram "Deploy from GitHub to Cloud Run" {
 }
 ```
 
-After importing both packs with the commands shown in their catalog cards, repeat `--provider-pack` when rendering:
+After both imports, the standard render command discovers both packs:
+
+```sh
+$ stack render architecture.stack -o architecture.svg --notice architecture.NOTICE.md
+```
+
+## Shared icon store
+
+The default icon store is `$XDG_CONFIG_HOME/stack/icons`. When `XDG_CONFIG_HOME` is unset, Stack uses `$HOME/.config/stack/icons`.
+
+```text
+icons/
+  aws/
+  gcp/
+  azure/
+  simple-icons/
+```
+
+Set a different shared location in `$XDG_CONFIG_HOME/stack/config.yaml` with an absolute path:
+
+```yaml
+default_icons_path: /absolute/path/to/stack-icons
+```
+
+The configured location is used by both `stack icons import` and `stack render`.
+
+## Use provider icons in Playground
+
+Open **Icons**, choose the `stack/icons` folder, and the Playground loads every recognized provider directory in that store. Search the loaded artwork and select an item to copy its ID into Stack source.
+
+The selected packs are processed in the current browser tab. When a rendered diagram contains provider artwork, **Notice** beside the SVG download provides the source, terms, and used-icon record.
+
+## Keep icons with a project
+
+Use `-o` to place imported packs in a project directory that can be committed with the repository:
+
+```sh
+$ stack icons import gcp --accept-terms -o .stack-icons
+$ stack icons import simple-icons --accept-terms -o .stack-icons
+```
+
+Pass that icon-store root with `--provider-pack` when rendering:
 
 ```sh
 $ stack render architecture.stack \
-  --provider-pack .stack-icons/gcp \
-  --provider-pack .stack-icons/simple-icons \
+  --provider-pack .stack-icons \
   -o architecture.svg \
   --notice architecture.NOTICE.md
 ```
 
-The CLI validates each bounded pack before rendering and records the exact used icons and source archives in the notice sidecar.
+## Find icon IDs
 
-## Offline behavior
+Search the catalog from the CLI or on this page:
 
-CLI authoring and SVG generation work fully offline after the CLI and any desired provider archives are on the device. Installing the CLI or obtaining a new official archive may require a connection.
+```sh
+$ stack icons list
+$ stack icons list aws s3
+$ stack icons list azure database
+$ stack icons list simple-icons github
+```
 
-The Web Playground also formats, checks, and renders locally after its JavaScript and WebAssembly have loaded. It has no server rendering dependency and provider files never leave the browser. The current website is not an installed offline app, however, so a cold start without a network connection is not guaranteed.
+The CLI output contains `ID`, `PRODUCT`, `CATEGORY`, and recommended `KIND` columns. Namespaced IDs such as `gcp:cloud-run` and `simple-icons:github` select artwork from the corresponding pack.
+
+## Verification, terms, and notices
+
+The CLI catalog pins each official HTTPS archive URL, release, complete archive SHA-256, allowlisted entry path, terms URL, and review date. Import applies bounded archive and SVG sizes, sanitizes active and external SVG content, and writes each pack atomically.
+
+Each pack includes `NOTICE.md`. `stack render --notice <PATH>` writes the exact pack revisions, source releases, terms URLs, attribution, non-endorsement text, and used icon IDs for a rendered artifact. The catalog links each provider's official source and terms, plus brand sources and guidelines for curated Simple Icons marks.

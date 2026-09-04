@@ -35,7 +35,6 @@ Stack 문자열은 일반 텍스트입니다. 소스에는 실행 코드, 임의
 - 브라우저 Playground가 지원되는 공개 경험입니다.
 - 공개 `@stack-sh/engine`은 Playground가 사용하는 typed WebAssembly `format`, `check`, `render`를 제공합니다.
 - 공개 `@stack-sh/language`는 에디터 하이라이트용 공유 TextMate grammar와 언어 metadata를 제공합니다.
-- Native `stack` 명령은 private pre-release repository에 있지만 지원되는 external binary로 배포되지 않았습니다. 이 문서는 설치를 안내하지 않습니다.
-- Authentication, persistence, collaboration, billing, entitlement, paid theme, remote theme registry, hosted rendering API, PNG/PDF export, multi-file project, LSP는 현재 공개 제품에 포함되지 않습니다.
+- 공개 [`stack-sh/cli`](https://github.com/stack-sh/cli)는 native `format`, `check`, `render` 및 provider-icon store 작업을 제공합니다.
 
 표준 언어 계약은 [`stack-sh/specification`](https://github.com/stack-sh/specification), 공개 테마 catalog는 [`stack-sh/theme`](https://github.com/stack-sh/theme), 엔진 동작은 [`stack-sh/engine`](https://github.com/stack-sh/engine)이 소유합니다.
