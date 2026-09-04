@@ -20,8 +20,8 @@ const locales = ["ja", "zh", "ko"]
 const docsRoot = path.resolve("docs")
 const packageMetadata = JSON.parse(await readFile(path.resolve("package.json"), "utf8"))
 
-if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.4.0") {
-  throw new Error("Documentation must use the exact @stack-sh/engine 0.4.0 release")
+if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.5.0") {
+  throw new Error("Documentation must use the exact @stack-sh/engine 0.5.0 release")
 }
 
 const [
@@ -161,6 +161,24 @@ const coreIconIds = [
   "webhook",
   "identity",
   "observability",
+  "gateway",
+  "load-balancer",
+  "dns",
+  "cdn",
+  "firewall",
+  "network",
+  "event",
+  "stream",
+  "search",
+  "analytics",
+  "repository",
+  "pipeline",
+  "secret",
+  "document",
+  "task",
+  "chat",
+  "email",
+  "ai",
 ]
 const requiredTerms = [
   "stack 1.0",

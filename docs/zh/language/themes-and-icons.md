@@ -88,8 +88,26 @@ diagram "Explicit icon" {
 | `webhook`       | Webhook endpoint                  | 入站或出站回调        |
 | `identity`      | Identity and access               | 身份验证或授权        |
 | `observability` | Observability system              | 指标、日志或链路追踪  |
+| `gateway`       | Network gateway                   | 公共或私有网络入口    |
+| `load-balancer` | Load balancer                     | 流量分发              |
+| `dns`           | Domain name service               | 主机名与服务发现      |
+| `cdn`           | Content delivery network          | 边缘内容分发          |
+| `firewall`      | Network firewall                  | 网络访问边界          |
+| `network`       | Network topology                  | 通用网络或子网        |
+| `event`         | Discrete event                    | 单个领域或系统事件    |
+| `stream`        | Event stream                      | 连续事件或数据流      |
+| `search`        | Search service                    | 索引与查询系统        |
+| `analytics`     | Analytics system                  | 报告或数据分析        |
+| `repository`    | Source code repository            | 源代码与版本控制      |
+| `pipeline`      | Delivery pipeline                 | 构建、测试或部署流程  |
+| `secret`        | Secret or credential              | 密钥或凭据            |
+| `document`      | Document or knowledge base        | 文档与知识库          |
+| `task`          | Task or issue tracker             | 任务、工单或问题跟踪  |
+| `chat`          | Chat or messaging tool            | 团队聊天或消息        |
+| `email`         | Email delivery                    | 邮件投递或收件箱      |
+| `ai`            | Artificial intelligence system    | AI 模型或推理服务     |
 
-切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.4.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
+切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.5.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
 
 <IconCatalog locale="zh" />
 

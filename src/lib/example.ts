@@ -33,6 +33,7 @@ diagram "Commerce platform" {
 
     node api "Commerce API" {
       kind service
+      icon "gateway"
       detail "Orders and inventory"
     }
 

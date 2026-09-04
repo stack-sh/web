@@ -74,22 +74,40 @@ diagram "Explicit icon" {
 
 무료 코어 catalog는 `default`, `light`, `dark`에 다음 provider-neutral 명시적 아이콘을 제공합니다.
 
-| ID              | Stable subject                    | 주요 용도                      |
-| --------------- | --------------------------------- | ------------------------------ |
-| `api`           | Application programming interface | 공개 또는 내부 API             |
-| `web`           | Web application                   | 브라우저용 Web 경험            |
-| `mobile`        | Mobile application                | iOS 또는 Android 클라이언트    |
-| `desktop`       | Desktop application               | 네이티브 데스크톱 클라이언트   |
-| `server`        | Server host                       | 가상 머신 또는 물리 호스트     |
-| `container`     | Application container             | 컨테이너화된 워크로드          |
-| `cluster`       | Compute cluster                   | 오케스트레이션된 컴퓨팅 그룹   |
-| `cloud`         | Cloud environment                 | provider-neutral 클라우드 경계 |
-| `scheduler`     | Scheduled execution               | Cron 작업 또는 예약 실행       |
-| `webhook`       | Webhook endpoint                  | 인바운드 또는 아웃바운드 콜백  |
-| `identity`      | Identity and access               | 인증 또는 권한 부여            |
-| `observability` | Observability system              | 메트릭, 로그 또는 트레이스     |
+| ID              | Stable subject                    | 주요 용도                        |
+| --------------- | --------------------------------- | -------------------------------- |
+| `api`           | Application programming interface | 공개 또는 내부 API               |
+| `web`           | Web application                   | 브라우저용 Web 경험              |
+| `mobile`        | Mobile application                | iOS 또는 Android 클라이언트      |
+| `desktop`       | Desktop application               | 네이티브 데스크톱 클라이언트     |
+| `server`        | Server host                       | 가상 머신 또는 물리 호스트       |
+| `container`     | Application container             | 컨테이너화된 워크로드            |
+| `cluster`       | Compute cluster                   | 오케스트레이션된 컴퓨팅 그룹     |
+| `cloud`         | Cloud environment                 | provider-neutral 클라우드 경계   |
+| `scheduler`     | Scheduled execution               | Cron 작업 또는 예약 실행         |
+| `webhook`       | Webhook endpoint                  | 인바운드 또는 아웃바운드 콜백    |
+| `identity`      | Identity and access               | 인증 또는 권한 부여              |
+| `observability` | Observability system              | 메트릭, 로그 또는 트레이스       |
+| `gateway`       | Network gateway                   | 공용 또는 사설 네트워크 진입점   |
+| `load-balancer` | Load balancer                     | 트래픽 분산                      |
+| `dns`           | Domain name service               | 호스트 이름 및 서비스 검색       |
+| `cdn`           | Content delivery network          | 엣지 콘텐츠 전송                 |
+| `firewall`      | Network firewall                  | 네트워크 접근 경계               |
+| `network`       | Network topology                  | 일반 네트워크 또는 서브넷        |
+| `event`         | Discrete event                    | 개별 도메인 또는 시스템 이벤트   |
+| `stream`        | Event stream                      | 지속적인 이벤트 또는 데이터 흐름 |
+| `search`        | Search service                    | 인덱싱 및 쿼리 시스템            |
+| `analytics`     | Analytics system                  | 보고 또는 데이터 분석            |
+| `repository`    | Source code repository            | 소스 코드 및 버전 관리           |
+| `pipeline`      | Delivery pipeline                 | 빌드, 테스트 또는 배포 흐름      |
+| `secret`        | Secret or credential              | 비밀, 키 또는 자격 증명          |
+| `document`      | Document or knowledge base        | 문서 및 지식 기반                |
+| `task`          | Task or issue tracker             | 작업, 티켓 또는 이슈 추적        |
+| `chat`          | Chat or messaging tool            | 팀 채팅 또는 메시징              |
+| `email`         | Email delivery                    | 이메일 전송 또는 받은편지함      |
+| `ai`            | Artificial intelligence system    | AI 모델 또는 추론 서비스         |
 
-아래 미리보기를 라이트와 다크로 전환하여 실제 출력을 비교할 수 있습니다. 각 이미지는 공개된 `@stack-sh/engine@0.4.0`이 로컬에서 렌더링하며 문서에 Theme SVG 에셋을 복제하지 않습니다. 문법 행을 선택하면 복사됩니다.
+아래 미리보기를 라이트와 다크로 전환하여 실제 출력을 비교할 수 있습니다. 각 이미지는 공개된 `@stack-sh/engine@0.5.0`이 로컬에서 렌더링하며 문서에 Theme SVG 에셋을 복제하지 않습니다. 문법 행을 선택하면 복사됩니다.
 
 <IconCatalog locale="ko" />
 
