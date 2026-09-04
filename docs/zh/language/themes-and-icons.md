@@ -89,7 +89,7 @@ diagram "Explicit icon" {
 | `identity`      | Identity and access               | 身份验证或授权        |
 | `observability` | Observability system              | 指标、日志或链路追踪  |
 
-切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.3.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
+切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.4.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
 
 <IconCatalog locale="zh" />
 

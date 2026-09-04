@@ -68,6 +68,7 @@ type Labels = {
   introduction: string
   gettingStarted: string
   playground: string
+  providerIcons: string
   language: string
   syntax: string
   nodesAndGroups: string
@@ -98,6 +99,7 @@ function sidebar(prefix: string, labels: Labels): DefaultTheme.SidebarItem[] {
         { text: labels.introduction, link: `${prefix}/guide/what-is-stack` },
         { text: labels.gettingStarted, link: `${prefix}/guide/getting-started` },
         { text: labels.playground, link: `${prefix}/guide/playground` },
+        { text: labels.providerIcons, link: `${prefix}/guide/provider-icons` },
       ],
     },
     {
@@ -155,6 +157,7 @@ const en: Labels = {
   introduction: "What is Stack?",
   gettingStarted: "Getting started",
   playground: "Using the Playground",
+  providerIcons: "Provider icons",
   language: "Language",
   syntax: "Document and syntax",
   nodesAndGroups: "Nodes and groups",
@@ -182,6 +185,7 @@ const ja: Labels = {
   introduction: "Stackとは",
   gettingStarted: "はじめる",
   playground: "Playgroundの使い方",
+  providerIcons: "Provider icon",
   language: "言語",
   syntax: "Documentとsyntax",
   nodesAndGroups: "Nodeとgroup",
@@ -209,6 +213,7 @@ const zh: Labels = {
   introduction: "什么是 Stack？",
   gettingStarted: "快速开始",
   playground: "使用 Playground",
+  providerIcons: "云服务商图标",
   language: "语言",
   syntax: "文档与语法",
   nodesAndGroups: "节点与分组",
@@ -236,6 +241,7 @@ const ko: Labels = {
   introduction: "Stack이란?",
   gettingStarted: "시작하기",
   playground: "Playground 사용법",
+  providerIcons: "클라우드 제공자 아이콘",
   language: "언어",
   syntax: "문서와 문법",
   nodesAndGroups: "노드와 그룹",

@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from "react"
 import { Download, Maximize2 } from "lucide-react"
+import type { ProviderNotice } from "@stack-sh/engine"
 
 import { Button } from "@/components/ui/button"
+import { SvgAssetImage } from "@/components/svg-asset-image"
 import {
   Dialog,
   DialogContent,
@@ -11,15 +12,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { providerNoticeMarkdown } from "@/lib/provider-notice"
 
 interface PreviewPaneProps {
   svg: string | null
   status: string
   engineVersion: string | null
   isLoading: boolean
+  providerNotices: readonly ProviderNotice[]
 }
 
-export function PreviewPane({ svg, status, engineVersion, isLoading }: PreviewPaneProps) {
+export function PreviewPane({
+  svg,
+  status,
+  engineVersion,
+  isLoading,
+  providerNotices,
+}: PreviewPaneProps) {
   function downloadSvg() {
     if (!svg) return
 
@@ -31,24 +40,41 @@ export function PreviewPane({ svg, status, engineVersion, isLoading }: PreviewPa
     URL.revokeObjectURL(url)
   }
 
+  function downloadNotices() {
+    const notice = providerNoticeMarkdown(providerNotices)
+    const url = URL.createObjectURL(new Blob([notice], { type: "text/markdown;charset=utf-8" }))
+    const anchor = document.createElement("a")
+    anchor.href = url
+    anchor.download = "diagram.NOTICE.md"
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <section className="grid min-h-[34rem] grid-rows-[auto_1fr_auto] border-t bg-muted lg:min-h-0 lg:border-t-0 lg:border-l">
       <div className="flex h-12 items-center justify-between border-b bg-background px-3">
         <h2 className="text-sm font-medium">Preview</h2>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              aria-label="Download SVG"
-              disabled={!svg}
-              onClick={downloadSvg}
-              size="icon-sm"
-              variant="ghost"
-            >
-              <Download aria-hidden="true" />
+        <div className="flex items-center gap-1">
+          {providerNotices.length > 0 ? (
+            <Button onClick={downloadNotices} size="xs" variant="ghost">
+              Notice
             </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Download SVG</TooltipContent>
-        </Tooltip>
+          ) : null}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                aria-label="Download SVG"
+                disabled={!svg}
+                onClick={downloadSvg}
+                size="icon-sm"
+                variant="ghost"
+              >
+                <Download aria-hidden="true" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Download SVG</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
       <div className="flex min-h-0 items-center justify-center overflow-auto p-4 sm:p-6">
@@ -70,13 +96,6 @@ export function PreviewPane({ svg, status, engineVersion, isLoading }: PreviewPa
 }
 
 function SvgImage({ svg }: { svg: string }) {
-  const previewUrl = useMemo(
-    () => URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" })),
-    [svg],
-  )
-
-  useEffect(() => () => URL.revokeObjectURL(previewUrl), [previewUrl])
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -85,10 +104,10 @@ function SvgImage({ svg }: { svg: string }) {
           className="group relative flex max-h-full max-w-full items-center justify-center border bg-white p-2 outline-none transition-colors hover:border-foreground/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted"
           type="button"
         >
-          <img
+          <SvgAssetImage
             alt="Rendered Stack architecture diagram"
             className="max-h-full max-w-full object-contain"
-            src={previewUrl}
+            svg={svg}
           />
           <span className="absolute right-2 bottom-2 inline-flex items-center gap-1 border bg-white/95 px-2 py-1 font-sans text-[0.6875rem] font-medium text-neutral-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
             <Maximize2 aria-hidden="true" className="size-3" />
@@ -105,10 +124,10 @@ function SvgImage({ svg }: { svg: string }) {
         </DialogHeader>
         <div className="min-h-0 overflow-auto bg-muted p-4 sm:p-8">
           <div className="flex min-h-full min-w-[48rem] items-start justify-center">
-            <img
+            <SvgAssetImage
               alt="Expanded Stack architecture diagram"
               className="h-auto w-full max-w-none border bg-white p-2 object-contain"
-              src={previewUrl}
+              svg={svg}
             />
           </div>
         </div>
