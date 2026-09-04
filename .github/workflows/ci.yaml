@@ -37,6 +37,19 @@ jobs:
           path: .stack-cli
           persist-credentials: false
 
+      - name: Read pinned example corpus contract
+        id: corpus
+        run: |
+          node --input-type=module -e 'import { exampleCorpusSource } from "./scripts/example-corpus.config.mjs"; console.log(`revision=${exampleCorpusSource.revision}`)' >> "$GITHUB_OUTPUT"
+
+      - name: Check out pinned Stack example corpus
+        uses: actions/checkout@v7
+        with:
+          repository: stack-sh/specification
+          ref: ${{ steps.corpus.outputs.revision }}
+          path: .stack-specification
+          persist-credentials: false
+
       - name: Install minimum supported Rust
         run: rustup toolchain install 1.85.0 --profile minimal
 
@@ -54,6 +67,11 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Verify pinned example snapshots
+        env:
+          STACK_SPECIFICATION_ROOT: ${{ github.workspace }}/.stack-specification
+        run: npm run examples:check:source
 
       - name: Smoke test documentation CLI examples
         env:

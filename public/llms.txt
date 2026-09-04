@@ -9,6 +9,7 @@ Stack source describes components, boundaries, relationships, themes, and layout
 - [Stack documentation](https://stack-diagram.com/docs/llms.txt): Curated guides, complete language reference, diagnostics, limits, versioning, and safety information.
 - [Complete English documentation](https://stack-diagram.com/llms-full.txt): All English documentation in one Markdown document for agents that prefer a single context.
 - [Getting started](https://stack-diagram.com/docs/guide/getting-started.md): Install the browser package, write a first `.stack` document, and use the Playground.
+- [Example gallery](https://stack-diagram.com/docs/examples/index.md): Reusable canonical examples from small diagrams through provider and mixed-cloud systems.
 - [Language syntax](https://stack-diagram.com/docs/language/syntax.md): Document structure, identifiers, strings, comments, and validation rules.
 - [Themes and icons](https://stack-diagram.com/docs/language/themes-and-icons.md): Theme selection, icon references, fallbacks, and catalog ownership.
 - [Diagnostics and limits](https://stack-diagram.com/docs/reference/diagnostics-and-limits.md): Diagnostic codes, source ranges, warnings, and safety limits.

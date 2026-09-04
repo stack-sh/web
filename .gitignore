@@ -15,6 +15,7 @@ docs/.vitepress/cache
 .wrangler
 .dev.vars*
 .stack-cli
+.stack-specification
 
 # Editor directories and files
 .vscode/*
