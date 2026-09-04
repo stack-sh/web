@@ -54,8 +54,14 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button aria-label="Provider icons" disabled={disabled} size="sm" variant="outline">
-          <PackageOpen aria-hidden="true" data-icon="inline-start" />
+        <Button
+          aria-label="Provider icons"
+          className="size-7 px-0 sm:w-auto sm:pr-2.5 sm:pl-1.5"
+          disabled={disabled}
+          size="sm"
+          variant="outline"
+        >
+          <PackageOpen aria-hidden="true" />
           <span className="hidden sm:inline">Icons</span>
           {packs.length > 0 ? (
             <span className="border-l pl-1.5 font-mono text-[0.6875rem]">{packs.length}</span>
