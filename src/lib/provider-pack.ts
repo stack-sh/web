@@ -11,18 +11,22 @@ interface ProviderManifestIcon {
   }
 }
 
+export interface LoadedProviderSource {
+  id: string
+  pageUrl: string
+  release: string
+  termsUrl: string
+  reviewAfter: string
+}
+
 interface ProviderManifest {
   packVersion: string
   provider: {
     id: string
     name: string
   }
-  source: {
-    pageUrl: string
-    release: string
-    termsUrl: string
-    reviewAfter: string
-  }
+  source: LoadedProviderSource
+  additionalSources: LoadedProviderSource[]
   icons: ProviderManifestIcon[]
 }
 
@@ -37,10 +41,7 @@ export interface LoadedProviderPack {
   providerId: string
   providerName: string
   packVersion: string
-  sourcePageUrl: string
-  sourceRelease: string
-  termsUrl: string
-  reviewAfter: string
+  sources: readonly LoadedProviderSource[]
   icons: readonly LoadedProviderIcon[]
 }
 
@@ -78,11 +79,31 @@ function httpsUrl(record: Record<string, unknown>, field: string): string {
   return url.toString()
 }
 
+function sourceFrom(record: Record<string, unknown>, id: string): LoadedProviderSource {
+  return {
+    id,
+    pageUrl: httpsUrl(record, "pageUrl"),
+    release: requiredString(record, "release"),
+    termsUrl: httpsUrl(record, "termsUrl"),
+    reviewAfter: requiredString(record, "reviewAfter"),
+  }
+}
+
 function manifestFrom(value: unknown): ProviderManifest {
   if (!isRecord(value)) throw new Error("Provider manifest must be a JSON object.")
 
   const provider = requiredRecord(value, "provider")
   const source = requiredRecord(value, "source")
+  const additionalSourcesValue = value.additionalSources
+  if (additionalSourcesValue !== undefined && !Array.isArray(additionalSourcesValue)) {
+    throw new Error("Provider manifest field 'additionalSources' must be an array.")
+  }
+  const additionalSources = (additionalSourcesValue ?? []).map((sourceValue, index) => {
+    if (!isRecord(sourceValue)) {
+      throw new Error(`Provider manifest additional source ${index + 1} must be an object.`)
+    }
+    return sourceFrom(sourceValue, requiredString(sourceValue, "id"))
+  })
   const iconsValue = value.icons
   if (!Array.isArray(iconsValue) || iconsValue.length === 0) {
     throw new Error("Provider manifest must declare at least one icon.")
@@ -106,12 +127,8 @@ function manifestFrom(value: unknown): ProviderManifest {
       id: requiredString(provider, "id"),
       name: requiredString(provider, "name"),
     },
-    source: {
-      pageUrl: httpsUrl(source, "pageUrl"),
-      release: requiredString(source, "release"),
-      termsUrl: httpsUrl(source, "termsUrl"),
-      reviewAfter: requiredString(source, "reviewAfter"),
-    },
+    source: sourceFrom(source, "primary"),
+    additionalSources,
     icons,
   }
 }
@@ -187,10 +204,7 @@ export async function loadProviderPackFiles(
     providerId: manifest.provider.id,
     providerName: manifest.provider.name,
     packVersion: manifest.packVersion,
-    sourcePageUrl: manifest.source.pageUrl,
-    sourceRelease: manifest.source.release,
-    termsUrl: manifest.source.termsUrl,
-    reviewAfter: manifest.source.reviewAfter,
+    sources: [manifest.source, ...manifest.additionalSources],
     icons: manifest.icons.map((icon) => ({
       id: icon.id,
       productName: icon.productName,

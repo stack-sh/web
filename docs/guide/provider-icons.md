@@ -1,20 +1,20 @@
 # Provider icons
 
-Stack supports a provider-neutral core icon catalog without setup. AWS, Google Cloud, and Azure artwork is available through user-imported provider packs. The audited catalog below is public, but Stack does not host or redistribute the vendor SVG files.
+Stack supports a provider-neutral core icon catalog without setup. AWS, Google Cloud, Azure, and common developer or collaboration artwork is available through user-imported provider packs. The searchable catalog below is public metadata, but Stack does not host or redistribute the vendor SVG files.
 
 ## Available provider catalog
 
-| Provider     | Audited release                            | Available IDs                                                                                                    | Official source and terms                                                                                                                         |
-| ------------ | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| AWS          | `Icon-package_07312026`                    | `aws:s3`, `aws:sqs`, `aws:lambda`, `aws:ec2`, `aws:rds`, `aws:dynamodb`, `aws:eks`                               | [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) and [AWS Trademark Guidelines](https://aws.amazon.com/trademark-guidelines/) |
-| Google Cloud | Core product icons from the May 2026 guide | `gcp:cloud-run`, `gcp:cloud-storage`, `gcp:compute-engine`, `gcp:gke`, `gcp:bigquery`, `gcp:cloud-sql`           | [Google Cloud Icon Library](https://cloud.google.com/icons) and [Google Brand Resource Center](https://about.google/brand-resource-center/)       |
-| Azure        | `Azure_Public_Service_Icons_V24`           | `azure:virtual-machines`, `azure:storage-accounts`, `azure:azure-sql-database`, `azure:aks`, `azure:app-service` | [Azure Architecture Icons](https://learn.microsoft.com/azure/architecture/icons/) and the terms included in the official archive                  |
+The audited catalog contains 1,051 IDs: 305 AWS Architecture Icons, all 19 Google Cloud core-product and 26 category icons, 639 Azure service icons after exact-byte deduplication, and 62 curated tool icons. Search or filter the complete list without loading any SVG bytes. Results are shown 100 at a time so the page remains usable on smaller devices.
 
-Every imported manifest records the official product name, source release, complete archive hash, terms URL, review date, permitted output categories, and non-endorsement notice. A provider pack adds only artwork; the authored node `kind` still controls its semantic styling and layout.
+<ProviderCatalog locale="en" />
+
+Every imported manifest records the official product name, every contributing source release and archive hash, terms URL, review date, permitted output categories, and non-endorsement notice. Curated tool records also retain the rights owner's brand source and guideline links. A provider pack adds only artwork; the authored node `kind` still controls its semantic styling and layout.
 
 ## Why artwork is not hosted
 
-The reviewed vendor guidance permits particular diagram and documentation uses, but does not clearly grant Stack permission to repackage the SVG bytes in its website, npm package, WebAssembly module, or native binary. Static Documentation therefore shows the catalog, provenance, and exact IDs without copying vendor artwork.
+The reviewed vendor guidance permits particular diagram and documentation uses, but does not clearly grant Stack permission to repackage every SVG byte in its website, npm package, WebAssembly module, or native binary. Static Documentation therefore shows searchable catalog metadata, provenance, and exact IDs without copying vendor artwork.
+
+The curated tool archive comes from [Simple Icons](https://simpleicons.org/). Its CC0 distribution does not imply that every underlying brand mark is CC0, so inclusion is not permission or endorsement. Follow the per-icon source and guideline links shown above before use.
 
 After you load a pack, the Playground shows its actual icons from your selected local files. It creates browser-local image URLs only after Engine validation and does not inject the SVG as page HTML. Review the linked provider terms before using or distributing a generated diagram.
 
@@ -23,16 +23,21 @@ After you load a pack, the Playground shows its actual icons from your selected 
 Download the official archive yourself, then use the public Stack CLI to process that local file:
 
 ```sh
-stack icons import aws ~/Downloads/aws-icons.zip \
+stack icons list aws s3
+stack icons import aws /path/to/aws-icons.zip \
   --accept-terms \
   -o .stack-icons/aws
+stack icons import gcp /path/to/core-products-icons.zip \
+  --source categories=/path/to/category-icons.zip \
+  --accept-terms \
+  -o .stack-icons/gcp
 ```
 
-Replace `aws` with `gcp` or `azure` for the other audited profiles. The importer makes no network request or upload. It verifies the complete archive, reads only reviewed paths, removes active content, preserves colors and geometry, and creates `manifest.json`, `NOTICE.md`, and `assets/*.svg`.
+Use `aws`, `gcp`, `azure`, or `simple-icons`. Google Cloud requires both official local archives shown above. The importer makes no network request or upload. It verifies every complete archive, reads only reviewed paths, removes active content, preserves colors and geometry, and creates `manifest.json`, `NOTICE.md`, and `assets/*.svg`.
 
 ## Use a pack in Playground
 
-Open **Icons**, choose one pack's `manifest.json` and every declared file in `assets/`, then copy an ID from the local catalog into source:
+Open **Icons**, choose one pack's `manifest.json` and every declared file in `assets/`, then search the loaded local catalog and copy an ID into source:
 
 ```stack
 stack 1.0

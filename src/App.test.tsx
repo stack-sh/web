@@ -23,7 +23,7 @@ vi.mock("@stack-sh/engine", () => ({
 import App from "./App"
 
 const metadata = {
-  engineVersion: "0.5.0",
+  engineVersion: "0.6.0",
   languageVersion: { major: 1, minor: 0 },
   themeCatalogRevision: "sha256:test",
   themeCatalogVersion: "0.4.0",
@@ -64,13 +64,22 @@ describe("Stack Playground", () => {
         {
           archiveSha256: "sha256:test",
           attribution: "AWS icons are owned by Amazon Web Services.",
-          icons: [{ id: "aws:s3", productName: "Amazon S3" }],
+          icons: [{ id: "aws:s3", productName: "Amazon S3", sourceId: "primary" }],
           nonEndorsement: "AWS does not endorse Stack.",
           packRevision: "sha256:pack",
           packVersion: "0.1.0",
           providerId: "aws",
           providerName: "Amazon Web Services",
           sourceRelease: "fixture-1",
+          sources: [
+            {
+              archiveSha256: "sha256:test",
+              id: "primary",
+              pageUrl: "https://example.com/icons",
+              release: "fixture-1",
+              termsUrl: "https://example.com/terms",
+            },
+          ],
           termsSummary: "Use in architecture diagrams.",
           termsUrl: "https://example.com/terms",
         },

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react"
-import { Check, Copy, ExternalLink, PackageOpen, Trash2, Upload } from "lucide-react"
+import { useMemo, useRef, useState } from "react"
+import { Check, Copy, ExternalLink, PackageOpen, Search, Trash2, Upload } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,11 +20,30 @@ interface ProviderIconsProps {
   onRemove: (providerId: string) => void
 }
 
+const ICON_BATCH_SIZE = 48
+
 export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderIconsProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [isImporting, setIsImporting] = useState(false)
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
+  const [query, setQuery] = useState("")
+  const [visibleByProvider, setVisibleByProvider] = useState<Record<string, number>>({})
+  const normalizedQuery = query.trim().toLocaleLowerCase()
+  const filteredPacks = useMemo(
+    () =>
+      packs.map((pack) => ({
+        pack,
+        icons: pack.icons.filter(
+          (icon) =>
+            normalizedQuery.length === 0 ||
+            icon.id.toLocaleLowerCase().includes(normalizedQuery) ||
+            icon.productName.toLocaleLowerCase().includes(normalizedQuery),
+        ),
+      })),
+    [normalizedQuery, packs],
+  )
+  const filteredIconCount = filteredPacks.reduce((total, item) => total + item.icons.length, 0)
 
   async function handleFiles(files: FileList | null) {
     if (!files?.length) return
@@ -117,8 +136,8 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
               <PackageOpen aria-hidden="true" className="mb-3 size-6 text-muted-foreground" />
               <p className="text-sm font-medium">No local provider packs</p>
               <p className="mt-1 max-w-md text-xs leading-5 text-muted-foreground">
-                Core icons remain available without a pack. AWS, Google Cloud, and Azure artwork is
-                user-imported so Stack does not redistribute vendor assets.
+                Core icons remain available without a pack. AWS, Google Cloud, Azure, and tool
+                artwork is user-imported so Stack does not redistribute vendor assets.
               </p>
               <a
                 className="mt-3 inline-flex items-center gap-1 rounded-sm text-xs underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -131,75 +150,134 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
             </div>
           ) : (
             <div className="space-y-5">
-              {packs.map((pack) => (
-                <section aria-labelledby={`provider-${pack.providerId}`} key={pack.providerId}>
-                  <div className="mb-2 flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-sm font-medium" id={`provider-${pack.providerId}`}>
-                        {pack.providerName}
-                      </h3>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {pack.sourceRelease} · pack {pack.packVersion} · {pack.icons.length} icons
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Review terms again after {pack.reviewAfter}.{" "}
-                        <a
-                          className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                          href={pack.sourcePageUrl}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          Source
-                        </a>{" "}
-                        ·{" "}
-                        <a
-                          className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                          href={pack.termsUrl}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          Terms
-                        </a>
-                      </p>
+              <label className="relative block">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  className="h-9 w-full rounded-md border bg-transparent pr-20 pl-9 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                  onChange={(event) => {
+                    setQuery(event.currentTarget.value)
+                    setVisibleByProvider({})
+                  }}
+                  placeholder="Search ID or product name"
+                  type="search"
+                  value={query}
+                />
+                <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-mono text-[0.6875rem] text-muted-foreground">
+                  {filteredIconCount} {filteredIconCount === 1 ? "result" : "results"}
+                </span>
+              </label>
+              {filteredIconCount === 0 ? (
+                <div className="border border-dashed p-6 text-center text-sm text-muted-foreground">
+                  No icons match “{query}”.
+                </div>
+              ) : null}
+              {filteredPacks
+                .filter(({ icons }) => icons.length > 0)
+                .map(({ pack, icons }) => (
+                  <section aria-labelledby={`provider-${pack.providerId}`} key={pack.providerId}>
+                    <div className="mb-2 flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-sm font-medium" id={`provider-${pack.providerId}`}>
+                          {pack.providerName}
+                        </h3>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {pack.sources[0].release} · pack {pack.packVersion} · {pack.icons.length}{" "}
+                          icons
+                        </p>
+                        <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
+                          {pack.sources.map((source) => (
+                            <li key={source.id}>
+                              <span className="font-mono">{source.id}</span>{" "}
+                              <a
+                                className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                                href={source.pageUrl}
+                                rel="noreferrer"
+                                target="_blank"
+                              >
+                                Source
+                              </a>{" "}
+                              /{" "}
+                              <a
+                                className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                                href={source.termsUrl}
+                                rel="noreferrer"
+                                target="_blank"
+                              >
+                                Terms
+                              </a>
+                              {` (review after ${source.reviewAfter})`}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <Button
+                        aria-label={`Remove ${pack.providerName}`}
+                        onClick={() => onRemove(pack.providerId)}
+                        size="icon-sm"
+                        variant="ghost"
+                      >
+                        <Trash2 aria-hidden="true" />
+                      </Button>
                     </div>
-                    <Button
-                      aria-label={`Remove ${pack.providerName}`}
-                      onClick={() => onRemove(pack.providerId)}
-                      size="icon-sm"
-                      variant="ghost"
-                    >
-                      <Trash2 aria-hidden="true" />
-                    </Button>
-                  </div>
-                  <ul className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
-                    {pack.icons.map((icon) => (
-                      <li className="bg-background" key={icon.id}>
-                        <button
-                          className="flex min-h-24 w-full items-center gap-3 p-3 text-left outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-                          onClick={() => void copyIcon(icon.id)}
-                          type="button"
-                        >
-                          <LocalIconPreview productName={icon.productName} svg={icon.svg} />
-                          <span className="min-w-0 flex-1">
-                            <span className="block text-xs font-medium">{icon.productName}</span>
-                            <span className="mt-1 block font-mono text-[0.6875rem] text-muted-foreground">
-                              {icon.id}
-                            </span>
-                          </span>
-                          {copiedIcon === icon.id ? (
-                            <Check aria-label="Copied" className="size-3.5 shrink-0" />
-                          ) : (
-                            <Copy
-                              aria-label="Copy syntax"
-                              className="size-3.5 shrink-0 text-muted-foreground"
-                            />
-                          )}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))}
+                    {icons.length > 0 ? (
+                      <ul className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-3">
+                        {icons
+                          .slice(0, visibleByProvider[pack.providerId] ?? ICON_BATCH_SIZE)
+                          .map((icon) => (
+                            <li className="bg-background" key={icon.id}>
+                              <button
+                                className="flex min-h-24 w-full items-center gap-3 p-3 text-left outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                                onClick={() => void copyIcon(icon.id)}
+                                type="button"
+                              >
+                                <LocalIconPreview productName={icon.productName} svg={icon.svg} />
+                                <span className="min-w-0 flex-1">
+                                  <span className="block text-xs font-medium">
+                                    {icon.productName}
+                                  </span>
+                                  <span className="mt-1 block font-mono text-[0.6875rem] text-muted-foreground">
+                                    {icon.id}
+                                  </span>
+                                </span>
+                                {copiedIcon === icon.id ? (
+                                  <Check aria-label="Copied" className="size-3.5 shrink-0" />
+                                ) : (
+                                  <Copy
+                                    aria-label="Copy syntax"
+                                    className="size-3.5 shrink-0 text-muted-foreground"
+                                  />
+                                )}
+                              </button>
+                            </li>
+                          ))}
+                      </ul>
+                    ) : null}
+                    {icons.length > (visibleByProvider[pack.providerId] ?? ICON_BATCH_SIZE) ? (
+                      <Button
+                        className="mt-3 w-full"
+                        onClick={() =>
+                          setVisibleByProvider((visible) => ({
+                            ...visible,
+                            [pack.providerId]:
+                              (visible[pack.providerId] ?? ICON_BATCH_SIZE) + ICON_BATCH_SIZE,
+                          }))
+                        }
+                        size="sm"
+                        variant="outline"
+                      >
+                        Show{" "}
+                        {Math.min(
+                          ICON_BATCH_SIZE,
+                          icons.length - (visibleByProvider[pack.providerId] ?? ICON_BATCH_SIZE),
+                        )}{" "}
+                        more
+                      </Button>
+                    ) : null}
+                  </section>
+                ))}
             </div>
           )}
         </div>

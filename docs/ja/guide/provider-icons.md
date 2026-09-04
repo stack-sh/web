@@ -1,20 +1,20 @@
 # Provider icon
 
-Stackは設定不要でprovider-neutralなcore icon catalogを利用できます。AWS、Google Cloud、Azureのartworkはuser-imported provider packとして利用します。監査済みcatalogは以下で公開しますが、Stackがvendor SVG fileをhost・再配布することはありません。
+Stackは設定不要でprovider-neutralなcore icon catalogを利用できます。AWS、Google Cloud、Azure、主要な開発・collaboration toolのartworkはuser-imported provider packとして利用します。検索可能なcatalogはpublic metadataですが、Stackがvendor SVG fileをhost・再配布することはありません。
 
 ## 利用可能なprovider catalog
 
-| Provider     | 監査済みrelease                    | 利用可能なID                                                                                                     | 公式sourceとterms                                                                                                                              |
-| ------------ | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| AWS          | `Icon-package_07312026`            | `aws:s3`, `aws:sqs`, `aws:lambda`, `aws:ec2`, `aws:rds`, `aws:dynamodb`, `aws:eks`                               | [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/)と[AWS Trademark Guidelines](https://aws.amazon.com/trademark-guidelines/) |
-| Google Cloud | 2026年5月guideのcore product icons | `gcp:cloud-run`, `gcp:cloud-storage`, `gcp:compute-engine`, `gcp:gke`, `gcp:bigquery`, `gcp:cloud-sql`           | [Google Cloud Icon Library](https://cloud.google.com/icons)と[Google Brand Resource Center](https://about.google/brand-resource-center/)       |
-| Azure        | `Azure_Public_Service_Icons_V24`   | `azure:virtual-machines`, `azure:storage-accounts`, `azure:azure-sql-database`, `azure:aks`, `azure:app-service` | [Azure Architecture Icons](https://learn.microsoft.com/azure/architecture/icons/)と公式archive内のterms                                        |
+監査済みcatalogは合計1,051 IDです。AWS Architecture Icons 305件、Google Cloudのcore product 19件とcategory 26件、完全に同じbyteをdeduplicateしたAzure service icon 639件、主要tool 62件を収録します。SVG byteをloadせず全件を検索・filterでき、小さいdeviceでも崩れないよう100件ずつ表示します。
 
-Import済みmanifestには、公式product name、source release、archive全体のhash、terms URL、review date、許可されたoutput category、non-endorsement noticeが記録されます。Provider packが追加するのはartworkだけで、semantic stylingとlayoutはsourceに書いたnode `kind`が引き続き決めます。
+<ProviderCatalog locale="ja" />
+
+Import済みmanifestには、公式product name、利用した全source releaseとarchive hash、terms URL、review date、許可されたoutput category、non-endorsement noticeが記録されます。Tool iconはrights ownerのbrand sourceとguideline linkも保持します。Provider packが追加するのはartworkだけで、semantic stylingとlayoutはsourceに書いたnode `kind`が引き続き決めます。
 
 ## Artworkをhostしない理由
 
-確認したvendor guidanceは特定のdiagramやdocumentationでの利用を認めていますが、Stackのwebsite、npm package、WebAssembly module、native binaryへSVG byteを再packageする明確な許諾は確認できません。そのため静的Documentationではvendor artworkを複製せず、catalog、provenance、正確なIDを表示します。
+確認したvendor guidanceは特定のdiagramやdocumentationでの利用を認めていますが、Stackのwebsite、npm package、WebAssembly module、native binaryへすべてのSVG byteを再packageする明確な許諾は確認できません。そのため静的Documentationではvendor artworkを複製せず、検索可能なcatalog metadata、provenance、正確なIDを表示します。
+
+Tool archiveには[Simple Icons](https://simpleicons.org/)を使います。そのCC0 distributionは、個々のbrand markまでCC0であることを意味しません。Catalogへの掲載は利用許諾やendorsementではないため、使用前に上表のicon別sourceとguidelineを確認してください。
 
 Packをloadした後のPlaygroundでは、選択したlocal fileから実際のiconを表示できます。Engine validation後にbrowser-localなimage URLを作り、SVGをpage HTMLとしてinjectしません。生成diagramの利用・配布前に、link先のprovider termsを確認してください。
 
@@ -23,16 +23,21 @@ Packをloadした後のPlaygroundでは、選択したlocal fileから実際のi
 公式archiveを自分でdownloadし、publicなStack CLIでlocal fileを処理します。
 
 ```sh
-stack icons import aws ~/Downloads/aws-icons.zip \
+stack icons list aws s3
+stack icons import aws /path/to/aws-icons.zip \
   --accept-terms \
   -o .stack-icons/aws
+stack icons import gcp /path/to/core-products-icons.zip \
+  --source categories=/path/to/category-icons.zip \
+  --accept-terms \
+  -o .stack-icons/gcp
 ```
 
-他の監査済みprofileでは`aws`を`gcp`または`azure`に置き換えます。Importerはnetwork requestやuploadを行いません。Archive全体を検証し、review済みpathだけを読み、active contentを除去してcolorとgeometryを保持し、`manifest.json`、`NOTICE.md`、`assets/*.svg`を生成します。
+`aws`、`gcp`、`azure`、`simple-icons`を利用できます。Google Cloudは上記2つの公式local archiveが必要です。Importerはnetwork requestやuploadを行いません。すべてのarchive全体を検証し、review済みpathだけを読み、active contentを除去してcolorとgeometryを保持し、`manifest.json`、`NOTICE.md`、`assets/*.svg`を生成します。
 
 ## Playgroundでpackを使う
 
-**Icons**を開き、1つのpackにある`manifest.json`と`assets/`内の宣言済みfileをすべて選びます。Local catalogからIDをcopyし、sourceで使います。
+**Icons**を開き、1つのpackにある`manifest.json`と`assets/`内の宣言済みfileをすべて選びます。Load済みlocal catalogを検索してIDをcopyし、sourceで使います。
 
 ```stack
 stack 1.0

@@ -11,6 +11,15 @@ const manifest = {
     reviewAfter: "2026-12-03",
     termsUrl: "https://example.com/terms",
   },
+  additionalSources: [
+    {
+      id: "categories",
+      pageUrl: "https://example.com/categories",
+      release: "fixture-categories-1",
+      reviewAfter: "2026-12-04",
+      termsUrl: "https://example.com/category-terms",
+    },
+  ],
   icons: [
     {
       asset: { path: "assets/storage.svg" },
@@ -32,6 +41,22 @@ describe("loadProviderPackFiles", () => {
       { id: "example:storage", productName: "Example Storage", svg: "<svg />" },
     ])
     expect(result.input.assets).toEqual([{ path: "assets/storage.svg", svg: "<svg />" }])
+    expect(result.sources).toEqual([
+      {
+        id: "primary",
+        pageUrl: "https://example.com/icons",
+        release: "fixture-1",
+        reviewAfter: "2026-12-03",
+        termsUrl: "https://example.com/terms",
+      },
+      {
+        id: "categories",
+        pageUrl: "https://example.com/categories",
+        release: "fixture-categories-1",
+        reviewAfter: "2026-12-04",
+        termsUrl: "https://example.com/category-terms",
+      },
+    ])
   })
 
   it("rejects unsafe links before they reach the UI", async () => {

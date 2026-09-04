@@ -9,7 +9,7 @@ These Markdown pages are the public user-facing reference. Examples marked as `s
 - [What is Stack?](https://stack-diagram.com/docs/guide/what-is-stack.md): Goals, conceptual model, processing pipeline, and deliberate non-goals.
 - [Getting started](https://stack-diagram.com/docs/guide/getting-started.md): Package installation, first diagram, engine operations, and browser Playground workflow.
 - [Using the Playground](https://stack-diagram.com/docs/guide/playground.md): Editor, formatter, diagnostics, preview, color mode, and SVG download behavior.
-- [Provider icons](https://stack-diagram.com/docs/guide/provider-icons.md): Local AWS, Google Cloud, and Azure pack import, catalog, terms, and offline boundaries.
+- [Provider icons](https://stack-diagram.com/docs/guide/provider-icons.md): Searchable AWS, Google Cloud, Azure, and tool catalogs; local pack import, terms, and offline boundaries.
 
 ## Language
 
