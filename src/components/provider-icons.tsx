@@ -184,28 +184,34 @@ export function ProviderIcons({ disabled, packs, onImport, onRemove }: ProviderI
                           {pack.providerName}
                         </h3>
                         <p className="mt-0.5 text-xs text-muted-foreground">
-                          {pack.sourceRelease} · pack {pack.packVersion} · {pack.icons.length} icons
+                          {pack.sources[0].release} · pack {pack.packVersion} · {pack.icons.length}{" "}
+                          icons
                         </p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          Review terms again after {pack.reviewAfter}.{" "}
-                          <a
-                            className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                            href={pack.sourcePageUrl}
-                            rel="noreferrer"
-                            target="_blank"
-                          >
-                            Source
-                          </a>{" "}
-                          ·{" "}
-                          <a
-                            className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                            href={pack.termsUrl}
-                            rel="noreferrer"
-                            target="_blank"
-                          >
-                            Terms
-                          </a>
-                        </p>
+                        <ul className="mt-1 space-y-1 text-xs text-muted-foreground">
+                          {pack.sources.map((source) => (
+                            <li key={source.id}>
+                              <span className="font-mono">{source.id}</span>{" "}
+                              <a
+                                className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                                href={source.pageUrl}
+                                rel="noreferrer"
+                                target="_blank"
+                              >
+                                Source
+                              </a>{" "}
+                              /{" "}
+                              <a
+                                className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                                href={source.termsUrl}
+                                rel="noreferrer"
+                                target="_blank"
+                              >
+                                Terms
+                              </a>
+                              {` (review after ${source.reviewAfter})`}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                       <Button
                         aria-label={`Remove ${pack.providerName}`}

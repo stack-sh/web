@@ -11,10 +11,22 @@ function providerPack(): LoadedProviderPack {
     providerId: "azure",
     providerName: "Microsoft Azure",
     packVersion: "0.2.0",
-    sourcePageUrl: "https://example.com/icons",
-    sourceRelease: "fixture",
-    termsUrl: "https://example.com/terms",
-    reviewAfter: "2026-12-03",
+    sources: [
+      {
+        id: "primary",
+        pageUrl: "https://example.com/icons",
+        release: "fixture",
+        termsUrl: "https://example.com/terms",
+        reviewAfter: "2026-12-03",
+      },
+      {
+        id: "categories",
+        pageUrl: "https://example.com/categories",
+        release: "fixture-categories",
+        termsUrl: "https://example.com/category-terms",
+        reviewAfter: "2026-12-04",
+      },
+    ],
     icons: Array.from({ length: 50 }, (_, index) => ({
       id: `azure:service-${index + 1}`,
       productName: index === 49 ? "Needle Database" : `Azure Service ${index + 1}`,
@@ -36,6 +48,10 @@ describe("ProviderIcons", () => {
     )
 
     await user.click(screen.getByRole("button", { name: "Provider icons" }))
+    expect(screen.getByText("primary")).toBeInTheDocument()
+    expect(screen.getByText("categories")).toBeInTheDocument()
+    expect(screen.getAllByRole("link", { name: "Source" })).toHaveLength(2)
+    expect(screen.getAllByRole("link", { name: "Terms" })).toHaveLength(2)
     expect(screen.getByText("azure:service-48")).toBeInTheDocument()
     expect(screen.queryByText("azure:service-49")).not.toBeInTheDocument()
 

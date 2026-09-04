@@ -107,7 +107,7 @@ diagram "Explicit icon" {
 | `email`         | Email delivery                    | 邮件投递或收件箱      |
 | `ai`            | Artificial intelligence system    | AI 模型或推理服务     |
 
-切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.5.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
+切换下方预览的浅色与深色模式即可比较真实输出。每张图片都由已发布的 `@stack-sh/engine@0.6.0` 在本地渲染；文档没有复制 Theme SVG 资源。选择语法行即可复制。
 
 <IconCatalog locale="zh" />
 
