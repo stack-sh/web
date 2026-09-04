@@ -26,6 +26,8 @@ The WebAssembly adapter and editor language assets are installed from the exact 
 ```sh
 npm run dev
 npm run docs:dev
+npm run docs:check
+npm run docs:test
 npm run format
 npm run format:check
 npm run lint
@@ -37,6 +39,12 @@ npm run docs:preview
 ```
 
 Formatting and linting use Oxfmt and Oxlint. The production build compiles the React playground into `dist/`, validates the English, Japanese, Simplified Chinese, and Korean documentation sets, and builds VitePress with a `/docs/` base into `dist/docs/`.
+
+## Documentation contract
+
+`npm run docs:check` validates that all four locales have the same page inventory, heading structure, and canonical code blocks. It also rejects broken internal links and anchors, unsafe external links, malformed code fences, and Stack examples that fail against the exact `@stack-sh/engine` version in `package.json`. `npm run docs:test` exercises the corresponding positive and negative fixtures.
+
+CI additionally builds the Stack CLI revision pinned in [`scripts/docs-validation.config.mjs`](./scripts/docs-validation.config.mjs) with its minimum supported Rust version, then runs `npm run docs:smoke` through `STACK_CLI_BIN`. This checks the documented version, help surface, and safe executable examples without adding Rust to normal Web builds. Intentional locale or execution differences must be declared in the same configuration with a non-empty reason; the validator rejects stale exceptions.
 
 ## Brand mark
 
