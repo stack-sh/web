@@ -7,6 +7,7 @@ export const documentationContract = {
       items: [
         { label: "introduction", page: "guide/what-is-stack.md" },
         { label: "gettingStarted", page: "guide/getting-started.md" },
+        { label: "examples", page: "examples/index.md" },
         { label: "playground", page: "guide/playground.md" },
         { label: "providerIcons", page: "guide/provider-icons.md" },
       ],

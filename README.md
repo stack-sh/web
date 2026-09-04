@@ -28,6 +28,7 @@ npm run dev
 npm run docs:dev
 npm run docs:check
 npm run docs:test
+npm run examples:check
 npm run format
 npm run format:check
 npm run lint
@@ -45,6 +46,8 @@ Formatting and linting use Oxfmt and Oxlint. The production build compiles the R
 `npm run docs:check` validates that all four locales have the same page inventory, heading structure, and canonical code blocks. It also rejects broken internal links and anchors, unsafe external links, malformed code fences, and Stack examples that fail against the exact `@stack-sh/engine` version in `package.json`. `npm run docs:test` exercises the corresponding positive and negative fixtures.
 
 CI additionally builds the Stack CLI revision pinned in [`scripts/docs-validation.config.mjs`](./scripts/docs-validation.config.mjs) with its minimum supported Rust version, then runs `npm run docs:smoke` through `STACK_CLI_BIN`. This checks the documented version, help surface, and safe executable examples without adding Rust to normal Web builds. Intentional locale or execution differences must be declared in the same configuration with a non-empty reason; the validator rejects stale exceptions.
+
+The example gallery is generated from the public specification commit pinned in [`scripts/example-corpus.config.mjs`](./scripts/example-corpus.config.mjs). [`example-corpus`](./example-corpus) is a hermetic snapshot for the Playground and documentation build; CI checks every catalog, schema, and `.stack` source byte against the pinned provider commit. `npm run examples:check` checks and renders all examples, resolves every namespaced icon against the published provider catalog, and detects stale SVG thumbnails. To intentionally advance the corpus, check out the new pinned specification revision, run `STACK_SPECIFICATION_ROOT=/path/to/specification npm run examples:sync`, and then run `npm run examples:generate`.
 
 ## Brand mark
 

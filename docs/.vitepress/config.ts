@@ -69,6 +69,7 @@ type Labels = {
   guide: string
   introduction: string
   gettingStarted: string
+  examples: string
   playground: string
   providerIcons: string
   language: string
@@ -107,6 +108,7 @@ function localeTheme(prefix: string, labels: Labels): DefaultTheme.Config {
   return {
     nav: [
       { text: labels.guide, link: `${prefix}/guide/getting-started` },
+      { text: labels.examples, link: `${prefix}/examples/` },
       { text: labels.reference, link: `${prefix}/reference/diagnostics-and-limits` },
       { text: "Playground", link: "https://stack-diagram.com/", target: "_self" },
     ],
@@ -131,6 +133,7 @@ const en: Labels = {
   guide: "Guide",
   introduction: "What is Stack?",
   gettingStarted: "Getting started",
+  examples: "Examples",
   playground: "Using the Playground",
   providerIcons: "Provider icons",
   language: "Language",
@@ -159,6 +162,7 @@ const ja: Labels = {
   guide: "ガイド",
   introduction: "Stackとは",
   gettingStarted: "はじめる",
+  examples: "Example gallery",
   playground: "Playgroundの使い方",
   providerIcons: "Provider icon",
   language: "言語",
@@ -187,6 +191,7 @@ const zh: Labels = {
   guide: "指南",
   introduction: "什么是 Stack？",
   gettingStarted: "快速开始",
+  examples: "示例库",
   playground: "使用 Playground",
   providerIcons: "云服务商图标",
   language: "语言",
@@ -215,6 +220,7 @@ const ko: Labels = {
   guide: "가이드",
   introduction: "Stack이란?",
   gettingStarted: "시작하기",
+  examples: "예제 갤러리",
   playground: "Playground 사용법",
   providerIcons: "클라우드 제공자 아이콘",
   language: "언어",

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1255.4" height="340.4" viewBox="0 0 1255400 340400" role="img" aria-labelledby="stack-title stack-description" data-engine-version="0.6.0" data-theme-id="light" data-theme-version="0.5.0" data-theme-revision="sha256:3bfd66e1a96628b29b95b7273b54373bcce952f7285aefa506b4255a629eaf53">
+  <title id="stack-title">GCP data service</title>
+  <desc id="stack-description">Architecture diagram with 6 nodes, 2 groups, and 5 relationships.</desc>
+  <metadata>stack-engine 0.6.0; language 1.0; theme 0.5.0 at sha256:3bfd66e1a96628b29b95b7273b54373bcce952f7285aefa506b4255a629eaf53</metadata>
+  <rect x="0" y="0" width="1255400" height="340400" fill="#FAF9F6"/>
+  <defs>
+    <marker id="stack-arrow" markerUnits="userSpaceOnUse" markerWidth="6500" markerHeight="6500" refX="9000" refY="5000" viewBox="0 0 10000 10000" orient="auto-start-reverse">
+      <path d="M 0 0 L 10000 5000 L 0 10000 z" fill="#57534E"/>
+    </marker>
+  </defs>
+  <text x="32000" y="50200" fill="#1C1917" font-family="system-ui" font-size="13000" font-weight="600">GCP data service</text>
+  <g data-stack-layer="groups">
+    <g role="group" aria-label="Application" data-stack-id="application">
+      <title>Application</title>
+      <rect x="216000" y="70200" width="591400" height="150200" rx="12000" fill="#EEEAE3" fill-opacity="0.55" stroke="#78716C" stroke-width="1000"/>
+      <text x="240000" y="107200" fill="#1C1917" font-family="system-ui" font-size="13000" font-weight="600">Application</text>
+    </g>
+    <g role="group" aria-label="Analytics" data-stack-id="analytics">
+      <title>Analytics</title>
+      <rect x="831400" y="70200" width="392000" height="238200" rx="12000" fill="#EEEAE3" fill-opacity="0.55" stroke="#78716C" stroke-width="1000"/>
+      <text x="855400" y="107200" fill="#1C1917" font-family="system-ui" font-size="13000" font-weight="600">Analytics</text>
+    </g>
+  </g>
+  <g data-stack-layer="edges">
+    <g role="group" aria-label="Web client flows to Cloud Run API: HTTPS" data-edge-kind="request" data-edge-direction="forward">
+      <title>Web client flows to Cloud Run API: HTTPS</title>
+      <polyline points="192000,106200 192000,160400 240000,160400" fill="none" stroke="#57534E" stroke-width="1250" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#stack-arrow)" />
+    </g>
+    <g role="group" aria-label="Cloud Run API flows to Cloud SQL: SQL" data-edge-kind="data" data-edge-direction="forward">
+      <title>Cloud Run API flows to Cloud SQL: SQL</title>
+      <polyline points="406300,160400 430300,160400" fill="none" stroke="#57534E" stroke-width="1250" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#stack-arrow)" />
+    </g>
+    <g role="group" aria-label="Cloud Run API flows to Cloud Storage: Uploads" data-edge-kind="data" data-edge-direction="forward">
+      <title>Cloud Run API flows to Cloud Storage: Uploads</title>
+      <polyline points="406300,160400 406300,196400 614300,196400 614300,160400" fill="none" stroke="#57534E" stroke-width="1250" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#stack-arrow)" />
+    </g>
+    <g role="group" aria-label="Cloud Run API flows to BigQuery: Events" data-edge-kind="event" data-edge-direction="forward">
+      <title>Cloud Run API flows to BigQuery: Events</title>
+      <polyline points="406300,160400 406300,196400 855400,196400 855400,160400" fill="none" stroke="#57534E" stroke-width="1250" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#stack-arrow)" />
+    </g>
+    <g role="group" aria-label="Analyst flows to BigQuery: Queries" data-edge-kind="request" data-edge-direction="forward">
+      <title>Analyst flows to BigQuery: Queries</title>
+      <polyline points="1039400,204400 1039400,160400 1015400,160400" fill="none" stroke="#57534E" stroke-width="1250" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#stack-arrow)" />
+    </g>
+  </g>
+  <g data-stack-layer="nodes">
+    <g role="group" aria-label="Web client" data-stack-id="client" data-node-kind="client">
+      <title>Web client</title>
+      <rect x="32000" y="70200" width="160000" height="72000" rx="8000" fill="#FFFFFF" stroke="#78716C" stroke-width="1500"/>
+      <svg x="52000" y="94200" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="web"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.75"/>
+  <path d="M3 8h18M7 6h.01M10 6h.01" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/> </svg>
+      <text x="88000" y="106200" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Web client</text>
+    </g>
+    <g role="group" aria-label="Cloud Run API" data-stack-id="api" data-node-kind="service">
+      <title>Cloud Run API</title>
+      <rect x="240000" y="124400" width="166300" height="72000" rx="8000" fill="#FFFFFF" stroke="#005DBB" stroke-width="1500"/>
+      <svg x="260000" y="148400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="kind-external"><path d="M11 5H5v14h14v-6M13 5h6v6M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>
+      <text x="296000" y="160400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Cloud Run API</text>
+    </g>
+    <g role="group" aria-label="Cloud SQL" data-stack-id="database" data-node-kind="database">
+      <title>Cloud SQL</title>
+      <path d="M 430300 134400 V 186400 C 430300 196400 590300 196400 590300 186400 V 134400 C 590300 124400 430300 124400 430300 134400 Z" fill="#FFFFFF" stroke="#005DBB" stroke-width="1500"/>
+      <ellipse cx="510300" cy="134400" rx="80000" ry="10000" fill="none" stroke="#005DBB" stroke-width="1500"/>
+      <svg x="450300" y="148400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="kind-external"><path d="M11 5H5v14h14v-6M13 5h6v6M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>
+      <text x="486300" y="160400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Cloud SQL</text>
+    </g>
+    <g role="group" aria-label="Cloud Storage" data-stack-id="objects" data-node-kind="storage">
+      <title>Cloud Storage</title>
+      <rect x="614300" y="124400" width="169100" height="72000" rx="4000" fill="#FFFFFF" stroke="#78716C" stroke-width="1500"/>
+      <svg x="634300" y="148400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="kind-external"><path d="M11 5H5v14h14v-6M13 5h6v6M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>
+      <text x="670300" y="160400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Cloud Storage</text>
+    </g>
+    <g role="group" aria-label="BigQuery" data-stack-id="warehouse" data-node-kind="database">
+      <title>BigQuery</title>
+      <path d="M 855400 134400 V 186400 C 855400 196400 1015400 196400 1015400 186400 V 134400 C 1015400 124400 855400 124400 855400 134400 Z" fill="#FFFFFF" stroke="#005DBB" stroke-width="1500"/>
+      <ellipse cx="935400" cy="134400" rx="80000" ry="10000" fill="none" stroke="#005DBB" stroke-width="1500"/>
+      <svg x="875400" y="148400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="kind-external"><path d="M11 5H5v14h14v-6M13 5h6v6M19 5l-9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>
+      <text x="911400" y="160400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">BigQuery</text>
+    </g>
+    <g role="group" aria-label="Analyst" data-stack-id="analyst" data-node-kind="actor">
+      <title>Analyst</title>
+      <circle cx="1119400" cy="204400" r="80000" fill="#FFFFFF" stroke="#78716C" stroke-width="1500"/>
+      <svg x="1059400" y="192400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="kind-actor"><circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M5 20c.8-4 3-6 7-6s6.2 2 7 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/> </svg>
+      <text x="1095400" y="204400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Analyst</text>
+    </g>
+  </g>
+  <g data-stack-layer="edge-labels" aria-hidden="true">
+    <g data-edge-label="HTTPS">
+      <rect x="169500" y="145600" width="45000" height="23400" rx="4000" fill="#FAF9F6"/>
+      <text x="192000" y="157300" text-anchor="middle" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="11000">HTTPS</text>
+    </g>
+    <g data-edge-label="SQL">
+      <rect x="402400" y="93000" width="31800" height="23400" rx="4000" fill="#FAF9F6"/>
+      <text x="418300" y="104700" text-anchor="middle" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="11000">SQL</text>
+    </g>
+    <g data-edge-label="Uploads">
+      <rect x="483125" y="204400" width="54350" height="23400" rx="4000" fill="#FAF9F6"/>
+      <text x="510300" y="216100" text-anchor="middle" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="11000">Uploads</text>
+    </g>
+    <g data-edge-label="Events">
+      <rect x="606425" y="204400" width="48850" height="23400" rx="4000" fill="#FAF9F6"/>
+      <text x="630850" y="216100" text-anchor="middle" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="11000">Events</text>
+    </g>
+    <g data-edge-label="Queries">
+      <rect x="1013325" y="93000" width="52150" height="23400" rx="4000" fill="#FAF9F6"/>
+      <text x="1039400" y="104700" text-anchor="middle" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="11000">Queries</text>
+    </g>
+  </g>
+</svg>

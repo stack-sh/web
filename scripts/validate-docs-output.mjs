@@ -1,8 +1,12 @@
 import { readFile, readdir } from "node:fs/promises"
 import path from "node:path"
 
+import { validateDocumentationContract } from "./docs-contract.mjs"
+import { documentationContract } from "./docs-validation.config.mjs"
+
 const outputRoot = path.resolve("dist/docs")
 const siteOutputRoot = path.resolve("dist")
+const docsRoot = path.resolve("docs")
 const localePages = [
   ["index.html", "en-US"],
   ["ja/index.html", "ja-JP"],
@@ -86,6 +90,18 @@ for (const locale of ["", "ja/", "zh/", "ko/"]) {
   if (cards !== 30) throw new Error(`${page} contains ${cards} icon cards instead of 30`)
 }
 
+for (const locale of ["", "ja/", "zh/", "ko/"]) {
+  const page = `${locale}examples/index.html`
+  const html = await readFile(path.join(outputRoot, page), "utf8")
+  const cards = html.match(/class="stack-example-card"/g)?.length ?? 0
+  const thumbnails = html.match(/class="stack-example-card__preview"/g)?.length ?? 0
+
+  if (cards !== 9) throw new Error(`${page} contains ${cards} example cards instead of 9`)
+  if (thumbnails !== 9) {
+    throw new Error(`${page} contains ${thumbnails} example thumbnails instead of 9`)
+  }
+}
+
 const documentationAssets = await readdir(path.join(outputRoot, "assets"))
 
 if (!documentationAssets.some((asset) => /^stack_engine_bg\..+\.wasm$/.test(asset))) {
@@ -94,9 +110,20 @@ if (!documentationAssets.some((asset) => /^stack_engine_bg\..+\.wasm$/.test(asse
 
 const sitemap = await readFile(path.join(outputRoot, "sitemap.xml"), "utf8")
 const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1])
+const { pages } = await validateDocumentationContract({
+  docsRoot,
+  locales: documentationContract.locales,
+  allowedFenceLanguages: documentationContract.allowedFenceLanguages,
+  navigationPages: documentationContract.navigation.flatMap((section) =>
+    section.items.map((item) => item.page),
+  ),
+  exceptions: documentationContract.exceptions,
+})
+const expectedLocations = pages.length * (documentationContract.locales.length + 1)
 
-if (locations.length !== 48)
-  throw new Error(`Expected 48 sitemap locations, found ${locations.length}`)
+if (locations.length !== expectedLocations) {
+  throw new Error(`Expected ${expectedLocations} sitemap locations, found ${locations.length}`)
+}
 
 for (const location of locations) {
   if (!location.startsWith("https://stack-diagram.com/docs/"))
@@ -135,5 +162,5 @@ for (const requiredContent of [
 }
 
 console.log(
-  "Validated site metadata, agent discovery files, four locale entry points, and all 48 sitemap locations.",
+  `Validated site metadata, agent discovery files, four locale entry points, and all ${expectedLocations} sitemap locations.`,
 )

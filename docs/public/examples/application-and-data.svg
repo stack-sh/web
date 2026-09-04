@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="443.7" height="174.6" viewBox="0 0 443700 174600" role="img" aria-labelledby="stack-title stack-description" data-engine-version="0.6.0" data-theme-id="light" data-theme-version="0.5.0" data-theme-revision="sha256:3bfd66e1a96628b29b95b7273b54373bcce952f7285aefa506b4255a629eaf53">
+  <title id="stack-title">Application and datastore</title>
+  <desc id="stack-description">Architecture diagram with 2 nodes, 0 groups, and 1 relationship.</desc>
+  <metadata>stack-engine 0.6.0; language 1.0; theme 0.5.0 at sha256:3bfd66e1a96628b29b95b7273b54373bcce952f7285aefa506b4255a629eaf53</metadata>
+  <rect x="0" y="0" width="443700" height="174600" fill="#FAF9F6"/>
+  <defs>
+    <marker id="stack-arrow" markerUnits="userSpaceOnUse" markerWidth="6500" markerHeight="6500" refX="9000" refY="5000" viewBox="0 0 10000 10000" orient="auto-start-reverse">
+      <path d="M 0 0 L 10000 5000 L 0 10000 z" fill="#57534E"/>
+    </marker>
+  </defs>
+  <text x="32000" y="50200" fill="#1C1917" font-family="system-ui" font-size="13000" font-weight="600">Application and datastore</text>
+  <g data-stack-layer="groups">
+  </g>
+  <g data-stack-layer="edges">
+    <g role="group" aria-label="Application flows to Primary database: SQL" data-edge-kind="data" data-edge-direction="forward">
+      <title>Application flows to Primary database: SQL</title>
+      <polyline points="192000,106400 216000,106400" fill="none" stroke="#57534E" stroke-width="1250" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#stack-arrow)" />
+    </g>
+  </g>
+  <g data-stack-layer="nodes">
+    <g role="group" aria-label="Application: Business logic" data-stack-id="app" data-node-kind="service">
+      <title>Application: Business logic</title>
+      <rect x="32000" y="70200" width="160000" height="72400" rx="8000" fill="#FFFFFF" stroke="#005DBB" stroke-width="1500"/>
+      <svg x="52000" y="94400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="server"><rect x="3" y="3" width="18" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.75"/>
+  <rect x="3" y="14" width="18" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.75"/>
+  <path d="M7 6.5h.01M7 17.5h.01M11 6.5h7M11 17.5h7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/> </svg>
+      <text x="88000" y="97400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Application</text>
+      <text x="88000" y="116400" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="12000" font-weight="400">Business logic</text>
+    </g>
+    <g role="group" aria-label="Primary database: PostgreSQL" data-stack-id="db" data-node-kind="database">
+      <title>Primary database: PostgreSQL</title>
+      <path d="M 216000 80200 V 132600 C 216000 142600 411700 142600 411700 132600 V 80200 C 411700 70200 216000 70200 216000 80200 Z" fill="#FFFFFF" stroke="#005DBB" stroke-width="1500"/>
+      <ellipse cx="313850" cy="80200" rx="97850" ry="10000" fill="none" stroke="#005DBB" stroke-width="1500"/>
+      <svg x="236000" y="94400" width="24000" height="24000" viewBox="0 0 24 24" color="#005DBB" aria-hidden="true" focusable="false" data-icon-id="kind-database"><ellipse cx="12" cy="5" rx="8" ry="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7" fill="none" stroke="currentColor" stroke-width="1.5"/> </svg>
+      <text x="272000" y="97400" dominant-baseline="middle" fill="#1C1917" font-family="system-ui" font-size="14000" font-weight="600">Primary database</text>
+      <text x="272000" y="116400" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="12000" font-weight="400">PostgreSQL</text>
+    </g>
+  </g>
+  <g data-stack-layer="edge-labels" aria-hidden="true">
+    <g data-edge-label="SQL">
+      <rect x="188100" y="38800" width="31800" height="23400" rx="4000" fill="#FAF9F6"/>
+      <text x="204000" y="50500" text-anchor="middle" dominant-baseline="middle" fill="#57534E" font-family="system-ui" font-size="11000">SQL</text>
+    </g>
+  </g>
+</svg>
