@@ -17,9 +17,21 @@ for (const provider of providers) {
   catalogs.push({
     id: source.provider.id,
     name: source.provider.name,
-    release: source.source.release,
-    sourcePageUrl: source.source.pageUrl,
-    termsUrl: source.source.termsUrl,
+    source: {
+      pageUrl: source.source.pageUrl,
+      archiveUrl: source.source.archiveUrl,
+      archiveSha256: source.source.archiveSha256,
+      release: source.source.release,
+      termsUrl: source.source.termsUrl,
+    },
+    additionalSources: (source.additionalSources ?? []).map((additionalSource) => ({
+      id: additionalSource.id,
+      pageUrl: additionalSource.pageUrl,
+      archiveUrl: additionalSource.archiveUrl,
+      archiveSha256: additionalSource.archiveSha256,
+      release: additionalSource.release,
+      termsUrl: additionalSource.termsUrl,
+    })),
     icons: source.icons.map((icon) => ({
       id: icon.id,
       productName: icon.productName,

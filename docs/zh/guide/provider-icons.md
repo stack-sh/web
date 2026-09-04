@@ -20,20 +20,14 @@ Stack 无需配置即可使用与服务商无关的核心图标目录。AWS、Go
 
 ## 创建本地 pack
 
-自行下载官方压缩包，再使用公开的 Stack CLI 处理本地文件：
+选择上方的 AWS、Google Cloud、Azure 或 Simple Icons 卡片，即可查看已审核压缩包的准确下载 URL、预期 SHA-256，以及完整的 `curl` → `stack icons import` → `stack render` 命令。如果压缩包字节不再匹配已审核 hash，CLI 会拒绝导入。
 
 ```sh
-stack icons list aws s3
-stack icons import aws /path/to/aws-icons.zip \
-  --accept-terms \
-  -o .stack-icons/aws
-stack icons import gcp /path/to/core-products-icons.zip \
-  --source categories=/path/to/category-icons.zip \
-  --accept-terms \
-  -o .stack-icons/gcp
+$ stack icons list aws s3
+$ stack icons list simple-icons github
 ```
 
-可使用 `aws`、`gcp`、`azure` 或 `simple-icons`。Google Cloud 需要上面两个官方本地归档。Importer 不发起网络请求或上传；它验证每个完整压缩包，只读取审核过的路径，移除活动内容，保留颜色与几何，并生成 `manifest.json`、`NOTICE.md` 和 `assets/*.svg`。
+可使用 `aws`、`gcp`、`azure` 或 `simple-icons`。Google Cloud 需要选择卡片时显示的两个官方压缩包。Importer 读取由 `curl` 下载的文件，本身不发起下载或上传；它验证每个完整压缩包，只读取审核过的路径，移除活动内容，保留颜色与几何，并生成 `manifest.json`、`NOTICE.md` 和 `assets/*.svg`。
 
 ## 在 Playground 使用 pack
 
@@ -54,16 +48,41 @@ diagram "Storage" {
 
 Playground 接受已经处理的 pack，而不是服务商原始 ZIP。原始压缩包验证和安全 SVG 处理仍由 CLI 负责，避免浏览器代码重复安全边界。
 
-## 在 CLI 中离线使用 pack
+## 在 CLI 中使用 pack
+
+一个 Stack 文件可以使用多个服务商。例如，下面的图同时使用 Google Cloud pack 中的 Cloud Run 与 Simple Icons pack 中的 GitHub：
+
+```stack
+stack 1.0
+
+diagram "Deploy from GitHub to Cloud Run" {
+  node repository "GitHub" {
+    kind external
+    icon "simple-icons:github"
+  }
+
+  node service "Cloud Run" {
+    kind service
+    icon "gcp:cloud-run"
+  }
+
+  edge repository -> service "Deploy" {
+    kind dependency
+  }
+}
+```
+
+使用目录卡片中的命令导入两个 pack 后，在渲染时重复指定 `--provider-pack`：
 
 ```sh
-stack render architecture.stack \
-  --provider-pack .stack-icons/aws \
+$ stack render architecture.stack \
+  --provider-pack .stack-icons/gcp \
+  --provider-pack .stack-icons/simple-icons \
   -o architecture.svg \
   --notice architecture.NOTICE.md
 ```
 
-`--provider-pack` 可以重复指定。`stack fmt`、`stack check`、`stack render` 与 `stack icons import` 都不会发起网络请求；导入只要求官方压缩包已经存在于本地。CLI 在渲染前验证有大小限制的 pack，并把实际使用的图标写入 notice sidecar。
+CLI 会在渲染前验证每个有大小限制的 pack，并把实际使用的图标和来源压缩包写入 notice sidecar。
 
 ## 离线行为
 

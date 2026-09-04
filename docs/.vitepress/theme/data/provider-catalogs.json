@@ -7,9 +7,14 @@
     {
       "id": "aws",
       "name": "Amazon Web Services",
-      "release": "Icon-package_07312026",
-      "sourcePageUrl": "https://aws.amazon.com/architecture/icons/",
-      "termsUrl": "https://aws.amazon.com/trademark-guidelines/",
+      "source": {
+        "pageUrl": "https://aws.amazon.com/architecture/icons/",
+        "archiveUrl": "https://d1.awsstatic.com/onedam/marketing-channels/website/public/shared/architecture-icon-release/Icon-package_07312026.5846e92413caa21490223536cc97f1269e44fa92.zip",
+        "archiveSha256": "sha256:d2d166c453526471749d520e0db022c459abef759d2946cf2dd1d1c992dc6526",
+        "release": "Icon-package_07312026",
+        "termsUrl": "https://aws.amazon.com/trademark-guidelines/"
+      },
+      "additionalSources": [],
       "icons": [
         {
           "id": "aws:amazon-api-gateway",
@@ -1846,9 +1851,23 @@
     {
       "id": "gcp",
       "name": "Google Cloud",
-      "release": "Core product icons (May 2026 guide)",
-      "sourcePageUrl": "https://cloud.google.com/icons",
-      "termsUrl": "https://about.google/brand-resource-center/",
+      "source": {
+        "pageUrl": "https://cloud.google.com/icons",
+        "archiveUrl": "https://services.google.com/fh/files/misc/core-products-icons.zip",
+        "archiveSha256": "sha256:6531a10f58bc599c24d9a455d81dd757c1a03c3c43da9cddf639b859c1c1eece",
+        "release": "Core product icons (May 2026 guide)",
+        "termsUrl": "https://about.google/brand-resource-center/"
+      },
+      "additionalSources": [
+        {
+          "id": "categories",
+          "pageUrl": "https://cloud.google.com/icons",
+          "archiveUrl": "https://services.google.com/fh/files/misc/category-icons.zip",
+          "archiveSha256": "sha256:e5bc3abd3527dc2500e9bff7f15870783e2c764129c49b7cd4c1b4e105345002",
+          "release": "Product category icons (May 2026 guide)",
+          "termsUrl": "https://about.google/brand-resource-center/"
+        }
+      ],
       "icons": [
         {
           "id": "gcp:agents",
@@ -2125,9 +2144,14 @@
     {
       "id": "azure",
       "name": "Microsoft Azure",
-      "release": "Azure_Public_Service_Icons_V24",
-      "sourcePageUrl": "https://learn.microsoft.com/azure/architecture/icons/",
-      "termsUrl": "https://learn.microsoft.com/azure/architecture/icons/",
+      "source": {
+        "pageUrl": "https://learn.microsoft.com/azure/architecture/icons/",
+        "archiveUrl": "https://arch-center.azureedge.net/icons/Azure_Public_Service_Icons_V24.zip",
+        "archiveSha256": "sha256:921594ccd1bf3d9c0a1bd7b6d924e050551a59342f2b353bb74bdcf761c35141",
+        "release": "Azure_Public_Service_Icons_V24",
+        "termsUrl": "https://learn.microsoft.com/azure/architecture/icons/"
+      },
+      "additionalSources": [],
       "icons": [
         {
           "id": "azure:030777508-icon-service-service-group-relationships",
@@ -5968,9 +5992,14 @@
     {
       "id": "simple-icons",
       "name": "Simple Icons (curated tools)",
-      "release": "16.29.0",
-      "sourcePageUrl": "https://simpleicons.org/",
-      "termsUrl": "https://github.com/simple-icons/simple-icons/blob/16.29.0/DISCLAIMER.md",
+      "source": {
+        "pageUrl": "https://simpleicons.org/",
+        "archiveUrl": "https://github.com/simple-icons/simple-icons/archive/refs/tags/16.29.0.zip",
+        "archiveSha256": "sha256:99f30fabd5be19dab51e09b2adebb6fe54fce1f3709ddfdc936a1338dfebc68d",
+        "release": "16.29.0",
+        "termsUrl": "https://github.com/simple-icons/simple-icons/blob/16.29.0/DISCLAIMER.md"
+      },
+      "additionalSources": [],
       "icons": [
         {
           "id": "simple-icons:1password",

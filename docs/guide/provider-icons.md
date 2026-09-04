@@ -20,20 +20,14 @@ After you load a pack, the Playground shows its actual icons from your selected 
 
 ## Create a local pack
 
-Download the official archive yourself, then use the public Stack CLI to process that local file:
+Select an AWS, Google Cloud, Azure, or Simple Icons card above to see its exact audited download URL, expected SHA-256, and complete `curl` → `stack icons import` → `stack render` commands. The CLI rejects an archive if its bytes no longer match the reviewed hash.
 
 ```sh
-stack icons list aws s3
-stack icons import aws /path/to/aws-icons.zip \
-  --accept-terms \
-  -o .stack-icons/aws
-stack icons import gcp /path/to/core-products-icons.zip \
-  --source categories=/path/to/category-icons.zip \
-  --accept-terms \
-  -o .stack-icons/gcp
+$ stack icons list aws s3
+$ stack icons list simple-icons github
 ```
 
-Use `aws`, `gcp`, `azure`, or `simple-icons`. Google Cloud requires both official local archives shown above. The importer makes no network request or upload. It verifies every complete archive, reads only reviewed paths, removes active content, preserves colors and geometry, and creates `manifest.json`, `NOTICE.md`, and `assets/*.svg`.
+Use `aws`, `gcp`, `azure`, or `simple-icons`. Google Cloud requires both official archives shown when its card is selected. The importer reads the files downloaded by `curl`; it does not fetch or upload them itself. It verifies every complete archive, reads only reviewed paths, removes active content, preserves colors and geometry, and creates `manifest.json`, `NOTICE.md`, and `assets/*.svg`.
 
 ## Use a pack in Playground
 
@@ -54,16 +48,41 @@ The selected files stay in the current browser tab. The Playground does not uplo
 
 The Playground accepts an already processed pack, not a raw provider ZIP. Raw-archive verification and safe SVG processing remain in the CLI so browser code does not duplicate that security boundary.
 
-## Use a pack offline in CLI
+## Use a pack in CLI
+
+A single Stack file can use multiple providers. For example, this diagram uses Cloud Run from the Google Cloud pack and GitHub from the Simple Icons pack:
+
+```stack
+stack 1.0
+
+diagram "Deploy from GitHub to Cloud Run" {
+  node repository "GitHub" {
+    kind external
+    icon "simple-icons:github"
+  }
+
+  node service "Cloud Run" {
+    kind service
+    icon "gcp:cloud-run"
+  }
+
+  edge repository -> service "Deploy" {
+    kind dependency
+  }
+}
+```
+
+After importing both packs with the commands shown in their catalog cards, repeat `--provider-pack` when rendering:
 
 ```sh
-stack render architecture.stack \
-  --provider-pack .stack-icons/aws \
+$ stack render architecture.stack \
+  --provider-pack .stack-icons/gcp \
+  --provider-pack .stack-icons/simple-icons \
   -o architecture.svg \
   --notice architecture.NOTICE.md
 ```
 
-`--provider-pack` is repeatable. `stack fmt`, `stack check`, `stack render`, and `stack icons import` perform no network request; importing requires only that the official archive already exists locally. The CLI validates bounded pack inputs before rendering and records the exact used icons in the notice sidecar.
+The CLI validates each bounded pack before rendering and records the exact used icons and source archives in the notice sidecar.
 
 ## Offline behavior
 
