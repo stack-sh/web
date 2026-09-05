@@ -1,13 +1,16 @@
 import assert from "node:assert/strict"
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises"
+import { readFile, readdir } from "node:fs/promises"
 import path from "node:path"
 
 import init, { check, render } from "@stack-sh/engine"
 
-const writeThumbnails = process.argv.includes("--write-thumbnails")
+assert.equal(
+  process.argv.length,
+  2,
+  "Examples are rendered at runtime; no image generation flags are supported",
+)
 const corpusRoot = path.resolve("example-corpus")
 const sourceRoot = path.join(corpusRoot, "sources")
-const thumbnailRoot = path.resolve("docs/public/examples")
 const catalog = JSON.parse(await readFile(path.join(corpusRoot, "catalog.json"), "utf8"))
 const providerCatalog = JSON.parse(
   await readFile(path.resolve("docs/.vitepress/theme/data/provider-catalogs.json"), "utf8"),
@@ -26,7 +29,6 @@ function declarations(source, declaration) {
   return source.match(new RegExp(`^\\s*${declaration}\\s+`, "gm"))?.length ?? 0
 }
 
-const expectedThumbnails = []
 for (const example of catalog.examples) {
   const source = await readFile(path.join(sourceRoot, example.source), "utf8")
   for (const field of ["nodes", "groups", "edges"]) {
@@ -71,30 +73,8 @@ for (const example of catalog.examples) {
   assert.ok(rendered.svg, `${example.id} did not produce an SVG`)
   assert.match(rendered.svg, /<svg\b[^>]*\bviewBox="[^"]+"/)
   assert.doesNotMatch(rendered.svg, /<script\b|<foreignObject\b|\b(?:href|src)="https?:/i)
-
-  const thumbnail = `${example.id}.svg`
-  expectedThumbnails.push(thumbnail)
-  const destination = path.join(thumbnailRoot, thumbnail)
-  if (writeThumbnails) {
-    await mkdir(thumbnailRoot, { recursive: true })
-    await writeFile(destination, rendered.svg)
-  } else {
-    assert.equal(
-      await readFile(destination, "utf8"),
-      rendered.svg,
-      `${thumbnail} is stale; run npm run examples:generate`,
-    )
-  }
 }
 
-const actualThumbnails = (await readdir(thumbnailRoot))
-  .filter((entry) => entry.endsWith(".svg"))
-  .sort()
-assert.deepEqual(
-  actualThumbnails,
-  expectedThumbnails.sort(),
-  "Example thumbnail inventory has drifted",
-)
 console.log(
-  `${writeThumbnails ? "Generated" : "Validated"} ${catalog.examples.length} checked, rendered, and provider-resolved example thumbnails with @stack-sh/engine 0.7.0.`,
+  `Validated ${catalog.examples.length} canonical examples with @stack-sh/engine 0.7.0; no SVG files are generated.`,
 )

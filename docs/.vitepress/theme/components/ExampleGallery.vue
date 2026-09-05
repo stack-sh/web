@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import corpus from "../../../../example-corpus/catalog.json"
 import { exampleCorpusSource } from "../../../../scripts/example-corpus.config.mjs"
+import ExamplePreview from "./ExamplePreview.vue"
 
 type Locale = "en" | "ja" | "zh" | "ko"
 type LearningStage = "starter" | "intermediate" | "advanced"
@@ -84,13 +85,12 @@ function featureLabel(feature: string) {
           class="stack-example-card"
           :aria-labelledby="`example-${example.id}`"
         >
-          <a class="stack-example-card__preview" :href="sourceUrl(example.source)">
-            <img
-              :src="`/docs/examples/${example.id}.svg`"
-              :alt="example.thumbnail.alt"
-              loading="lazy"
-            />
-          </a>
+          <ExamplePreview
+            :source="example.source"
+            :source-url="sourceUrl(example.source)"
+            :alt="example.thumbnail.alt"
+            :locale="locale"
+          />
           <div class="stack-example-card__body">
             <div class="stack-example-card__heading">
               <h3 :id="`example-${example.id}`">{{ example.title }}</h3>
