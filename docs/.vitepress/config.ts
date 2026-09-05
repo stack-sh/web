@@ -116,7 +116,10 @@ function localeTheme(prefix: string, labels: Labels): DefaultTheme.Config {
     ],
     sidebar: sidebar(prefix, labels),
     editLink: {
-      pattern: "https://github.com/stack-sh/web/edit/main/docs/:path",
+      pattern: ({ relativePath }) =>
+        /^(?:(?:ja|zh|ko)\/)?guide\/agent-workflow\.md$/.test(relativePath)
+          ? "https://github.com/stack-sh/docs/edit/main/content/agent-workflow.md"
+          : `https://github.com/stack-sh/docs/edit/main/content/site/${relativePath}`,
       text: labels.edit,
     },
     outline: { level: [2, 3], label: labels.outline },
