@@ -109,11 +109,14 @@ for (const locale of ["", "ja/", "zh/", "ko/"]) {
   const page = `${locale}examples/index.html`
   const html = await readFile(path.join(outputRoot, page), "utf8")
   const cards = html.match(/class="stack-example-card"/g)?.length ?? 0
-  const thumbnails = html.match(/class="stack-example-card__preview"/g)?.length ?? 0
+  const previews = html.match(/class="stack-example-preview"/g)?.length ?? 0
 
   if (cards !== 9) throw new Error(`${page} contains ${cards} example cards instead of 9`)
-  if (thumbnails !== 9) {
-    throw new Error(`${page} contains ${thumbnails} example thumbnails instead of 9`)
+  if (previews !== 9) {
+    throw new Error(`${page} contains ${previews} runtime example previews instead of 9`)
+  }
+  if (/src="[^"]*\/examples\/[^"]+\.svg/.test(html)) {
+    throw new Error(`${page} references a pre-rendered example SVG`)
   }
 }
 

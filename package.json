@@ -23,7 +23,6 @@
     "docs:preview": "vitepress preview docs",
     "examples:check": "node scripts/validate-example-corpus.mjs",
     "examples:check:source": "node scripts/sync-example-corpus.mjs --check",
-    "examples:generate": "node scripts/validate-example-corpus.mjs --write-thumbnails",
     "examples:sync": "node scripts/sync-example-corpus.mjs",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",

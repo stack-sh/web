@@ -19,7 +19,12 @@ import init, {
 let initialization: Promise<void> | undefined
 
 export function initializeStackEngine(): Promise<void> {
-  initialization ??= init().then(() => undefined)
+  initialization ??= init()
+    .then(() => undefined)
+    .catch((error) => {
+      initialization = undefined
+      throw error
+    })
   return initialization
 }
 
