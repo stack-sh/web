@@ -4,7 +4,7 @@
 
 ## 安装 skill
 
-使用 `npx skills add stack-sh/web --skill stack-diagrams` 仅将图表 skill 安装到当前项目。仅在需要用户级安装时添加 `-g`，并检查下载的指令。CLI 需要单独安装。需要可复现安装时，将 `stack-sh/web` 替换为不可变的 GitHub commit URL。
+使用 `npx skills add stack-sh/web --skill stack-diagrams` 仅将图表 skill 安装到当前项目。仅在需要用户级安装时添加 `-g`，并检查下载的指令。CLI 需要单独安装。需要可复现安装时，先 clone 仓库并 checkout 已审核的 commit，再运行 `npx skills add /absolute/path/to/web --skill stack-diagrams`。安装器不能将 commit SHA 直接作为远程分支安装。
 
 [SKILL.md](https://github.com/stack-sh/web/blob/main/skills/stack-diagrams/SKILL.md)
 
