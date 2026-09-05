@@ -20,8 +20,8 @@ const providerCatalog = JSON.parse(
   await readFile(path.join(docsRoot, ".vitepress/theme/data/provider-catalogs.json"), "utf8"),
 )
 
-if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.6.0") {
-  throw new Error("Documentation must use the exact @stack-sh/engine 0.6.0 release")
+if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.7.0") {
+  throw new Error("Documentation must use the exact @stack-sh/engine 0.7.0 release")
 }
 
 const expectedProviderCounts = { aws: 305, gcp: 45, azure: 639, "simple-icons": 62 }

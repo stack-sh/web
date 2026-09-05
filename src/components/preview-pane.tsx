@@ -82,7 +82,11 @@ export function PreviewPane({
           <SvgImage svg={svg} />
         ) : (
           <p className="max-w-xs text-center text-sm leading-6 text-muted-foreground">
-            {isLoading ? "Loading the Stack engine…" : "Run the source to generate an SVG."}
+            {isLoading
+              ? "Loading the Stack engine…"
+              : status === "Analyzing source…"
+                ? "Analyzing source…"
+                : "Run the source to generate an SVG."}
           </p>
         )}
       </div>

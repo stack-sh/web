@@ -64,7 +64,7 @@ for (const example of catalog.examples) {
       providerIcons.length,
       `${example.id} ${operation} provider fallback count does not match its source`,
     )
-    assert.equal(result.metadata.engineVersion, "0.6.0")
+    assert.equal(result.metadata.engineVersion, "0.7.0")
     assert.deepEqual(result.metadata.languageVersion, { major: 1, minor: 0 })
   }
 
@@ -96,5 +96,5 @@ assert.deepEqual(
   "Example thumbnail inventory has drifted",
 )
 console.log(
-  `${writeThumbnails ? "Generated" : "Validated"} ${catalog.examples.length} checked, rendered, and provider-resolved example thumbnails with @stack-sh/engine 0.6.0.`,
+  `${writeThumbnails ? "Generated" : "Validated"} ${catalog.examples.length} checked, rendered, and provider-resolved example thumbnails with @stack-sh/engine 0.7.0.`,
 )

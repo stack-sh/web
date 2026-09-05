@@ -1,13 +1,19 @@
 import init, {
   check,
   checkWithProviderPacks,
+  completion,
+  completionWithProviderPacks,
   format,
+  hover,
   render,
   renderWithProviderPacks,
   type CheckResult,
+  type CompletionResult,
   type FormatResult,
+  type HoverResult,
   type ProviderPackInput,
   type RenderResult,
+  type SourcePosition,
 } from "@stack-sh/engine"
 
 let initialization: Promise<void> | undefined
@@ -33,6 +39,25 @@ export function renderStack(
   providerPacks: readonly ProviderPackInput[] = [],
 ): RenderResult {
   return providerPacks.length > 0 ? renderWithProviderPacks(source, providerPacks) : render(source)
+}
+
+export function completeStack(
+  source: string,
+  documentVersion: number,
+  position: SourcePosition,
+  providerPacks: readonly ProviderPackInput[] = [],
+): CompletionResult {
+  return providerPacks.length > 0
+    ? completionWithProviderPacks(source, documentVersion, position, providerPacks)
+    : completion(source, documentVersion, position)
+}
+
+export function hoverStack(
+  source: string,
+  documentVersion: number,
+  position: SourcePosition,
+): HoverResult {
+  return hover(source, documentVersion, position)
 }
 
 export function validateProviderPack(providerPack: ProviderPackInput): void {

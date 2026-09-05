@@ -1,4 +1,4 @@
-import type { SourceRange } from "@stack-sh/engine"
+import type { SourcePosition, SourceRange, TextEdit } from "@stack-sh/engine"
 
 export interface SourceSelection {
   start: number
@@ -35,6 +35,47 @@ export function utf8ByteOffsetToUtf16Index(source: string, byteOffset: number) {
   }
 
   return source.length
+}
+
+export function sourcePositionAtUtf16Index(source: string, utf16Index: number): SourcePosition {
+  const target = Math.min(Math.max(0, utf16Index), source.length)
+  let byteOffset = 0
+  let line = 1
+  let column = 1
+  let index = 0
+
+  while (index < target) {
+    const codePoint = source.codePointAt(index)
+    if (codePoint === undefined) break
+    const character = String.fromCodePoint(codePoint)
+    if (character === "\r" && source[index + 1] === "\n") {
+      if (target === index + 1) break
+      byteOffset += 2
+      index += 2
+      line += 1
+      column = 1
+      continue
+    }
+
+    byteOffset += utf8Length(character)
+    index += character.length
+    if (character === "\n") {
+      line += 1
+      column = 1
+    } else {
+      column += 1
+    }
+  }
+
+  return { byteOffset, line, column }
+}
+
+export function applyTextEdit(source: string, edit: TextEdit) {
+  const selection = sourceSelection(source, edit.range)
+  return {
+    source: source.slice(0, selection.start) + edit.newText + source.slice(selection.end),
+    selection: selection.start + edit.newText.length,
+  }
 }
 
 export function sourceSelection(source: string, range: SourceRange): SourceSelection {
