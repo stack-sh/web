@@ -1,0 +1,13 @@
+# Static asset response rules: https://developers.cloudflare.com/workers/static-assets/headers/
+/machine/*
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/machine/index.json
+  Cache-Control: public, max-age=0, must-revalidate
+
+/machine/v1.0.0/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/docs-source.json
+  Cache-Control: public, max-age=0, must-revalidate

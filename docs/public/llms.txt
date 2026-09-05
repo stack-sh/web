@@ -24,6 +24,9 @@ These Markdown pages are the public user-facing reference. Examples marked as `s
 
 ## Reference
 
+- [Machine resource discovery](https://stack-diagram.com/machine/index.json): Versioned grammar, schemas, diagnostics, example sources, implementation capabilities, and SHA-256 integrity.
+- [Machine resource policy](https://github.com/stack-sh/docs/blob/main/MACHINE_RESOURCES.md): Compatibility, immutable versions, caching, and a verified resource consumer example.
+
 - [Diagnostics and limits](https://stack-diagram.com/docs/reference/diagnostics-and-limits.md): Stable diagnostic codes, source ranges, warnings, and bounded-input limits.
 - [Versioning and safety](https://stack-diagram.com/docs/reference/versioning-and-safety.md): Compatibility policy, trust boundaries, escaping, and package responsibilities.
 

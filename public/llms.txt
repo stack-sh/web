@@ -6,6 +6,9 @@ Stack source describes components, boundaries, relationships, themes, and layout
 
 ## Documentation
 
+- [Machine resource discovery](https://stack-diagram.com/machine/index.json): Versioned grammar, schemas, diagnostics, example sources, implementation capabilities, and SHA-256 integrity.
+- [Machine resource policy](https://github.com/stack-sh/docs/blob/main/MACHINE_RESOURCES.md): Compatibility, immutable versions, caching, and a verified resource consumer example.
+
 - [Coding agents](https://stack-diagram.com/docs/guide/coding-agents.md): Install the Stack diagram skill or copy a minimal instruction; generate, validate, and render with the published local CLI.
 
 - [Stack documentation](https://stack-diagram.com/docs/llms.txt): Curated guides, complete language reference, diagnostics, limits, versioning, and safety information.
