@@ -83,6 +83,18 @@ jobs:
           STACK_CLI_BIN: ${{ github.workspace }}/.stack-cli/target/debug/stack
         run: npm run docs:smoke
 
+      - name: Verify and smoke test the published CLI archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node --input-type=module -e 'import { documentationContract as c } from "./scripts/docs-validation.config.mjs"; console.log(c.cli.version)')
+          archive="stack-v${version}-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir .stack-release
+          gh release download "v${version}" --repo stack-sh/cli --pattern "$archive" --dir .stack-release
+          gh attestation verify ".stack-release/$archive" --repo stack-sh/cli
+          tar -xzf ".stack-release/$archive" -C .stack-release
+          STACK_CLI_BIN="$PWD/.stack-release/stack-v${version}-x86_64-unknown-linux-gnu/stack" npm run docs:smoke
+
       - name: Build playground
         run: npm run build
 

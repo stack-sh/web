@@ -59,7 +59,13 @@ The Playground publishes canonical, Open Graph, Twitter Card, and `WebApplicatio
 
 [`public/robots.txt`](./public/robots.txt) permits public search crawling and advertises both sitemaps. [`public/llms.txt`](./public/llms.txt) and [`docs/public/llms.txt`](./docs/public/llms.txt) provide curated agent entry points. The VitePress build also emits clean Markdown alternatives for every documentation page and generates `/llms-full.txt` from the complete English documentation, so the agent-facing content stays synchronized with its public source.
 
-## Scope
+## Keeping CLI documentation current
+
+`scripts/docs-validation.config.mjs` pins the published CLI version and its exact release commit. Run `npm run docs:release:sync` after a stable CLI release to update that pin and all four Getting Started version declarations together. Review any changed command behavior, then run `STACK_CLI_BIN=/absolute/path/to/the/verified/release/stack npm run docs:smoke` and the normal build checks before opening a PR. The sync command does not install a CLI, accept provider terms, or publish changes.
+
+The required CI baseline compares the pin against GitHub's latest stable release and resolved tag commit, executes documentation commands using both the pinned source and the attested published Linux archive, and verifies that an unsupported flag fails the documentation smoke. Offline documentation builds check locale version consistency without contacting GitHub. The read-only `Release freshness` workflow checks daily and on manual dispatch, so a CLI-only release cannot remain silently stale until someone edits this repository. A failed run requires a synchronization PR and a verified Web deployment; this workflow does not auto-merge or auto-publish. GitHub scheduled runs may be delayed, and GitHub Actions notification preferences govern failure notifications.
+
+## Playground scope
 
 The initial playground includes:
 

@@ -13,7 +13,7 @@
     "docs:check": "node scripts/cli-release.mjs && node scripts/validate-docs.mjs && node scripts/validate-docs-examples.mjs && npm run examples:check",
     "docs:release:check": "node scripts/cli-release.mjs --live",
     "docs:release:sync": "node scripts/cli-release.mjs --sync",
-    "docs:smoke": "node scripts/validate-docs-cli.mjs",
+    "docs:smoke": "node scripts/validate-docs-cli.mjs && node scripts/validate-docs-cli-negative.mjs",
     "docs:test": "node --test scripts/*.test.mjs",
     "docs:dev": "vitepress dev docs",
     "docs:preview": "vitepress preview docs",
