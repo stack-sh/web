@@ -67,7 +67,7 @@ The required CI baseline compares the pin against GitHub's latest stable release
 
 ## Coding agent skill
 
-Install the focused diagram skill with `npx skills add stack-sh/web --skill stack-diagrams` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for a copyable prompt, local validation loop, installation boundaries, and limitations. `skills/stack-diagrams/SKILL.md` is the maintained source; its CLI examples run alongside documentation examples against the published CLI in CI.
+Install the focused diagram skill with `npx skills add stack-sh/cli` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for a copyable prompt, local validation loop, installation boundaries, and limitations. The CLI repository owns `skills/stack-diagrams/SKILL.md`; `scripts/agent-skill.mjs` pins its merged revision and SHA-256. CI fetches and verifies those exact bytes, then runs its CLI examples alongside documentation examples against the published CLI. Update this separate skill pin after reviewing a merged skill change; it is independent of the binary release pin.
 
 ## Playground features
 

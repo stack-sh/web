@@ -7,6 +7,7 @@ import { promisify } from "node:util"
 
 import { validateDocumentationContract } from "./docs-contract.mjs"
 import { documentationContract } from "./docs-validation.config.mjs"
+import { readAgentSkill } from "./agent-skill.mjs"
 
 const execute = promisify(execFile)
 const cli = process.env.STACK_CLI_BIN
@@ -23,7 +24,7 @@ const { documents, cliExamples } = await validateDocumentationContract({
   exceptions: documentationContract.exceptions,
 })
 
-const skill = await readFile("skills/stack-diagrams/SKILL.md", "utf8")
+const skill = await readAgentSkill()
 assert.match(skill, /^---\nname: stack-diagrams\ndescription: .+\nlicense: Apache-2.0\n---/)
 const skillCommands = [...skill.matchAll(/```sh\n([\s\S]*?)```/g)].flatMap((match) =>
   match[1].trim().split("\n"),
