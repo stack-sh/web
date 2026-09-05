@@ -67,6 +67,12 @@ The required CI baseline compares the pin against GitHub's latest stable release
 
 ## Playground scope
 
+## Coding agent skill
+
+Install the focused diagram skill with `npx skills add stack-sh/web --skill stack-diagrams` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for a copyable prompt, local validation loop, installation boundaries, and limitations. `skills/stack-diagrams/SKILL.md` is the maintained source; its CLI examples run alongside documentation examples against the published CLI in CI.
+
+## Playground features
+
 The initial playground includes:
 
 - Responsive editor and SVG preview panes

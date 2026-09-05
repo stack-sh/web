@@ -6,6 +6,8 @@ Stack source describes components, boundaries, relationships, themes, and layout
 
 ## Documentation
 
+- [Coding agents](https://stack-diagram.com/docs/guide/coding-agents.md): Install the Stack diagram skill or copy a minimal instruction; generate, validate, and render with the published local CLI.
+
 - [Stack documentation](https://stack-diagram.com/docs/llms.txt): Curated guides, complete language reference, diagnostics, limits, versioning, and safety information.
 - [Complete English documentation](https://stack-diagram.com/llms-full.txt): All English documentation in one Markdown document for agents that prefer a single context.
 - [Getting started](https://stack-diagram.com/docs/guide/getting-started.md): Install the browser package, write a first `.stack` document, and use the Playground.
