@@ -59,6 +59,14 @@ The example gallery loads canonical `.stack` sources from the public specificati
 
 The Playground publishes canonical, Open Graph, Twitter Card, and `WebApplication` JSON-LD metadata from `index.html`. [`public/ogp.png`](./public/ogp.png) is the shared 1200×630 social image for the Playground and documentation.
 
+The pinned Docs homepage metadata supplies the canonical tagline, localized benefits,
+and supporting description. Vite substitutes the tagline into the Playground's HTML
+and JSON-LD placeholders with context-specific escaping; development retrieves the
+same verified Docs input before starting. VitePress displays the supporting paragraph
+below the tagline while keeping the H1 product-only, and generates its homepage
+Markdown alternatives from that same metadata. Do not maintain a second homepage
+story in Web or add pre-rendered example SVGs to illustrate it.
+
 [`public/robots.txt`](./public/robots.txt) permits public search crawling and advertises both sitemaps. [`public/llms.txt`](./public/llms.txt) and [`docs/public/llms.txt`](./docs/public/llms.txt) provide curated agent entry points. The VitePress build also emits clean Markdown alternatives for every documentation page and generates `/llms-full.txt` from the complete English documentation, so the agent-facing content stays synchronized with its public source.
 
 ## Keeping CLI documentation current

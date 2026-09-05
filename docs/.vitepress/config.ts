@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises"
+import { readFileSync } from "node:fs"
 import { createRequire } from "node:module"
 import path from "node:path"
 
@@ -7,50 +8,21 @@ import type { LanguageRegistration } from "@shikijs/core"
 import type { DefaultTheme } from "vitepress"
 
 import { documentationContract } from "../../scripts/docs-validation.config.mjs"
+import { productHomeMarkdown, readProductHome } from "../../scripts/product-home.mjs"
 
 const require = createRequire(import.meta.url)
 const stackGrammar = require("@stack-sh/language/grammar") as LanguageRegistration
 const siteOrigin = "https://stack-diagram.com"
-const siteDescription = "Write your Technical Stack, Get beautiful diagram"
+const siteDescription = readProductHome(readFileSync(path.resolve("docs/index.md"), "utf8")).hero
+  .tagline
 const socialImageUrl = `${siteOrigin}/ogp.png`
-const documentationHomeMarkdown: Record<string, string> = {
-  "index.md": `# Stack Documentation
-
-Stack is a declarative language for writing static software-architecture and technical-stack diagrams as concise, reviewable source.
-
-- [Getting started](./guide/getting-started.md)
-- [Language reference](./language/syntax.md)
-- [Diagnostics and limits](./reference/diagnostics-and-limits.md)
-`,
-  "ja/index.md": `# Stackドキュメント
-
-Stackは、静的なsoftware architecture diagramとtechnical stack diagramを簡潔でreview可能なsourceとして記述するための宣言的言語です。
-
-- [はじめる](./guide/getting-started.md)
-- [言語リファレンス](./language/syntax.md)
-- [Diagnosticとlimit](./reference/diagnostics-and-limits.md)
-`,
-  "zh/index.md": `# Stack 文档
-
-Stack 是一种声明式语言，用简洁、可审查的源代码编写静态软件架构图和技术栈图。
-
-- [快速开始](./guide/getting-started.md)
-- [语言参考](./language/syntax.md)
-- [诊断与限制](./reference/diagnostics-and-limits.md)
-`,
-  "ko/index.md": `# Stack 문서
-
-Stack은 정적 소프트웨어 아키텍처 및 기술 스택 다이어그램을 간결하고 검토 가능한 소스로 작성하는 선언적 언어입니다.
-
-- [시작하기](./guide/getting-started.md)
-- [언어 레퍼런스](./language/syntax.md)
-- [진단과 제한](./reference/diagnostics-and-limits.md)
-`,
-}
-
 function agentMarkdown(relativePath: string, source: string): string {
   const content = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "").trim()
-  return `${content || documentationHomeMarkdown[relativePath] || ""}\n`
+  if (content) return `${content}\n`
+  if (/^(?:(?:ja|zh|ko)\/)?index\.md$/.test(relativePath)) {
+    return productHomeMarkdown(readProductHome(source))
+  }
+  throw new Error(`Empty documentation page: ${relativePath}`)
 }
 
 function documentationUrl(relativePath: string): string {
@@ -390,7 +362,7 @@ export default defineConfig({
     logo: {
       light: "/favicon.svg",
       dark: "/favicon.svg",
-      alt: "Stack",
+      alt: "",
     },
     i18nRouting: true,
     externalLinkIcon: true,

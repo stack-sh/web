@@ -4,6 +4,7 @@ import path from "node:path"
 import { validateDocumentationContract } from "./docs-contract.mjs"
 import { documentationContract } from "./docs-validation.config.mjs"
 import { digest, readDocsManifest } from "./docs-source.mjs"
+import { readProductHome, validateBuiltProductHome, productHomeMarkdown } from "./product-home.mjs"
 
 const outputRoot = path.resolve("dist/docs")
 const siteOutputRoot = path.resolve("dist")
@@ -41,6 +42,7 @@ const [playgroundHtml, sourceSocialImage, builtSocialImage, rootAgentIndex, robo
 
 for (const metadata of [
   "<title>Stack</title>",
+  `name="description" content="${readProductHome(await readFile(path.join(docsRoot, "index.md"), "utf8")).hero.tagline}"`,
   'rel="canonical" href="https://stack-diagram.com/"',
   'property="og:image" content="https://stack-diagram.com/ogp.png"',
   'name="twitter:card" content="summary_large_image"',
@@ -50,6 +52,8 @@ for (const metadata of [
     throw new Error(`Built Playground metadata is missing: ${metadata}`)
   }
 }
+if (playgroundHtml.includes("__STACK_DESCRIPTION_"))
+  throw new Error("Unresolved product metadata token")
 
 if (!sourceSocialImage.equals(builtSocialImage)) {
   throw new Error("Built social image does not match public/ogp.png")
@@ -69,6 +73,12 @@ if (!rootSitemap.includes("<loc>https://stack-diagram.com/</loc>")) {
 
 for (const [page, language] of localePages) {
   const html = await readFile(path.join(outputRoot, page), "utf8")
+  const markdownPage = page.replace(/\.html$/, ".md")
+  const copy = readProductHome(await readFile(path.join(docsRoot, markdownPage), "utf8"))
+  validateBuiltProductHome(html, copy)
+  const agentCopy = await readFile(path.join(outputRoot, markdownPage), "utf8")
+  if (agentCopy !== productHomeMarkdown(copy))
+    throw new Error(`${page} agent copy diverges from the visible product story`)
 
   if (!html.includes(`<html lang="${language}"`))
     throw new Error(`${page} does not declare ${language}`)

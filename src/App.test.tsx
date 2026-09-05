@@ -133,6 +133,7 @@ describe("Stack Playground", () => {
   it("loads the engine and renders the initial source", async () => {
     render(<App />)
 
+    expect(screen.getByRole("heading", { level: 1, name: "Stack" })).toBeInTheDocument()
     expect(screen.getByRole("textbox", { name: "Stack source" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Stack" }).querySelector("img")).toHaveAttribute(
       "src",

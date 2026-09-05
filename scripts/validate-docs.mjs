@@ -3,6 +3,7 @@ import path from "node:path"
 
 import { validateDocumentationContract } from "./docs-contract.mjs"
 import { documentationContract } from "./docs-validation.config.mjs"
+import { readProductHome } from "./product-home.mjs"
 
 const docsRoot = path.resolve("docs")
 const locales = documentationContract.locales
@@ -101,10 +102,9 @@ if (playgroundLogo !== documentationLogo) {
   throw new Error("Playground and documentation logo assets do not match")
 }
 
-const siteDescription = "Write your Technical Stack, Get beautiful diagram"
 const requiredMetadata = [
   "<title>Stack</title>",
-  `name="description" content="${siteDescription}"`,
+  'name="description" content="__STACK_DESCRIPTION_HTML__"',
   'rel="canonical" href="https://stack-diagram.com/"',
   'rel="describedby" href="/llms.txt"',
   'property="og:title" content="Stack"',
@@ -156,14 +156,14 @@ if (!rootSitemap.includes("<loc>https://stack-diagram.com/</loc>")) {
 }
 
 for (const [page, source] of englishPages) {
-  if (page === "index.md" && !source.includes("light: /favicon.svg")) {
+  if (page === "index.md" && readProductHome(source).hero.image.light !== "/favicon.svg") {
     throw new Error("English documentation home does not use the Stack logo")
   }
 }
 
 for (const locale of locales) {
   const source = await readFile(path.join(docsRoot, locale, "index.md"), "utf8")
-  if (!source.includes("light: /favicon.svg")) {
+  if (readProductHome(source).hero.image.light !== "/favicon.svg") {
     throw new Error(`${locale}/index.md does not use the Stack logo`)
   }
 }
