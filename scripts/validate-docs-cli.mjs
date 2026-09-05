@@ -23,6 +23,13 @@ const { documents, cliExamples } = await validateDocumentationContract({
   exceptions: documentationContract.exceptions,
 })
 
+const skill = await readFile("skills/stack-diagrams/SKILL.md", "utf8")
+assert.match(skill, /^---\nname: stack-diagrams\ndescription: .+\nlicense: Apache-2.0\n---/)
+const skillCommands = [...skill.matchAll(/```sh\n([\s\S]*?)```/g)].flatMap((match) =>
+  match[1].trim().split("\n"),
+)
+assert.ok(skillCommands.length > 0, "Skill must include executable CLI examples")
+
 const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "stack-docs-cli-"))
 try {
   const environment = {
@@ -69,7 +76,7 @@ try {
 
   const usedExceptions = new Set()
   let executedExamples = 0
-  for (const command of [...new Set(cliExamples)]) {
+  for (const command of [...new Set([...cliExamples, ...skillCommands])]) {
     const exception = [...configuredExceptions.keys()].find((prefix) => command.startsWith(prefix))
     if (exception) {
       usedExceptions.add(exception)

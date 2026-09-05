@@ -65,7 +65,11 @@ The Playground publishes canonical, Open Graph, Twitter Card, and `WebApplicatio
 
 The required CI baseline compares the pin against GitHub's latest stable release and resolved tag commit, executes documentation commands using both the pinned source and the attested published Linux archive, and verifies that an unsupported flag fails the documentation smoke. Offline documentation builds check locale version consistency without contacting GitHub. The read-only `Release freshness` workflow checks daily and on manual dispatch, so a CLI-only release cannot remain silently stale until someone edits this repository. A failed run requires a synchronization PR and a verified Web deployment; this workflow does not auto-merge or auto-publish. GitHub scheduled runs may be delayed, and GitHub Actions notification preferences govern failure notifications.
 
-## Playground scope
+## Coding agent skill
+
+Install the focused diagram skill with `npx skills add stack-sh/web --skill stack-diagrams` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for a copyable prompt, local validation loop, installation boundaries, and limitations. `skills/stack-diagrams/SKILL.md` is the maintained source; its CLI examples run alongside documentation examples against the published CLI in CI.
+
+## Playground features
 
 The initial playground includes:
 
