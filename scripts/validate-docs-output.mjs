@@ -148,6 +148,19 @@ for (const location of locations) {
 
   const route = new URL(location).pathname.replace(/^\/docs\//, "")
   const markdownPath = route.endsWith("/") || route === "" ? `${route}index.md` : `${route}.md`
+  const htmlPath = markdownPath.replace(/\.md$/, ".html")
+  const html = await readFile(path.join(outputRoot, htmlPath), "utf8")
+  const editSource = /^(?:(?:ja|zh|ko)\/)?guide\/agent-workflow\.md$/.test(markdownPath)
+    ? "content/agent-workflow.md"
+    : `content/site/${markdownPath}`
+  // Locale landing pages use VitePress's home layout, which has no edit footer.
+  const isLocaleHome = /^(?:(?:ja|zh|ko)\/)?index\.md$/.test(markdownPath)
+  if (!isLocaleHome && !html.includes(`https://github.com/stack-sh/docs/edit/main/${editSource}`)) {
+    throw new Error(`Edit link does not target the canonical Docs source: ${htmlPath}`)
+  }
+  if (html.includes("https://github.com/stack-sh/web/edit/main/docs/")) {
+    throw new Error(`Retired Web source edit link remains: ${htmlPath}`)
+  }
   const markdown = await readFile(path.join(outputRoot, markdownPath), "utf8")
 
   if (!markdown.trim()) throw new Error(`Markdown alternate is empty: ${markdownPath}`)
