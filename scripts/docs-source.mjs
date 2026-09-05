@@ -90,6 +90,11 @@ export async function syncDocs(directory = root, lock = docsSource, fetchResourc
     await writeFile(target, bytes)
   }
   await writeFile(path.join(directory, ".stack-docs/manifest.json"), manifestBytes)
+  await mkdir(path.join(directory, "public"), { recursive: true })
+  await writeFile(
+    path.join(directory, "public/docs-source.json"),
+    JSON.stringify(lock, null, 2) + "\n",
+  )
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

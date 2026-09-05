@@ -37,6 +37,10 @@ test("retrieves verified immutable content and supplies only generated build inp
   await syncDocs(directory, f.lock, f.fetchResource)
   assert.equal(await readFile(path.join(directory, "docs/index.md"), "utf8"), f.source)
   assert.equal(await readFile(path.join(directory, ".stack-docs/SKILL.md"), "utf8"), f.source)
+  assert.deepEqual(
+    JSON.parse(await readFile(path.join(directory, "public/docs-source.json"), "utf8")),
+    f.lock,
+  )
 })
 
 test("rejects mutable pins, traversal, duplicate paths, and unsupported manifests", async () => {
