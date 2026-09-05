@@ -252,7 +252,7 @@ export default function App() {
     <TooltipProvider>
       <div className="flex min-h-svh flex-col bg-background lg:h-svh lg:overflow-hidden">
         <header className="flex h-12 shrink-0 items-center justify-between border-b px-3 sm:px-4">
-          <h1 className="sr-only">Stack Playground</h1>
+          <h1 className="sr-only">Stack</h1>
           <div className="flex h-full items-center">
             <a
               className="flex items-center gap-2 text-sm font-semibold tracking-[-0.02em]"
