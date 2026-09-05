@@ -1,3 +1,5 @@
+import { readDocsManifest } from "./docs-source.mjs"
+
 export const documentationContract = {
   locales: ["ja", "zh", "ko"],
   allowedFenceLanguages: ["stack", "sh", "text", "yaml"],
@@ -8,6 +10,7 @@ export const documentationContract = {
         { label: "introduction", page: "guide/what-is-stack.md" },
         { label: "gettingStarted", page: "guide/getting-started.md" },
         { label: "codingAgents", page: "guide/coding-agents.md" },
+        { label: "agentWorkflow", page: "guide/agent-workflow.md" },
         { label: "examples", page: "examples/index.md" },
         { label: "playground", page: "guide/playground.md" },
         { label: "providerIcons", page: "guide/provider-icons.md" },
@@ -31,17 +34,17 @@ export const documentationContract = {
       ],
     },
   ],
-  cli: {
-    repository: "stack-sh/cli",
-    revision: "7f4066884f7902d4c582d45184f3a9019fe59bf7",
-    version: "0.4.0",
-    executionExceptions: [
-      {
-        prefix: "stack icons import ",
-        reason:
-          "Import downloads provider archives and records terms acceptance; CI validates its real help contract without performing the side effect.",
-      },
-    ],
+  get cli() {
+    return {
+      ...readDocsManifest().cli,
+      executionExceptions: [
+        {
+          prefix: "stack icons import ",
+          reason:
+            "Import downloads provider archives and records terms acceptance; CI validates its real help contract without performing the side effect.",
+        },
+      ],
+    }
   },
   stackExecutionExceptions: [
     {

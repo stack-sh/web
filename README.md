@@ -61,13 +61,17 @@ The Playground publishes canonical, Open Graph, Twitter Card, and `WebApplicatio
 
 ## Keeping CLI documentation current
 
-`scripts/docs-validation.config.mjs` pins the published CLI version and its exact release commit. Run `npm run docs:release:sync` after a stable CLI release to update that pin and all four Getting Started version declarations together. Review any changed command behavior, then run `STACK_CLI_BIN=/absolute/path/to/the/verified/release/stack npm run docs:smoke` and the normal build checks before opening a PR. The sync command does not install a CLI, accept provider terms, or publish changes.
+User-facing Markdown and the published CLI identity are owned by [stack-sh/docs](https://github.com/stack-sh/docs). Edit sources there, run `npm run release:sync` after a stable CLI release, verify, and merge. Then update `scripts/docs-source.json` to the merged Docs commit and SHA-256 of its `generated/manifest.json`. Run `npm run docs:source` to retrieve the verified inputs. Web's CLI version and skill instructions come from that same manifest; there is no second editable CLI version pin here.
+
+The original documentation Markdown paths under `docs/` are generated, ignored build inputs. Do not edit them. VitePress configuration and site assets remain Web-owned. Build and docs development commands retrieve the pinned source before use. A missing resource, invalid manifest, unsafe path, duplicate path, or hash mismatch fails before writing the fetched bundle. Source retrieval requires network access; the subsequent validation commands operate on the verified local inputs.
+
+Review command behavior, then run `STACK_CLI_BIN=/absolute/path/to/the/verified/release/stack npm run docs:smoke` and the normal build checks before opening a consumer PR. The former Web `docs:release:sync` command now directs maintainers to the canonical Docs repository instead of editing generated files.
 
 The required CI baseline compares the pin against GitHub's latest stable release and resolved tag commit, executes documentation commands using both the pinned source and the attested published Linux archive, and verifies that an unsupported flag fails the documentation smoke. Offline documentation builds check locale version consistency without contacting GitHub. The read-only `Release freshness` workflow checks daily and on manual dispatch, so a CLI-only release cannot remain silently stale until someone edits this repository. A failed run requires a synchronization PR and a verified Web deployment; this workflow does not auto-merge or auto-publish. GitHub scheduled runs may be delayed, and GitHub Actions notification preferences govern failure notifications.
 
 ## Coding agent skill
 
-Install the focused diagram skill with `npx skills add stack-sh/cli` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for a copyable prompt, local validation loop, installation boundaries, and limitations. The CLI repository owns `skills/stack-diagrams/SKILL.md`; `scripts/agent-skill.mjs` pins its merged revision and SHA-256. CI fetches and verifies those exact bytes, then runs its CLI examples alongside documentation examples against the published CLI. Update this separate skill pin after reviewing a merged skill change; it is independent of the binary release pin.
+Install the focused diagram skill with `npx skills add stack-sh/cli` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for the usage workflow. Docs generates both the skill distributed by CLI and the workflow displayed here from one source. Web verifies and executes the same Docs bundle's skill commands alongside documentation examples against the published CLI.
 
 ## Playground features
 

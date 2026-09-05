@@ -16,6 +16,8 @@ docs/.vitepress/cache
 .dev.vars*
 .stack-cli
 .stack-specification
+.stack-docs
+docs/**/*.md
 
 # Editor directories and files
 .vscode/*
