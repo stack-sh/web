@@ -4,9 +4,9 @@ Use Stack with a coding agent to keep architecture diagrams as reviewable source
 
 ## Install the skill
 
-Install only the diagram skill with `npx skills add stack-sh/web --skill stack-diagrams`. This installs into the current project; add `-g` only when you want a user-wide installation. Review the downloaded instructions before use. This installs instructions, not the Stack CLI. For a reproducible installation, clone the repository, check out a reviewed commit, then run `npx skills add /absolute/path/to/web --skill stack-diagrams`. The installer does not accept a raw commit SHA as a remote branch.
+Install only the diagram skill with `npx skills add stack-sh/cli`. This installs into the current project; add `-g` only when you want a user-wide installation. Review the downloaded instructions before use. This installs instructions, not the Stack CLI. For a reproducible installation, clone the repository, check out a reviewed commit, then run `npx skills add /absolute/path/to/cli --skill stack-diagrams`. The installer does not accept a raw commit SHA as a remote branch.
 
-[SKILL.md](https://github.com/stack-sh/web/blob/main/skills/stack-diagrams/SKILL.md)
+[SKILL.md](https://github.com/stack-sh/cli/blob/main/skills/stack-diagrams/SKILL.md)
 
 ## Without installation
 
