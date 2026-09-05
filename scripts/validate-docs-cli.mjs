@@ -12,7 +12,7 @@ const execute = promisify(execFile)
 const cli = process.env.STACK_CLI_BIN
 if (!cli) throw new Error("STACK_CLI_BIN must point to the pinned Stack CLI binary")
 
-const docsRoot = path.resolve("docs")
+const docsRoot = path.resolve(process.env.STACK_DOCS_ROOT ?? "docs")
 const { documents, cliExamples } = await validateDocumentationContract({
   docsRoot,
   locales: documentationContract.locales,

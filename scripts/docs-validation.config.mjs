@@ -32,8 +32,8 @@ export const documentationContract = {
   ],
   cli: {
     repository: "stack-sh/cli",
-    revision: "ca4a3c8f3eba3bac374f120e05151ac516de0faa",
-    version: "0.3.0",
+    revision: "7f4066884f7902d4c582d45184f3a9019fe59bf7",
+    version: "0.4.0",
     executionExceptions: [
       {
         prefix: "stack icons import ",
