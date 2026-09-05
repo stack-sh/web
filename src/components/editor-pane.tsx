@@ -408,6 +408,9 @@ export function EditorPane({
             source={source}
           />
 
+          <label className="sr-only" htmlFor="stack-source">
+            Stack source
+          </label>
           <textarea
             aria-activedescendant={activeOptionId}
             aria-autocomplete="list"
@@ -457,6 +460,8 @@ export function EditorPane({
             }}
             onKeyDown={(event) => {
               if (composingRef.current || event.nativeEvent.isComposing) return
+              // Safari can deliver compositionend before the IME-confirming Enter.
+              if (event.key === "Enter" && event.nativeEvent.keyCode === 229) return
               if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
                 event.preventDefault()
                 setCompletion(null)

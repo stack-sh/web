@@ -295,6 +295,13 @@ describe("Stack Playground", () => {
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument()
     fireEvent.compositionEnd(editor)
     await screen.findByRole("listbox")
+    fireEvent.keyDown(editor, { key: "Enter", isComposing: true })
+    expect(editor).toHaveValue(source)
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
+    // Safari's confirming Enter may arrive after compositionend with isComposing false.
+    fireEvent.keyDown(editor, { key: "Enter", keyCode: 229, isComposing: false })
+    expect(editor).toHaveValue(source)
+    expect(screen.getByRole("listbox")).toBeInTheDocument()
     await user.keyboard("{ArrowDown}{Enter}")
 
     expect(editor).toHaveValue(source.slice(0, editStart) + "group")
