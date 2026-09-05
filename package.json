@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "docs:source": "node scripts/docs-source.mjs",
+    "prebuild": "npm run docs:source",
+    "predocs:dev": "npm run docs:source",
+    "predocs:build": "npm run docs:source",
     "build": "npm run build:playground && npm run docs:build",
     "build:playground": "tsc -b && vite build",
     "cloudflare:check": "wrangler deploy --dry-run",

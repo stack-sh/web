@@ -21,4 +21,6 @@ jobs:
       - name: Compare documentation with the latest published CLI
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node scripts/cli-release.mjs --live
+        run: |
+          npm run docs:source
+          node scripts/cli-release.mjs --live

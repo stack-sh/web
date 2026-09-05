@@ -24,6 +24,9 @@ jobs:
           node-version: 22.14.0
           cache: npm
 
+      - name: Retrieve verified canonical documentation
+        run: npm run docs:source
+
       - name: Read pinned CLI documentation contract
         id: cli
         run: |

@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises"
+import { readFile } from "node:fs/promises"
 import { fileURLToPath } from "node:url"
 import path from "node:path"
 
@@ -9,7 +9,7 @@ export function validateRelease(lock, release, revision) {
   }
   if (release.tag_name !== `v${lock.version}`) {
     errors.push(
-      `CLI release drift: docs ${lock.version}, latest ${release.tag_name}; run npm run docs:release:sync`,
+      `CLI release drift: docs ${lock.version}, latest ${release.tag_name}; update stack-sh/docs with npm run release:sync, then update this site's Docs pin`,
     )
   }
   if (revision !== lock.revision)
@@ -51,25 +51,16 @@ export async function latestRelease() {
 
 async function main() {
   const { documentationContract } = await import("./docs-validation.config.mjs")
-  const configPath = new URL("./docs-validation.config.mjs", import.meta.url)
   const { cli } = documentationContract
-  const sync = process.argv.includes("--sync")
-  let version = cli.version
-  if (sync || process.argv.includes("--live")) {
+  if (process.argv.includes("--sync"))
+    throw new Error(
+      "Documentation is generated. Run npm run release:sync in stack-sh/docs, merge, then update scripts/docs-source.json.",
+    )
+  const version = cli.version
+  if (process.argv.includes("--live")) {
     const { release, revision } = await latestRelease()
-    if (sync) {
-      version = release.tag_name.slice(1)
-      const config = await readFile(configPath, "utf8")
-      await writeFile(
-        configPath,
-        config
-          .replace(cli.revision, revision)
-          .replace(`version: "${cli.version}"`, `version: "${version}"`),
-      )
-    } else {
-      const errors = validateRelease(cli, release, revision)
-      if (errors.length) throw new Error(errors.join("\n"))
-    }
+    const errors = validateRelease(cli, release, revision)
+    if (errors.length) throw new Error(errors.join("\n"))
   }
   for (const locale of ["", ...documentationContract.locales]) {
     const page = new URL(
@@ -78,12 +69,9 @@ async function main() {
     )
     const source = await readFile(page, "utf8")
     const updated = synchronizeVersion(source, version)
-    if (sync) await writeFile(page, updated)
-    else if (source !== updated) throw new Error(`Stale CLI version in ${fileURLToPath(page)}`)
+    if (source !== updated) throw new Error(`Stale CLI version in ${fileURLToPath(page)}`)
   }
-  console.log(
-    `Validated CLI ${version} documentation${sync ? " and synchronized release pin" : ""}.`,
-  )
+  console.log(`Validated CLI ${version} documentation.`)
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

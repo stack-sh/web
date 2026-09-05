@@ -70,6 +70,7 @@ type Labels = {
   introduction: string
   gettingStarted: string
   codingAgents: string
+  agentWorkflow: string
   examples: string
   playground: string
   providerIcons: string
@@ -135,6 +136,7 @@ const en: Labels = {
   introduction: "What is Stack?",
   gettingStarted: "Getting started",
   codingAgents: "Coding agents",
+  agentWorkflow: "Agent workflow",
   examples: "Examples",
   playground: "Using the Playground",
   providerIcons: "Provider icons",
@@ -165,6 +167,7 @@ const ja: Labels = {
   introduction: "Stackとは",
   gettingStarted: "はじめる",
   codingAgents: "Coding agentで使う",
+  agentWorkflow: "Agent向け共通手順",
   examples: "Example gallery",
   playground: "Playgroundの使い方",
   providerIcons: "Provider icon",
@@ -195,6 +198,7 @@ const zh: Labels = {
   introduction: "什么是 Stack？",
   gettingStarted: "快速开始",
   codingAgents: "Coding agent",
+  agentWorkflow: "Agent 工作流程",
   examples: "示例库",
   playground: "使用 Playground",
   providerIcons: "云服务商图标",
@@ -225,6 +229,7 @@ const ko: Labels = {
   introduction: "Stack이란?",
   gettingStarted: "시작하기",
   codingAgents: "Coding agent",
+  agentWorkflow: "Agent 워크플로",
   examples: "예제 갤러리",
   playground: "Playground 사용법",
   providerIcons: "클라우드 제공자 아이콘",
