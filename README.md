@@ -68,12 +68,15 @@ The initial playground includes:
 - Syntax highlighting from the shared Stack TextMate grammar
 - Distinct, accessible syntax palettes for light and dark color modes
 - Compiler-style diagnostics with source selection, code frames, expected values, help, and related locations
+- Contextual completion, semantic hover, inline diagnostic ranges, and debounced live preview
 - Safe SVG image preview, expanded dialog, and download
 - User-selected provider icon stores with searchable AWS, Google Cloud, Azure, and tool artwork
 
 Authentication, persistence, collaboration, and paid themes remain outside this delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the combined Vite and VitePress output as static assets.
 
 The editor keeps a native textarea as the input surface and layers Shiki presentation behind it. Highlighting consumes the raw `@stack-sh/language/grammar` export and does not determine whether source is valid. The Web-owned Shiki themes map grammar scopes to accessible light and dark colors. Validation and diagnostic guidance continue to come only from `@stack-sh/engine`.
+
+Language intelligence runs locally through `@stack-sh/engine` 0.7.0 WebAssembly; it does not start an LSP server or send source to a server. Suggestions follow typing or `Ctrl Space`; use arrow keys to choose, `Enter` or `Tab` to accept, and `Escape` to dismiss. The Context panel follows the caret or pointer. Imported provider packs supply their icon catalog to the same engine APIs. The adapter converts browser UTF-16 selections to engine source positions, rejects stale document results, and suspends completion during IME composition. Diagnostics and preview refresh from the same source snapshot after editing, while explicit actions remain available.
 
 ## License
 

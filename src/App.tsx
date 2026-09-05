@@ -1,5 +1,12 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from "react"
-import type { Diagnostic, EngineMetadata, ProviderNotice } from "@stack-sh/engine"
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
+import type {
+  CompletionResult,
+  Diagnostic,
+  EngineMetadata,
+  HoverResult,
+  ProviderNotice,
+  SourcePosition,
+} from "@stack-sh/engine"
 
 import { ColorModeToggle } from "@/components/color-mode-toggle"
 import { EditorPane } from "@/components/editor-pane"
@@ -10,13 +17,16 @@ import { EXAMPLE_SOURCE } from "@/lib/example"
 import type { LoadedProviderPack } from "@/lib/provider-pack"
 import {
   checkStack,
+  completeStack,
   formatStack,
+  hoverStack,
   initializeStackEngine,
   renderStack,
   validateProviderPack,
 } from "@/lib/stack-engine"
 
 const ProviderIcons = lazy(() => import("@/components/provider-icons"))
+const INPUT_RENDER_DELAY_MS = 180
 
 function hasErrors(diagnostics: readonly Diagnostic[]) {
   return diagnostics.some((diagnostic) => diagnostic.severity === "error")
@@ -37,6 +47,8 @@ function errorMessage(error: unknown) {
 export default function App() {
   const [colorMode, setColorMode] = useState<ColorMode>(initialColorMode)
   const [source, setSource] = useState(EXAMPLE_SOURCE)
+  const [documentVersion, setDocumentVersion] = useState(0)
+  const [analysisRevision, setAnalysisRevision] = useState(0)
   const [diagnostics, setDiagnostics] = useState<readonly Diagnostic[]>([])
   const [svg, setSvg] = useState<string | null>(null)
   const [metadata, setMetadata] = useState<EngineMetadata | null>(null)
@@ -44,6 +56,12 @@ export default function App() {
   const [providerPacks, setProviderPacks] = useState<readonly LoadedProviderPack[]>([])
   const [status, setStatus] = useState("Loading engine…")
   const [isReady, setIsReady] = useState(false)
+  const sourceRef = useRef(EXAMPLE_SOURCE)
+  const providerPacksRef = useRef<readonly LoadedProviderPack[]>([])
+  const documentVersionRef = useRef(0)
+  const analysisRevisionRef = useRef(0)
+  const lastRenderedRevisionRef = useRef(-1)
+  const scheduledRenderRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     applyColorMode(colorMode)
@@ -55,17 +73,38 @@ export default function App() {
     setStatus(errorMessage(error))
   }, [])
 
-  const runRender = useCallback((nextSource: string, packs: readonly LoadedProviderPack[]) => {
-    const result = renderStack(
-      nextSource,
-      packs.map((pack) => pack.input),
-    )
-    setDiagnostics(result.diagnostics)
-    setMetadata(result.metadata)
-    setSvg(result.svg)
-    setProviderNotices(result.providerNotices)
-    setStatus(resultStatus("Render", result.diagnostics))
+  const cancelScheduledRender = useCallback(() => {
+    if (!scheduledRenderRef.current) return
+    clearTimeout(scheduledRenderRef.current)
+    scheduledRenderRef.current = null
   }, [])
+
+  const runRender = useCallback(
+    (
+      nextSource: string,
+      packs: readonly LoadedProviderPack[],
+      revision: number,
+      action = "Render",
+    ) => {
+      try {
+        const result = renderStack(
+          nextSource,
+          packs.map((pack) => pack.input),
+        )
+        if (revision !== analysisRevisionRef.current) return
+
+        lastRenderedRevisionRef.current = revision
+        setDiagnostics(result.diagnostics)
+        setMetadata(result.metadata)
+        setSvg(result.svg)
+        setProviderNotices(result.providerNotices)
+        setStatus(resultStatus(action, result.diagnostics))
+      } catch (error) {
+        if (revision === analysisRevisionRef.current) reportFailure(error)
+      }
+    },
+    [reportFailure],
+  )
 
   useEffect(() => {
     let active = true
@@ -74,7 +113,7 @@ export default function App() {
       .then(() => {
         if (!active) return
         setIsReady(true)
-        runRender(EXAMPLE_SOURCE, [])
+        runRender(sourceRef.current, providerPacksRef.current, analysisRevisionRef.current)
       })
       .catch((error: unknown) => {
         if (active) reportFailure(error)
@@ -85,49 +124,105 @@ export default function App() {
     }
   }, [reportFailure, runRender])
 
-  function handleRender() {
-    try {
-      runRender(source, providerPacks)
-    } catch (error) {
-      reportFailure(error)
+  useEffect(() => {
+    if (!isReady || lastRenderedRevisionRef.current === analysisRevision) return
+
+    scheduledRenderRef.current = setTimeout(() => {
+      scheduledRenderRef.current = null
+      runRender(source, providerPacks, analysisRevision)
+    }, INPUT_RENDER_DELAY_MS)
+
+    return () => {
+      if (scheduledRenderRef.current) {
+        clearTimeout(scheduledRenderRef.current)
+        scheduledRenderRef.current = null
+      }
     }
+  }, [analysisRevision, isReady, providerPacks, runRender, source])
+
+  const handleSourceChange = useCallback((nextSource: string) => {
+    sourceRef.current = nextSource
+    setSource(nextSource)
+
+    const nextDocumentVersion = documentVersionRef.current + 1
+    documentVersionRef.current = nextDocumentVersion
+    setDocumentVersion(nextDocumentVersion)
+
+    const nextRevision = analysisRevisionRef.current + 1
+    analysisRevisionRef.current = nextRevision
+    setAnalysisRevision(nextRevision)
+
+    setDiagnostics([])
+    setSvg(null)
+    setProviderNotices([])
+    setStatus("Analyzing source…")
+    return nextDocumentVersion
+  }, [])
+
+  const handleRequestCompletion = useCallback(
+    (snapshot: string, version: number, position: SourcePosition): CompletionResult =>
+      completeStack(
+        snapshot,
+        version,
+        position,
+        providerPacksRef.current.map((pack) => pack.input),
+      ),
+    [],
+  )
+
+  const handleRequestHover = useCallback(
+    (snapshot: string, version: number, position: SourcePosition): HoverResult =>
+      hoverStack(snapshot, version, position),
+    [],
+  )
+
+  function advanceProviderContext(packs: readonly LoadedProviderPack[]) {
+    providerPacksRef.current = packs
+    setProviderPacks(packs)
+
+    const nextDocumentVersion = documentVersionRef.current + 1
+    documentVersionRef.current = nextDocumentVersion
+    setDocumentVersion(nextDocumentVersion)
+
+    const nextRevision = analysisRevisionRef.current + 1
+    analysisRevisionRef.current = nextRevision
+    setAnalysisRevision(nextRevision)
+    return nextRevision
   }
 
-  function handleSourceChange(nextSource: string) {
-    setSource(nextSource)
-    setDiagnostics([])
-    setStatus("Source changed")
+  function handleRender() {
+    cancelScheduledRender()
+    runRender(sourceRef.current, providerPacksRef.current, analysisRevisionRef.current)
   }
 
   function handleCheck() {
+    cancelScheduledRender()
     try {
       const result = checkStack(
-        source,
-        providerPacks.map((pack) => pack.input),
+        sourceRef.current,
+        providerPacksRef.current.map((pack) => pack.input),
       )
-      setDiagnostics(result.diagnostics)
       setMetadata(result.metadata)
-      setStatus(resultStatus("Check", result.diagnostics))
+      runRender(sourceRef.current, providerPacksRef.current, analysisRevisionRef.current, "Check")
     } catch (error) {
       reportFailure(error)
     }
   }
 
   function handleFormat() {
+    cancelScheduledRender()
     try {
-      const result = formatStack(source)
+      const result = formatStack(sourceRef.current)
       setDiagnostics(result.diagnostics)
       setMetadata(result.metadata)
       setStatus(resultStatus("Format", result.diagnostics))
 
       if (result.formattedSource !== null) {
-        setSource(result.formattedSource)
-        const rendered = renderStack(
-          result.formattedSource,
-          providerPacks.map((pack) => pack.input),
-        )
-        setSvg(rendered.svg)
-        setProviderNotices(rendered.providerNotices)
+        const formattedSource = result.formattedSource
+        const nextVersion = handleSourceChange(formattedSource)
+        const nextRevision = analysisRevisionRef.current
+        documentVersionRef.current = nextVersion
+        runRender(formattedSource, providerPacksRef.current, nextRevision, "Format")
       }
     } catch (error) {
       reportFailure(error)
@@ -141,14 +236,16 @@ export default function App() {
 
   function handleProviderIconStoreLoad(packs: readonly LoadedProviderPack[]) {
     for (const pack of packs) validateProviderPack(pack.input)
-    setProviderPacks(packs)
-    runRender(source, packs)
+    cancelScheduledRender()
+    const nextRevision = advanceProviderContext(packs)
+    runRender(sourceRef.current, packs, nextRevision)
   }
 
   function handleProviderPackRemove(providerId: string) {
-    const nextPacks = providerPacks.filter((pack) => pack.providerId !== providerId)
-    setProviderPacks(nextPacks)
-    runRender(source, nextPacks)
+    const nextPacks = providerPacksRef.current.filter((pack) => pack.providerId !== providerId)
+    cancelScheduledRender()
+    const nextRevision = advanceProviderContext(nextPacks)
+    runRender(sourceRef.current, nextPacks, nextRevision)
   }
 
   return (
@@ -206,9 +303,12 @@ export default function App() {
             colorMode={colorMode}
             diagnostics={diagnostics}
             disabled={!isReady}
+            documentVersion={documentVersion}
             onCheck={handleCheck}
             onFormat={handleFormat}
             onRender={handleRender}
+            onRequestCompletion={handleRequestCompletion}
+            onRequestHover={handleRequestHover}
             onSourceChange={handleSourceChange}
             source={source}
           />
