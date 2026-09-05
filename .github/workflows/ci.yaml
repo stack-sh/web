@@ -68,6 +68,11 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Check latest published CLI release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run docs:release:check
+
       - name: Verify pinned example snapshots
         env:
           STACK_SPECIFICATION_ROOT: ${{ github.workspace }}/.stack-specification
