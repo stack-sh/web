@@ -13,7 +13,7 @@ try {
     const page = path.join(docsRoot, locale, "guide/getting-started.md")
     await writeFile(
       page,
-      `${await readFile(page, "utf8")}\n\`\`\`sh\nstack check architecture.stack --not-a-real-option\n\`\`\`\n`,
+      `${await readFile(page, "utf8")}\n\`\`\`sh\n$ stack check architecture.stack --not-a-real-option\n\`\`\`\n`,
     )
   }
   assert.throws(
