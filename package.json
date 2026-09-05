@@ -12,6 +12,7 @@
     "build:playground": "tsc -b && vite build",
     "cloudflare:check": "wrangler deploy --dry-run",
     "deploy": "npm run build && wrangler deploy",
+    "predev": "npm run docs:source",
     "dev": "vite",
     "docs:build": "npm run docs:check && vitepress build docs && node scripts/validate-docs-output.mjs",
     "docs:check": "node scripts/cli-release.mjs && node scripts/validate-docs.mjs && node scripts/validate-docs-examples.mjs && npm run examples:check",
