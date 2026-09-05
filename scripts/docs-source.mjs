@@ -26,7 +26,7 @@ export function validateManifest(bytes, lock) {
   for (const file of manifest.files) {
     assert.match(
       file.path,
-      /^(?:site\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.md|guide\/agent-workflow\.md|skills\/stack-diagrams\/SKILL\.md)$/,
+      /^(?:site\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.md|guide\/agent-workflow\.md|skills\/stack-diagrams\/SKILL\.md|machine\/(?:index\.json|v\d+\.\d+\.\d+\/[a-z0-9.-]+\.json))$/,
     )
     assert.ok(!seen.has(file.path), "Duplicate Docs path")
     seen.add(file.path)
@@ -83,7 +83,9 @@ export async function syncDocs(directory = root, lock = docsSource, fetchResourc
       ? `docs/${file.slice(5)}`
       : file === "skills/stack-diagrams/SKILL.md"
         ? ".stack-docs/SKILL.md"
-        : null
+        : file.startsWith("machine/")
+          ? `public/${file}`
+          : null
     if (!relative) continue
     const target = path.join(directory, relative)
     await mkdir(path.dirname(target), { recursive: true })

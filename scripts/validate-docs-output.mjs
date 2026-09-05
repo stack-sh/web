@@ -3,10 +3,25 @@ import path from "node:path"
 
 import { validateDocumentationContract } from "./docs-contract.mjs"
 import { documentationContract } from "./docs-validation.config.mjs"
+import { digest, readDocsManifest } from "./docs-source.mjs"
 
 const outputRoot = path.resolve("dist/docs")
 const siteOutputRoot = path.resolve("dist")
 const docsRoot = path.resolve("docs")
+const sourceManifest = readDocsManifest()
+const machineFiles = sourceManifest.files.filter((file) => file.path.startsWith("machine/"))
+if (machineFiles.length < 4) throw new Error("Machine distribution is incomplete")
+for (const file of machineFiles) {
+  const bytes = await readFile(path.join(siteOutputRoot, file.path))
+  if (digest(bytes) !== file.sha256) throw new Error(`Built machine asset drift: ${file.path}`)
+}
+const machineIndex = JSON.parse(
+  await readFile(path.join(siteOutputRoot, "machine/index.json"), "utf8"),
+)
+const manifestPath = new URL(machineIndex.current.url).pathname.slice(1)
+const machineManifest = await readFile(path.join(siteOutputRoot, manifestPath))
+if (digest(machineManifest) !== machineIndex.current.sha256)
+  throw new Error("Machine discovery digest mismatch")
 const localePages = [
   ["index.html", "en-US"],
   ["ja/index.html", "ja-JP"],

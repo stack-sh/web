@@ -69,6 +69,17 @@ Review command behavior, then run `STACK_CLI_BIN=/absolute/path/to/the/verified/
 
 The required CI baseline compares the pin against GitHub's latest stable release and resolved tag commit, executes documentation commands using both the pinned source and the attested published Linux archive, and verifies that an unsupported flag fails the documentation smoke. Offline documentation builds check locale version consistency without contacting GitHub. The read-only `Release freshness` workflow checks daily and on manual dispatch, so a CLI-only release cannot remain silently stale until someone edits this repository. A failed run requires a synchronization PR and a verified Web deployment; this workflow does not auto-merge or auto-publish. GitHub scheduled runs may be delayed, and GitHub Actions notification preferences govern failure notifications.
 
+## Machine resources
+
+The pinned Docs bundle also supplies `/machine/index.json` and immutable versioned
+grammar/schema/diagnostic/example manifests. Both llms indexes link to discovery
+and the [canonical distribution policy](https://github.com/stack-sh/docs/blob/main/MACHINE_RESOURCES.md).
+Generated machine JSON is not hand-edited here. The output gate verifies every
+deployed machine file against the provider manifest and checks the discovery
+digest. Static headers allow public cross-origin reads, revalidate discovery, and
+cache version 1.0.0 artifacts immutably. Keep old versioned files when updating the
+Docs pin; publisher CI forbids rewriting them.
+
 ## Coding agent skill
 
 Install the focused diagram skill with `npx skills add stack-sh/cli` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for the usage workflow. Docs generates both the skill distributed by CLI and the workflow displayed here from one source. Web verifies and executes the same Docs bundle's skill commands alongside documentation examples against the published CLI.

@@ -18,6 +18,7 @@ docs/.vitepress/cache
 .stack-specification
 .stack-docs
 /public/docs-source.json
+/public/machine/
 docs/**/*.md
 
 # Editor directories and files

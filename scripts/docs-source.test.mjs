@@ -10,7 +10,12 @@ function fixture(change = (manifest) => manifest) {
   const manifest = change({
     schemaVersion: "1.0",
     cli: { repository: "stack-sh/cli", revision: "b".repeat(40), version: "0.4.0" },
-    files: ["site/index.md", "skills/stack-diagrams/SKILL.md"].map((file) => ({
+    files: [
+      "site/index.md",
+      "skills/stack-diagrams/SKILL.md",
+      "machine/index.json",
+      "machine/v1.0.0/manifest.json",
+    ].map((file) => ({
       path: file,
       sha256: digest(source),
     })),
@@ -25,7 +30,7 @@ function fixture(change = (manifest) => manifest) {
     assert.ok(
       url.startsWith(`https://raw.githubusercontent.com/stack-sh/docs/${lock.revision}/generated/`),
     )
-    return new Response(url.endsWith("manifest.json") ? bytes : source)
+    return new Response(url.endsWith("/generated/manifest.json") ? bytes : source)
   }
   return { source, bytes, lock, fetchResource }
 }
@@ -37,6 +42,11 @@ test("retrieves verified immutable content and supplies only generated build inp
   await syncDocs(directory, f.lock, f.fetchResource)
   assert.equal(await readFile(path.join(directory, "docs/index.md"), "utf8"), f.source)
   assert.equal(await readFile(path.join(directory, ".stack-docs/SKILL.md"), "utf8"), f.source)
+  assert.equal(await readFile(path.join(directory, "public/machine/index.json"), "utf8"), f.source)
+  assert.equal(
+    await readFile(path.join(directory, "public/machine/v1.0.0/manifest.json"), "utf8"),
+    f.source,
+  )
   assert.deepEqual(
     JSON.parse(await readFile(path.join(directory, "public/docs-source.json"), "utf8")),
     f.lock,
@@ -50,6 +60,14 @@ test("rejects mutable pins, traversal, duplicate paths, and unsupported manifest
     (m) => ({ ...m, schemaVersion: "2.0" }),
     (m) => ({ ...m, files: [...m.files, m.files[0]] }),
     (m) => ({ ...m, files: [{ path: "site/../../README.md", sha256: "a".repeat(64) }] }),
+    (m) => ({
+      ...m,
+      files: [...m.files, { path: "machine/v1.0.0/../../outside.json", sha256: "a".repeat(64) }],
+    }),
+    (m) => ({
+      ...m,
+      files: [...m.files, { path: "machine/latest/manifest.json", sha256: "a".repeat(64) }],
+    }),
   ]) {
     const invalid = fixture(change)
     assert.throws(() => validateManifest(invalid.bytes, invalid.lock))
@@ -72,7 +90,7 @@ test("fails on missing or altered resources before writing build inputs", async 
     syncDocs(
       directory,
       f.lock,
-      async (url) => new Response(url.endsWith("manifest.json") ? f.bytes : "altered"),
+      async (url) => new Response(url.endsWith("/generated/manifest.json") ? f.bytes : "altered"),
     ),
     /content integrity/,
   )
