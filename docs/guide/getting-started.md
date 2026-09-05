@@ -2,6 +2,10 @@
 
 The fastest way to use Stack is the browser [Playground](https://stack-diagram.com/). It runs the formatter, validator, layout engine, and SVG renderer locally in WebAssembly; you do not need to install a command or send source to a rendering API.
 
+## Install the native CLI
+
+For terminal workflows and local automation, install the owner-maintained Homebrew formula with `brew install stack-sh/tap/stack`. It uses the canonical Stack CLI 0.3.0 release archive and supports Apple Silicon macOS plus glibc-based Linux on arm64 and x86_64 when the host meets Homebrew's current tier-1 requirements. Homebrew owns upgrades through `brew upgrade stack-sh/tap/stack`; uninstalling the formula leaves your Stack configuration and icon store in place. See the [CLI distribution contract](https://github.com/stack-sh/cli/blob/main/docs/distribution.md#homebrew-installation) for the exact platform matrix, direct-install alternative, and recovery policy.
+
 ## Write your first document
 
 Replace the editor content with this example:

@@ -32,7 +32,7 @@ export const documentationContract = {
   ],
   cli: {
     repository: "stack-sh/cli",
-    revision: "04c47eca36e4a54be83604a8a4f3fb89d135507d",
+    revision: "ca4a3c8f3eba3bac374f120e05151ac516de0faa",
     version: "0.3.0",
     executionExceptions: [
       {
