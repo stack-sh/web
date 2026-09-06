@@ -66,7 +66,7 @@ for (const example of catalog.examples) {
       providerIcons.length,
       `${example.id} ${operation} provider fallback count does not match its source`,
     )
-    assert.equal(result.metadata.engineVersion, "0.7.0")
+    assert.equal(result.metadata.engineVersion, "0.8.0")
     assert.deepEqual(result.metadata.languageVersion, { major: 1, minor: 0 })
   }
 
@@ -76,5 +76,5 @@ for (const example of catalog.examples) {
 }
 
 console.log(
-  `Validated ${catalog.examples.length} canonical examples with @stack-sh/engine 0.7.0; no SVG files are generated.`,
+  `Validated ${catalog.examples.length} canonical examples with @stack-sh/engine 0.8.0; no SVG files are generated.`,
 )
