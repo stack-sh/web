@@ -1,12 +1,29 @@
 # Stack Web
 
-The browser playground and documentation site for the Stack architecture diagram language.
+The public browser experience for the [Stack architecture diagram language](https://github.com/stack-sh/specification). It combines a local-first diagram Playground with the multilingual documentation site at [stack-diagram.com](https://stack-diagram.com/).
 
-The top-level experience is a responsive source-to-SVG workspace: edit Stack source on the left, inspect the generated SVG on the right, and run formatting or validation from the toolbar. On smaller screens, the editor and preview stack vertically.
+## Live surfaces
 
-The playground is deployed to the `stack-web` Cloudflare Worker at [stack-diagram.com](https://stack-diagram.com/). Its multilingual VitePress documentation is built into the same static asset bundle and served from [`/docs/`](https://stack-diagram.com/docs/).
+| Surface            | URL                                                             | Purpose                                                                          |
+| ------------------ | --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Playground         | [stack-diagram.com](https://stack-diagram.com/)                 | Write Stack source and render SVG in the browser                                 |
+| Documentation      | [stack-diagram.com/docs](https://stack-diagram.com/docs/)       | Learn the language, CLI, themes, icons, configuration, and coding-agent workflow |
+| Japanese           | [stack-diagram.com/docs/ja](https://stack-diagram.com/docs/ja/) | Japanese documentation                                                           |
+| Simplified Chinese | [stack-diagram.com/docs/zh](https://stack-diagram.com/docs/zh/) | Simplified Chinese documentation                                                 |
+| Korean             | [stack-diagram.com/docs/ko](https://stack-diagram.com/docs/ko/) | Korean documentation                                                             |
 
-## Development
+## What you can do
+
+- Edit, format, check, and render Stack diagrams without sending source to a rendering server.
+- Download safe standalone SVG produced by the same Engine used by the native CLI.
+- Use contextual completion, semantic hover, source-linked diagnostics, and live preview.
+- Import caller-selected provider icon packs locally in the browser.
+- Browse canonical examples rendered at runtime with the current WebAssembly Engine.
+- Learn the complete workflow in four languages or install the coding-agent skill with `npx skills add stack-sh/cli`.
+
+The responsive workspace places source and preview side by side on larger screens and stacks them on smaller screens. The editor suspends completion during IME composition, and all rendering and language intelligence run locally through the pinned `@stack-sh/engine` WebAssembly package.
+
+## Start locally
 
 Requirements:
 
@@ -19,100 +36,32 @@ npm ci
 npm run dev
 ```
 
-The WebAssembly adapter and editor language assets are installed from the exact public `@stack-sh/engine` and `@stack-sh/language` versions in `package.json`. Web builds do not require a Rust toolchain.
+Web builds consume published `@stack-sh/engine` and `@stack-sh/language` packages, so a Rust toolchain is not required for normal development.
 
-## Commands
+Useful commands:
 
-```sh
-npm run dev
-npm run docs:dev
-npm run docs:check
-npm run docs:test
-npm run examples:check
-npm run format
-npm run format:check
-npm run lint
-npm test
-npm run build
-npm run cloudflare:check
-npm run preview
-npm run docs:preview
-```
+| Command                    | Purpose                                                  |
+| -------------------------- | -------------------------------------------------------- |
+| `npm run dev`              | Start the Playground and retrieve the pinned Docs bundle |
+| `npm run docs:dev`         | Start the multilingual documentation site                |
+| `npm test`                 | Run Playground and documentation tests                   |
+| `npm run lint`             | Run Oxlint                                               |
+| `npm run format:check`     | Check formatting with Oxfmt                              |
+| `npm run build`            | Build the production Playground and Docs bundle          |
+| `npm run cloudflare:check` | Validate the Cloudflare deployment without publishing    |
 
-Formatting and linting use Oxfmt and Oxlint. The production build compiles the React playground into `dist/`, validates the English, Japanese, Simplified Chinese, and Korean documentation sets, and builds VitePress with a `/docs/` base into `dist/docs/`.
+## How the pieces fit
 
-## Documentation contract
+- [`stack-sh/docs`](https://github.com/stack-sh/docs) owns the user-facing Markdown, CLI release identity, coding-agent skill, and machine-readable documentation bundle.
+- This repository pins a verified Docs commit, builds its four locales, and serves the generated site together with the Playground.
+- Canonical `.stack` examples come from a pinned [specification](https://github.com/stack-sh/specification) revision and render in the visitor's browser. Example SVG files are not checked in.
+- [`@stack-sh/engine`](https://www.npmjs.com/package/@stack-sh/engine) provides formatting, diagnostics, completion, hover, deterministic layout, and safe SVG rendering.
+- Cloudflare Workers serves the combined static output. Authentication, persistence, collaboration, and paid themes are outside this repository.
 
-`npm run docs:check` validates that all four locales have the same page inventory, heading structure, and canonical code blocks. It also rejects broken internal links and anchors, unsafe external links, malformed code fences, and Stack examples that fail against the exact `@stack-sh/engine` version in `package.json`. `npm run docs:test` exercises the corresponding positive and negative fixtures.
+The public site also exposes search metadata, localized Markdown alternatives, `llms.txt`, and versioned machine resources for coding agents and tools.
 
-CI additionally builds the Stack CLI revision pinned in [`scripts/docs-validation.config.mjs`](./scripts/docs-validation.config.mjs) with its minimum supported Rust version, then runs `npm run docs:smoke` through `STACK_CLI_BIN`. This checks the documented version, help surface, and safe executable examples without adding Rust to normal Web builds. Intentional locale or execution differences must be declared in the same configuration with a non-empty reason; the validator rejects stale exceptions.
-
-The example gallery loads canonical `.stack` sources from the public specification commit pinned in [`scripts/example-corpus.config.mjs`](./scripts/example-corpus.config.mjs). [`example-corpus`](./example-corpus) is a hermetic source snapshot shared with the Playground; CI checks every catalog, schema, and `.stack` source byte against the pinned provider commit. Previews render on the visitor's device with the same pinned WASM engine and adapter as the Playground. They are not checked-in or build-generated SVGs, so updating the site's engine also updates its example rendering. The browser loads examples near the viewport, displays engine SVG as a Blob-backed image, and releases image URLs on navigation. A source link remains available without JavaScript; operational failures offer retry, and engine diagnostics are shown separately. Provider artwork is not fetched or redistributed by the gallery: examples use the engine's fallback shapes unless the caller explicitly supplies icon packs.
-
-`npm run examples:check` checks and renders all examples in memory, resolves every namespaced icon against the published provider catalog, and checks safe SVG output without writing images. To intentionally advance the corpus, check out the new pinned specification revision, run `STACK_SPECIFICATION_ROOT=/path/to/specification npm run examples:sync`, then run `npm run examples:check`. Approved engine regression snapshots are separate test artifacts, not documentation previews.
-
-## Brand mark
-
-[`public/favicon.svg`](./public/favicon.svg) is the canonical Stack logo mark for Web surfaces. The Playground uses it as its favicon and header mark; VitePress uses the identical [`docs/public/favicon.svg`](./docs/public/favicon.svg) copy for its favicon, navigation, and localized home pages. The documentation validator rejects the build if the two public-root copies differ.
-
-## Discovery metadata
-
-The Playground publishes canonical, Open Graph, Twitter Card, and `WebApplication` JSON-LD metadata from `index.html`. [`public/ogp.png`](./public/ogp.png) is the shared 1200×630 social image for the Playground and documentation.
-
-The pinned Docs homepage metadata supplies the canonical tagline, localized benefits,
-and supporting description. Vite substitutes the tagline into the Playground's HTML
-and JSON-LD placeholders with context-specific escaping; development retrieves the
-same verified Docs input before starting. VitePress displays the supporting paragraph
-below the tagline while keeping the H1 product-only, and generates its homepage
-Markdown alternatives from that same metadata. Do not maintain a second homepage
-story in Web or add pre-rendered example SVGs to illustrate it.
-
-[`public/robots.txt`](./public/robots.txt) permits public search crawling and advertises both sitemaps. [`public/llms.txt`](./public/llms.txt) and [`docs/public/llms.txt`](./docs/public/llms.txt) provide curated agent entry points. The VitePress build also emits clean Markdown alternatives for every documentation page and generates `/llms-full.txt` from the complete English documentation, so the agent-facing content stays synchronized with its public source.
-
-## Keeping CLI documentation current
-
-User-facing Markdown and the published CLI identity are owned by [stack-sh/docs](https://github.com/stack-sh/docs). Edit sources there, run `npm run release:sync` after a stable CLI release, verify, and merge. Then update `scripts/docs-source.json` to the merged Docs commit and SHA-256 of its `generated/manifest.json`. Run `npm run docs:source` to retrieve the verified inputs. Web's CLI version and skill instructions come from that same manifest; there is no second editable CLI version pin here.
-
-The original documentation Markdown paths under `docs/` are generated, ignored build inputs. Do not edit them. VitePress configuration and site assets remain Web-owned. Build and docs development commands retrieve the pinned source before use. A missing resource, invalid manifest, unsafe path, duplicate path, or hash mismatch fails before writing the fetched bundle. Source retrieval requires network access; the subsequent validation commands operate on the verified local inputs.
-
-Review command behavior, then run `STACK_CLI_BIN=/absolute/path/to/the/verified/release/stack npm run docs:smoke` and the normal build checks before opening a consumer PR. The former Web `docs:release:sync` command now directs maintainers to the canonical Docs repository instead of editing generated files.
-
-The required CI baseline compares the pin against GitHub's latest stable release and resolved tag commit, executes documentation commands using both the pinned source and the attested published Linux archive, and verifies that an unsupported flag fails the documentation smoke. Offline documentation builds check locale version consistency without contacting GitHub. The read-only `Release freshness` workflow checks daily and on manual dispatch, so a CLI-only release cannot remain silently stale until someone edits this repository. A failed run requires a synchronization PR and a verified Web deployment; this workflow does not auto-merge or auto-publish. GitHub scheduled runs may be delayed, and GitHub Actions notification preferences govern failure notifications.
-
-## Machine resources
-
-The pinned Docs bundle also supplies `/machine/index.json` and immutable versioned
-grammar/schema/diagnostic/example manifests. Both llms indexes link to discovery
-and the [canonical distribution policy](https://github.com/stack-sh/docs/blob/main/MACHINE_RESOURCES.md).
-Generated machine JSON is not hand-edited here. The output gate verifies every
-deployed machine file against the provider manifest and checks the discovery
-digest. Static headers allow public cross-origin reads, revalidate discovery, and
-cache version 1.0.0 artifacts immutably. Keep old versioned files when updating the
-Docs pin; publisher CI forbids rewriting them.
-
-## Coding agent skill
-
-Install the focused diagram skill with `npx skills add stack-sh/cli` in the target project. It provides instructions, not a CLI binary. See the [coding agent guide](https://stack-diagram.com/docs/guide/coding-agents) for the usage workflow. Docs generates both the skill distributed by CLI and the workflow displayed here from one source. Web verifies and executes the same Docs bundle's skill commands alongside documentation examples against the published CLI.
-
-## Playground features
-
-The initial playground includes:
-
-- Responsive editor and SVG preview panes
-- `Format`, `Check`, and `Run` actions
-- Syntax highlighting from the shared Stack TextMate grammar
-- Distinct, accessible syntax palettes for light and dark color modes
-- Compiler-style diagnostics with source selection, code frames, expected values, help, and related locations
-- Contextual completion, semantic hover, inline diagnostic ranges, and debounced live preview
-- Safe SVG image preview, expanded dialog, and download
-- User-selected provider icon stores with searchable AWS, Google Cloud, Azure, and tool artwork
-
-Authentication, persistence, collaboration, and paid themes remain outside this delivery. Cloudflare configuration targets the `stack-web` Worker and publishes the combined Vite and VitePress output as static assets.
-
-The editor keeps a native textarea as the input surface and layers Shiki presentation behind it. Highlighting consumes the raw `@stack-sh/language/grammar` export and does not determine whether source is valid. The Web-owned Shiki themes map grammar scopes to accessible light and dark colors. Validation and diagnostic guidance continue to come only from `@stack-sh/engine`.
-
-Language intelligence runs locally through the pinned `@stack-sh/engine` WebAssembly package; it does not start an LSP server or send source to a server. Suggestions follow typing or `Ctrl Space`; use arrow keys to choose, `Enter` or `Tab` to accept, and `Escape` to dismiss. The Context panel follows the caret or pointer. Imported provider packs supply their icon catalog to the same engine APIs. The adapter converts browser UTF-16 selections to engine source positions, rejects stale document results, and suspends completion during IME composition. Diagnostics and preview refresh from the same source snapshot after editing, while explicit actions remain available.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for Docs pinning, example synchronization, validation, metadata, and deployment procedures.
 
 ## License
 
-Repository-authored work is licensed under Apache-2.0. Bundled font files and their licenses are documented in [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md).
+Repository-authored work is licensed under [Apache-2.0](./LICENSE). Bundled font files and their licenses are documented in [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md).
