@@ -45,7 +45,7 @@ function sourcePosition(source: string, utf16Index: number) {
 }
 
 const metadata = {
-  engineVersion: "0.7.0",
+  engineVersion: "0.8.0",
   languageVersion: { major: 1, minor: 0 },
   themeCatalogRevision: "sha256:test",
   themeCatalogVersion: "0.4.0",
