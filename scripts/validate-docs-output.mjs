@@ -108,6 +108,14 @@ for (const [page, language] of localePages) {
 }
 
 for (const locale of ["", "ja/", "zh/", "ko/"]) {
+  const page = `${locale}language/nodes-and-groups.html`
+  const html = await readFile(path.join(outputRoot, page), "utf8")
+  const cards = html.match(/data-node-kind="/g)?.length ?? 0
+
+  if (cards !== 10) throw new Error(`${page} contains ${cards} node kind cards instead of 10`)
+}
+
+for (const locale of ["", "ja/", "zh/", "ko/"]) {
   const page = `${locale}language/themes-and-icons.html`
   const html = await readFile(path.join(outputRoot, page), "utf8")
   const cards = html.match(/class="stack-icon-card"/g)?.length ?? 0

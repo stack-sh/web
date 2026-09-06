@@ -21,8 +21,8 @@ const providerCatalog = JSON.parse(
   await readFile(path.join(docsRoot, ".vitepress/theme/data/provider-catalogs.json"), "utf8"),
 )
 
-if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.8.0") {
-  throw new Error("Documentation must use the exact @stack-sh/engine 0.8.0 release")
+if (packageMetadata.dependencies["@stack-sh/engine"] !== "0.9.0") {
+  throw new Error("Documentation must use the exact @stack-sh/engine 0.9.0 release")
 }
 
 const expectedProviderCounts = { aws: 305, gcp: 45, azure: 639, "simple-icons": 62 }
@@ -230,6 +230,18 @@ const requiredTerms = [
 for (const term of requiredTerms) {
   if (!corpus.includes(term))
     throw new Error(`English documentation is missing required coverage for ${term}`)
+}
+
+for (const locale of ["", ...locales]) {
+  const page = path.join(docsRoot, locale, "language/nodes-and-groups.md")
+  const source = await readFile(page, "utf8")
+  const componentLocale = locale || "en"
+
+  if (!source.includes(`<NodeKindCatalog locale="${componentLocale}" />`)) {
+    throw new Error(
+      `${componentLocale}/language/nodes-and-groups.md is missing its node kind gallery`,
+    )
+  }
 }
 
 for (const locale of ["", ...locales]) {
