@@ -77,11 +77,14 @@ export function PreviewPane({
         </div>
       </div>
 
-      <div className="flex min-h-0 items-center justify-center overflow-auto p-4 sm:p-6">
+      <section
+        aria-label="Rendered diagram preview"
+        className="flex min-h-0 overflow-auto p-4 sm:p-6"
+      >
         {svg ? (
           <SvgImage svg={svg} />
         ) : (
-          <p className="max-w-xs text-center text-sm leading-6 text-muted-foreground">
+          <p className="m-auto max-w-xs text-center text-sm leading-6 text-muted-foreground">
             {isLoading
               ? "Loading the Stack engine…"
               : status === "Analyzing source…"
@@ -89,7 +92,7 @@ export function PreviewPane({
                 : "Run the source to generate an SVG."}
           </p>
         )}
-      </div>
+      </section>
 
       <div className="flex h-9 items-center justify-between border-t bg-background px-3 font-mono text-[0.6875rem] text-muted-foreground">
         <span aria-live="polite">{status}</span>
@@ -105,12 +108,12 @@ function SvgImage({ svg }: { svg: string }) {
       <DialogTrigger asChild>
         <button
           aria-label="Expand rendered diagram"
-          className="group relative flex max-h-full max-w-full items-center justify-center border bg-white p-2 outline-none transition-colors hover:border-foreground/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted"
+          className="group relative m-auto flex max-w-full shrink-0 items-center justify-center border bg-white p-2 outline-none transition-colors hover:border-foreground/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-muted"
           type="button"
         >
           <SvgAssetImage
             alt="Rendered Stack architecture diagram"
-            className="max-h-full max-w-full object-contain"
+            className="h-auto max-w-full object-contain"
             svg={svg}
           />
           <span className="absolute right-2 bottom-2 inline-flex items-center gap-1 border bg-white/95 px-2 py-1 font-sans text-[0.6875rem] font-medium text-neutral-900 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
