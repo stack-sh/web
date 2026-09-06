@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from "vue"
 import { createExamplePreview, type ExamplePreviewState } from "../../../../src/lib/example-preview"
 import { renderExample } from "../../../../src/lib/render-example"
+import ExampleLightbox from "./ExampleLightbox.vue"
 
 const props = defineProps<{
   source: string
@@ -11,6 +12,7 @@ const props = defineProps<{
 }>()
 const labels = {
   en: {
+    enlarge: "Enlarge diagram",
     loading: "Rendering this example on your device…",
     unavailable: "The preview could not be loaded.",
     errors: "This example reported rendering errors.",
@@ -20,6 +22,7 @@ const labels = {
     noScript: "Enable JavaScript to render this example, or read its .stack source.",
   },
   ja: {
+    enlarge: "作例を拡大",
     loading: "この端末で作例を描画しています…",
     unavailable: "プレビューを読み込めませんでした。",
     errors: "作例の描画でエラーが報告されました。",
@@ -29,6 +32,7 @@ const labels = {
     noScript: "JavaScriptを有効にして作例を描画するか、.stackソースをご覧ください。",
   },
   zh: {
+    enlarge: "放大图表",
     loading: "正在您的设备上渲染此示例…",
     unavailable: "无法加载预览。",
     errors: "此示例报告了渲染错误。",
@@ -38,6 +42,7 @@ const labels = {
     noScript: "请启用 JavaScript 渲染此示例，或阅读其 .stack 源码。",
   },
   ko: {
+    enlarge: "다이어그램 확대",
     loading: "이 기기에서 예제를 렌더링하고 있습니다…",
     unavailable: "미리보기를 불러올 수 없습니다.",
     errors: "이 예제에서 렌더링 오류가 보고되었습니다.",
@@ -49,6 +54,7 @@ const labels = {
 } as const
 const text = computed(() => labels[props.locale])
 const element = ref<HTMLElement>()
+const lightbox = ref<InstanceType<typeof ExampleLightbox>>()
 const state = shallowRef<ExamplePreviewState>({ status: "idle" })
 const preview = createExamplePreview(renderExample, (next) => (state.value = next))
 const diagnostics = computed(() => ("result" in state.value ? state.value.result.diagnostics : []))
@@ -89,9 +95,17 @@ onUnmounted(() => {
 <template>
   <div ref="element" class="stack-example-preview" :data-preview-status="state.status">
     <div class="stack-example-preview__image" :aria-busy="state.status === 'loading'">
-      <a v-if="state.status === 'ready'" :href="sourceUrl">
+      <button
+        v-if="state.status === 'ready'"
+        type="button"
+        class="stack-example-preview__enlarge"
+        aria-haspopup="dialog"
+        :aria-label="`${text.enlarge}: ${alt}`"
+        @click="lightbox?.open()"
+      >
         <img :src="state.url" :alt="alt" @error="state = { status: 'unavailable' }" />
-      </a>
+        <span class="stack-example-preview__hint">{{ text.enlarge }} ↗</span>
+      </button>
       <div v-else class="stack-example-preview__fallback">
         <p v-if="state.status === 'loading'" role="status">{{ text.loading }}</p>
         <p v-else-if="state.status === 'unavailable'" role="status">{{ text.unavailable }}</p>
@@ -115,5 +129,12 @@ onUnmounted(() => {
         </li>
       </ul>
     </details>
+    <ExampleLightbox
+      v-if="state.status === 'ready'"
+      ref="lightbox"
+      :url="state.url"
+      :alt="alt"
+      :locale="locale"
+    />
   </div>
 </template>
