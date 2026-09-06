@@ -64,4 +64,6 @@ Do not maintain a second product story in Web or add pre-rendered example SVGs. 
 
 Cloudflare configuration targets the `stack-web` Worker and publishes the combined Vite and VitePress output as static assets. Before a production deployment, run the complete build and dry-run checks, verify the exact Docs and Engine pins, and review the rendered Playground and all four documentation locales.
 
+The `Production deploy` workflow deploys the latest `main` revision after a push to `main`, a manual dispatch from `main`, or a `repository_dispatch` event whose `event_type` is `microcms_update`. The deploy job repeats formatting, lint, test, build, and Cloudflare dry-run gates before publishing with Wrangler. Configure `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` as GitHub Actions secrets; never put either value in the workflow or repository files.
+
 Keep changes focused, use English commit and pull request descriptions, and do not commit credentials, tokens, customer data, signing material, build output, or fetched private resources.
