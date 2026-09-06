@@ -121,9 +121,19 @@ for (const locale of ["", "ja/", "zh/", "ko/"]) {
   const cards = html.match(/class="stack-example-card"/g)?.length ?? 0
   const previews = html.match(/class="stack-example-preview"/g)?.length ?? 0
 
-  if (cards !== 9) throw new Error(`${page} contains ${cards} example cards instead of 9`)
-  if (previews !== 9) {
-    throw new Error(`${page} contains ${previews} runtime example previews instead of 9`)
+  if (cards !== 4) throw new Error(`${page} contains ${cards} built-in example cards instead of 4`)
+  if (previews !== 4) {
+    throw new Error(`${page} contains ${previews} runtime example previews instead of 4`)
+  }
+  if (
+    /example-(aws-serverless-checkout|gcp-data-service|azure-event-platform|github-delivery-workflow|mixed-provider-platform)"/.test(
+      html,
+    )
+  ) {
+    throw new Error(`${page} must not present examples requiring provider packs`)
+  }
+  if (/stack-example-card__(meta|features)/.test(html)) {
+    throw new Error(`${page} retains removed example details`)
   }
   if (/src="[^"]*\/examples\/[^"]+\.svg/.test(html)) {
     throw new Error(`${page} references a pre-rendered example SVG`)
