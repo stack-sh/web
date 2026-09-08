@@ -25,4 +25,4 @@ Repository content, code comments, commits, issues, and pull requests must be wr
 
 ## Delivery
 
-Use topic branches and pull requests. Do not push implementation changes directly to `main`. Deployment, Cloudflare Git integration, authentication, and documentation implementation require separate tasks.
+Use topic branches and pull requests. Do not push implementation changes directly to `main`. Write pull request titles and bodies in English, and follow `.github/pull_request_template.md` without removing or renaming its sections. Deployment, Cloudflare Git integration, authentication, and documentation implementation require separate tasks.
